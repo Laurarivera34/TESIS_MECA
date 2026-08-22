@@ -24,10 +24,9 @@ Analizar los factores fiscales asociados con el nivel de endeudamiento de los mu
 
 ### Objetivos específicos
 
-1. Construir una base de datos panel a nivel municipal a partir de diferentes fuentes de información.
-2. Identificar y caracterizar las principales variables fiscales relacionadas con el endeudamiento municipal.
+1. Caracterizar la evolución del endeudamiento y desempeño fiscal de las entidades territoriales colombianas durante el periodo de estudio, identificando diferencias entre entidades con y sin calificación crediticia.
 3. Analizar la evolución y distribución del endeudamiento entre municipios y a través del tiempo.
-4. Estimar modelos econométricos que permitan estudiar la relación entre las condiciones fiscales municipales y el endeudamiento.
+4. Estimar un modelo econométrico que permita identificar cuáles variables fiscales tienen mayor incidencia sobre la calidad crediticia territorial, controlando por características individuales y efectos temporales.
 5. Documentar de manera reproducible el proceso de construcción de la base, estimación de los modelos y generación de resultados.
 
 ---
@@ -37,9 +36,8 @@ Analizar los factores fiscales asociados con el nivel de endeudamiento de los mu
 ```text
 tesis_endeudamiento_municipal/
 │
-├── data/
-│   ├── raw/                    # Datos originales
-│   └── processed/              # Datos procesados para el análisis
+├── data/                       # Datos originales
+│ 
 │
 ├── code/
 │   ├── 01_import_cleaning.R    # Importación y limpieza de datos
@@ -52,6 +50,8 @@ tesis_endeudamiento_municipal/
 │   └── tables/                 # Tablas y resultados
 │
 ├── docs/                       # Documentación del proyecto
+│   ├── data_dictionary         # Diccionario de las variables
+│   ├── slides                  # Entrega de las diapositivas
 │
 ├── README.md                   # Descripción y guía del proyecto
 └── environment.txt             # Entorno y paquetes utilizados

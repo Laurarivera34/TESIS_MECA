@@ -54,10 +54,15 @@ Contiene las especificaciones econométricas utilizadas para estudiar la relaci�
 ---
 ## Autora
 Laura Sarif Rivera Sanabria
+
 Proyecto de grado
+
 Maestría en Economía Aplicada (MECA)
+
 Universidad de los Andes
+
 Colombia
+
 ## Estructura del proyecto
 
 ```text

@@ -79,6 +79,10 @@ tesis_endeudamiento_municipal/
 ├── output/
 │   ├── figures/                # Gráficos y visualizaciones
 │   └── tables/                 # Tablas y resultados
+│     └── diagnostics/
+│           ├── Table_A1_panel_structure.html
+│           ├── Table_A2_NA_Buen_Gobierno.html
+│           └── Table_A3_NA_Caracteristicas_Generales.html
 │
 ├── docs/                       # Documentación del proyecto
 │   ├── data_dictionary         # Diccionario de las variables

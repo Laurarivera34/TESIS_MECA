@@ -28,32 +28,6 @@ Analizar los factores fiscales asociados con el nivel de endeudamiento de los mu
 5. Documentar de manera reproducible el proceso de construcción de la base, estimación de los modelos y generación de resultados basado en los principios FAIR
 
 ---
-
-## Estructura del proyecto
-
-```text
-tesis_endeudamiento_municipal/
-│
-├── data/                       # Datos originales
-│
-├── code/
-│   ├── 01_import_cleaning.R    # Importación y limpieza de datos
-│   ├── 02_variables.R          # Construcción de variables
-│   ├── 03_descriptives.R       # Estadísticas descriptivas y exploración
-│   └── 04_econometrics.R       # Estimaciones econométricas
-│
-├── output/
-│   ├── figures/                # Gráficos y visualizaciones
-│   └── tables/                 # Tablas y resultados
-│
-├── docs/                       # Documentación del proyecto
-│   ├── data_dictionary         # Diccionario de las variables
-│   └── slides                  # Entrega de las diapositivas
-│
-├── README.md                   # Descripción y guía del proyecto
-└── environment.txt             # Entorno y paquetes utilizados
-
-
 ---
 ## Fuentes de datos
 Las principales fuentes de información del proyecto corresponden a las bases de datos del CEDE — Panel de Buen Gobierno y Características Generales, las cuales consolidan información municipal proveniente de diversas fuentes oficiales. Entre las principales fuentes se encuentran el Departamento Administrativo Nacional de Estadística (DANE), el Instituto Geográfico Agustín Codazzi (IGAC), el Departamento Nacional de Planeación (DNP), el Ministerio de Agricultura y Desarrollo Rural, AGRONET, el Ministerio de Salud y Protección Social y el Ministerio de Minas y Energía, entre otras entidades. Estas bases permiten integrar información de diferentes dimensiones de los municipios colombianos y constituyen el principal insumo para la construcción del panel utilizado en el análisis.
@@ -85,3 +59,26 @@ Proyecto de grado
 Maestría en Economía Aplicada (MECA)
 Universidad de los Andes
 Colombia
+## Estructura del proyecto
+
+```text
+tesis_endeudamiento_municipal/
+│
+├── data/                       # Datos originales
+│
+├── code/
+│   ├── 01_import_cleaning.R    # Importación y limpieza de datos
+│   ├── 02_variables.R          # Construcción de variables
+│   ├── 03_descriptives.R       # Estadísticas descriptivas y exploración
+│   └── 04_econometrics.R       # Estimaciones econométricas
+│
+├── output/
+│   ├── figures/                # Gráficos y visualizaciones
+│   └── tables/                 # Tablas y resultados
+│
+├── docs/                       # Documentación del proyecto
+│   ├── data_dictionary         # Diccionario de las variables
+│   └── slides                  # Entrega de las diapositivas
+│
+├── README.md                   # Descripción y guía del proyecto
+└── environment.txt             # Entorno y paquetes utilizados

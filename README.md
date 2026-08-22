@@ -54,7 +54,9 @@ tesis_endeudamiento_municipal/
 ├── README.md                   # Descripción y guía del proyecto
 └── environment.txt             # Entorno y paquetes utilizados
 
+
 ---
+
 ## Fuentes de datos
 Las principales fuentes de información del proyecto corresponden a las bases de datos del CEDE — Panel de Buen Gobierno y Características Generales, las cuales consolidan información municipal proveniente de diversas fuentes oficiales. Entre las principales fuentes se encuentran el Departamento Administrativo Nacional de Estadística (DANE), el Instituto Geográfico Agustín Codazzi (IGAC), el Departamento Nacional de Planeación (DNP), el Ministerio de Agricultura y Desarrollo Rural, AGRONET, el Ministerio de Salud y Protección Social y el Ministerio de Minas y Energía, entre otras entidades. Estas bases permiten integrar información de diferentes dimensiones de los municipios colombianos y constituyen el principal insumo para la construcción del panel utilizado en el análisis.
 

@@ -283,9 +283,25 @@ na_caracteristicas %>%
   arrange(porcentaje_na) %>%
   head(30)
 
+# 11. GUARDAR BASES CON NOMBRES ESTANDARIZADOS
+write_csv(
+  panel_buen_gobierno,
+  file.path(
+    processed,
+    "panel_buen_gobierno_clean.csv"
+  )
+)
+
+write_csv(
+  caracteristicas_generales,
+  file.path(
+    processed,
+    "caracteristicas_generales_clean.csv"
+  )
+)
 #///////////////// GENERACIÓN DE TABLAS
 
-# 11 TABLA DE ESTRUCTURA Y COBERTURA DEL PANEL
+# 12 TABLA DE ESTRUCTURA Y COBERTURA DEL PANEL
 estructura_panel <- bind_rows(
   
   panel_buen_gobierno %>%
@@ -317,7 +333,7 @@ estructura_panel <- bind_rows(
       Observaciones / `Observaciones esperadas` * 100
   )
 
-# 11.1 TABLA AER — ESTRUCTURA DEL PANEL
+# 12.1 TABLA AER — ESTRUCTURA DEL PANEL
 tabla_estructura_aer <- estructura_panel %>%
   mutate(
     Municipios = format(
@@ -366,7 +382,7 @@ tabla_estructura_aer %>%
   )
 
 
-# 12 TABLA DE VALORES FALTANTES 
+# 13 TABLA DE VALORES FALTANTES 
 tabla_na_aer <- function(
     diagnostico,
     archivo,

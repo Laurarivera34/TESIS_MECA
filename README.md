@@ -10,7 +10,7 @@ El proyecto busca analizar empíricamente la relación entre las condiciones fis
 
 ## Pregunta de investigación
 
-**¿Qué factores fiscales están asociados con el nivel de endeudamiento de los municipios colombianos?**
+**¿Cómo afecta una mayor disponibilidad de transferencias del Sistema General de Participaciones al endeudamiento de los municipios colombianos? Evidencia 2000-2025?**
 
 La pregunta podrá ser ajustada a medida que avance la exploración de las fuentes de información y se determine la disponibilidad y calidad de las variables relevantes.
 

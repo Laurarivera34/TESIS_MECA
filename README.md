@@ -19,13 +19,15 @@ La pregunta podrá ser ajustada a medida que avance la exploración de las fuent
 ## Objetivos
 
 ### Objetivo general
-Analizar los factores fiscales asociados con el nivel de endeudamiento de los municipios colombianos mediante el uso de datos de panel y herramientas de econometría aplicada.
+Estimar la relación entre las transferencias del Sistema General de Participaciones (SGP) y el endeudamiento de los municipios colombianos durante el periodo 2000–2025, e identificar su heterogeneidad según la clasificación fiscal municipal, mediante modelos de datos de panel con efectos fijos de municipio y año
 
 ### Objetivos específicos
-1. Caracterizar la evolución del endeudamiento y desempeño fiscal de las entidades territoriales colombianas durante el periodo de estudio, identificando diferencias entre entidades con y sin calificación crediticia.
-3. Analizar la evolución y distribución del endeudamiento entre municipios y a través del tiempo.
-4. Estimar un modelo econométrico que permita identificar cuáles variables fiscales tienen mayor incidencia sobre la calidad crediticia territorial, controlando por características individuales y efectos temporales.
-5. Documentar de manera reproducible el proceso de construcción de la base, estimación de los modelos y generación de resultados basado en los principios FAIR
+1. Caracterizar la evolución temporal y la distribución entre municipios del endeudamiento, las transferencias del SGP y las principales variables fiscales municipales durante el
+periodo 2000–2025.
+2. Estimar la relación promedio entre las transferencias del SGP y el endeudamiento municipal, a partir de la variación observada dentro de cada municipio a lo largo del tiempo,
+controlando por efectos fijos de municipio y año y por otras variables fiscales relevantes.
+3. Evaluar la robustez de los resultados mediante especificaciones alternativas de las variables, rezagos de las transferencias, tratamiento de valores atípicos y cambios en la muestra
+de municipios.
 
 ---
 ## Fuentes de datos

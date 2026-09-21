@@ -10,7 +10,9 @@ El proyecto busca analizar empíricamente la relación entre las condiciones fis
 
 ## Pregunta de investigación
 
-**¿Cómo afecta una mayor disponibilidad de transferencias del Sistema General de Participaciones al endeudamiento de los municipios colombianos? Evidencia 2000-2025?**
+**¿Qué efecto tiene el Sistema General de Participaciones sobre el indicador de sostenibilidad de la
+deuda de los municipios colombianos, definido por la Ley 358 de 1997? Evidencia para el período
+2000–2025.**
 
 La pregunta podrá ser ajustada a medida que avance la exploración de las fuentes de información y se determine la disponibilidad y calidad de las variables relevantes.
 
@@ -19,15 +21,25 @@ La pregunta podrá ser ajustada a medida que avance la exploración de las fuent
 ## Objetivos
 
 ### Objetivo general
-Estimar la relación entre las transferencias del Sistema General de Participaciones (SGP) y el endeudamiento de los municipios colombianos durante el periodo 2000–2025, e identificar su heterogeneidad según la clasificación fiscal municipal, mediante modelos de datos de panel con efectos fijos de municipio y año
+Analizar la brecha entre la capacidad de endeudamiento y el uso efectivo del crédito en los
+municipios colombianos, identificando por qué municipios que presentan indicadores fiscales
+compatibles con un endeudamiento sostenible recurren de manera diferente al crédito para
+financiar inversión, y evaluando el papel de su estructura de ingresos, las transferencias del
+Sistema General de Participaciones (SGP), la capacidad institucional, el acceso al sistema
+financiero y otras formas de endeudamiento del sector público territorial.
 
 ### Objetivos específicos
-1. Caracterizar la evolución temporal y la distribución entre municipios del endeudamiento, las transferencias del SGP y las principales variables fiscales municipales durante el
-periodo 2000–2025.
-2. Estimar la relación promedio entre las transferencias del SGP y el endeudamiento municipal, a partir de la variación observada dentro de cada municipio a lo largo del tiempo,
-controlando por efectos fijos de municipio y año y por otras variables fiscales relevantes.
-3. Evaluar la robustez de los resultados mediante especificaciones alternativas de las variables, rezagos de las transferencias, tratamiento de valores atípicos y cambios en la muestra
-de municipios.
+1. Estimar la capacidad de endeudamiento de los municipios colombianos a partir de los
+indicadores de solvencia y sostenibilidad establecidos en la Ley 358 de 1997, y evaluar
+la relación entre estos indicadores y la composición de los ingresos municipales, con
+especial atención a las transferencias del Sistema General de Participaciones (SGP).
+2. Analizar la relación entre la capacidad de endeudamiento y el uso efectivo del crédito, distinguiendo los municipios que, pese a presentar indicadores compatibles con un
+endeudamiento sostenible, registran niveles bajos o nulos de deuda, y considerando el
+endeudamiento de la administración central y de las entidades descentralizadas.
+3. Determinar los factores asociados con la brecha entre la capacidad de endeudamiento
+y el uso efectivo del crédito, evaluando el papel de la suficiencia de otras fuentes de
+financiación de la inversión, la capacidad institucional y técnica de los municipios, el
+acceso al crédito y el desarrollo financiero local.
 
 ---
 ## Fuentes de datos

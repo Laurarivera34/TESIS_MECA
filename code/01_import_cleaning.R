@@ -65,13 +65,26 @@ caracteristicas_generales <- read_excel(
   )
 )
 
-# Listado DANE: correspondencia entre municipios y departamentos
 listado_departamentos <- read_excel(
   file.path(
     data,
     "Listado_Departamentos_DANE.xlsx"
   ),
   col_types = "text"
+)
+
+ejecuciones_municipios <- haven::read_dta(
+  file.path(
+    data,
+    "Ejecuciones_Municipios_PANEL_1984_2023.dta"
+  )
+)
+
+ejecuciones_departamentos <- haven::read_dta(
+  file.path(
+    data,
+    "Ejecuciones_Departamentos_PANEL_1984_2023.dta"
+  )
 )
 
 #### SEGUNDA PARTE: DIAGNÓSTICO DE LOS DATOS

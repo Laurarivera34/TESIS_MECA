@@ -19,7 +19,6 @@ if (length(paquetes_faltantes) > 0) {
   install.packages(paquetes_faltantes)
 }
 
-###prueba 
 
 invisible(
   lapply(paquetes, library, character.only = TRUE)
@@ -64,32 +63,31 @@ caracteristicas_generales <- read_csv(
   show_col_types = FALSE
 )
 
-# 5. VERIFICAR QUE LAS BASES SE CARGARON CORRECTAMENTE
 
-dim(panel_buen_gobierno)
-dim(caracteristicas_generales)
-
-names(panel_buen_gobierno)
-names(caracteristicas_generales)
-
-# 6. VARIABLES DE INTERÉS
-# 6.1. Variables de Buen Gobierno
+# 5. VARIABLES DE INTERÉS
+# 5.1. Variables de Buen Gobierno
 variables_buen_gobierno <- c(
   
   # Ingresos
   "y_total",
   "y_corr",
   "y_transf",
+  "y_corr_tribut",
+  "y_no_tribut",
   "y_transf_nal",
+  "y_transf_otra",
   
   # Gastos
   "g_total",
   "g_corr",
+  "g_func",
   "g_func_general",
+  "g_func_personal",
   "g_func_trans",
   "g_int_deudap",
   
   # Ingresos de capital
+  "y_cap",
   "y_cap_regalias",
   "y_cap_transf",
   
@@ -120,10 +118,14 @@ variables_buen_gobierno <- c(
   # Sistema General de Participaciones
   "sgp_total",
   "sgp_educaciontot",
-  "sgp_propgeneral_ld"
+  "sgp_saludtot",
+  "sgp_propgeneraltot",
+  
+  # Inversión
+  "inv_total"
 )
 
-# 6.2. Variables de Características Generales
+# 5.2. Variables de Características Generales
 variables_caracteristicas <- c(
   
   # Identificación
@@ -171,28 +173,10 @@ variables_caracteristicas <- c(
   "parques"
 )
 
-# 7. VERIFICAR QUE TODAS LAS VARIABLES EXISTAN
 
-faltantes_buen_gobierno <- setdiff(
-  variables_buen_gobierno,
-  names(panel_buen_gobierno)
-)
+# 6. CREAR BASES ANALÍTICAS PRELIMINARES
 
-faltantes_caracteristicas <- setdiff(
-  variables_caracteristicas,
-  names(caracteristicas_generales)
-)
-
-cat("Variables faltantes en Buen Gobierno:\n")
-print(faltantes_buen_gobierno)
-
-cat("\nVariables faltantes en Características Generales:\n")
-print(faltantes_caracteristicas)
-
-
-# 8. CREAR BASES ANALÍTICAS PRELIMINARES
-
-# 8.1. Buen Gobierno
+# 6.1. Buen Gobierno
 base_buen_gobierno <- panel_buen_gobierno %>%
   select(
     codmpio,
@@ -200,21 +184,14 @@ base_buen_gobierno <- panel_buen_gobierno %>%
     all_of(variables_buen_gobierno)
   )
 
-# 8.2. Características Generales
+# 6.2. Características Generales
 base_caracteristicas <- caracteristicas_generales %>%
   select(
     all_of(variables_caracteristicas)
   )
 
-# 9. VERIFICAR ESTRUCTURA DE LAS BASES ANALÍTICAS
-dim(base_buen_gobierno)
-dim(base_caracteristicas)
 
-names(base_buen_gobierno)
-names(base_caracteristicas)
-
-
-# 10. DIAGNÓSTICO UNIVARIADO
+# 7. DIAGNÓSTICO UNIVARIADO
 diagnostico_univariado <- function(data) {
   
   tibble(
@@ -348,7 +325,7 @@ diagnostico_univariado <- function(data) {
 }
 
 
-# 11. APLICAR DIAGNÓSTICO
+# 8. APLICAR DIAGNÓSTICO
 diagnostico_buen_gobierno <- diagnostico_univariado(
   base_buen_gobierno
 )
@@ -357,13 +334,13 @@ diagnostico_caracteristicas <- diagnostico_univariado(
   base_caracteristicas
 )
 
-# 12. REVISAR DIAGNÓSTICO
+# 9. REVISAR DIAGNÓSTICO
 
 View(diagnostico_buen_gobierno)
 View(diagnostico_caracteristicas)
 
 
-# 13. IDENTIFICAR VARIABLES CON ALTO MISSING
+# 10. IDENTIFICAR VARIABLES CON ALTO MISSING
 
 diagnostico_buen_gobierno %>%
   arrange(desc(porcentaje_missing)) %>%
@@ -375,9 +352,9 @@ diagnostico_caracteristicas %>%
   print(n = Inf)
 
 
-# 14. IDENTIFICAR POSIBLES VALORES EXTREMOS
+# 11. IDENTIFICAR POSIBLES VALORES EXTREMOS
 
-# 14.1. Buen Gobierno
+# 11.1. Buen Gobierno
 diagnostico_buen_gobierno %>%
   filter(tipo %in% c("numeric", "integer")) %>%
   select(
@@ -395,7 +372,7 @@ diagnostico_buen_gobierno %>%
   print(n = Inf)
 
 
-# 14.2. Características Generales
+# 11.2. Características Generales
 diagnostico_caracteristicas %>%
   filter(tipo %in% c("numeric", "integer")) %>%
   select(
@@ -413,7 +390,7 @@ diagnostico_caracteristicas %>%
   print(n = Inf)
 
 
-# 15. GUARDAR BASES ANALÍTICAS EN CSV
+# 12. GUARDAR BASES ANALÍTICAS EN CSV
 write_csv(
   base_buen_gobierno,
   file.path(
@@ -433,21 +410,3 @@ write_csv(
 )
 
 
-# 16. GUARDAR DIAGNÓSTICOS EN CSV
-write_csv(
-  diagnostico_buen_gobierno,
-  file.path(
-    tables,
-    "diagnostico_buen_gobierno.csv"
-  ),
-  na = ""
-)
-
-write_csv(
-  diagnostico_caracteristicas,
-  file.path(
-    tables,
-    "diagnostico_caracteristicas.csv"
-  ),
-  na = ""
-)

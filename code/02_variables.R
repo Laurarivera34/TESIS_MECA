@@ -19,6 +19,8 @@ if (length(paquetes_faltantes) > 0) {
   install.packages(paquetes_faltantes)
 }
 
+###prueba 
+
 invisible(
   lapply(paquetes, library, character.only = TRUE)
 )

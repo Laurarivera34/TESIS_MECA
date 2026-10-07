@@ -229,3 +229,38 @@ write_csv(
 
 
 #### TERCERA PARTE: DIAGNÓSTICO DE LOS DATOS
+
+# Catálogo de indicadores de TerriData
+variables_terridata_clea <- terridata %>%
+  distinct(
+    subcategoria,
+    indicador,
+    fuente,
+    unidad_de_medida
+  ) %>%
+  arrange(subcategoria, indicador)
+
+View(variables_terridata)
+
+
+# Catálogo de indicadores con años disponibles
+variables_terridata <- terridata %>%
+  mutate(ano = as.integer(ano)) %>%
+  group_by(
+    subcategoria,
+    indicador,
+    fuente,
+    unidad_de_medida
+  ) %>%
+  summarise(
+    anos_disponibles = paste(
+      sort(unique(ano[!is.na(ano)])),
+      collapse = ", "
+    ),
+    numero_anos = n_distinct(ano, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(subcategoria, indicador)
+
+View(variables_terridata)
+

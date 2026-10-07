@@ -63,6 +63,29 @@ caracteristicas_generales <- read_csv(
   show_col_types = FALSE
 )
 
+terridata <- read_csv(
+  file.path(
+    processed,
+    "terridata_clean.csv"
+  ),
+  show_col_types = FALSE
+)
+
+ejecuciones_departamentos <- read_csv(
+  file.path(
+    processed,
+    "ejecuciones_departamentos_clean.csv"
+  ),
+  show_col_types = FALSE
+)
+
+ejecuciones_municipios <- read_csv(
+  file.path(
+    processed,
+    "ejecuciones_municipios_clean.csv"
+  ),
+  show_col_types = FALSE
+)
 
 # 5. VARIABLES DE INTERÉS
 # 5.1. Variables de Buen Gobierno

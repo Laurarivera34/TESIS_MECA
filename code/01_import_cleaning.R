@@ -1,5 +1,3 @@
-##### IMPORTACIÓN Y DIAGNÓSTICO DE LAS BASES
-
 #### PRIMER PARTE: IMPORTACIÓN DE LOS DATOS 
 
 # 1. LIMPIAR ENTORNO
@@ -73,6 +71,15 @@ listado_departamentos <- read_excel(
   col_types = "text"
 )
 
+terridata <- read_excel(
+  file.path(
+    data,
+    "TerriData_Dim7_2024.xlsx"
+  ),
+  col_types = "text"
+)
+
+
 ejecuciones_municipios <- haven::read_dta(
   file.path(
     data,
@@ -87,16 +94,13 @@ ejecuciones_departamentos <- haven::read_dta(
   )
 )
 
-#### SEGUNDA PARTE: DIAGNÓSTICO DE LOS DATOS
+#### SEGUNDA PARTE: LIMPIEZA DE LOS DATOS
 
 # 1. ESTANDARIZACIÓN DE NOMBRES
 panel_buen_gobierno <- panel_buen_gobierno %>%
   janitor::clean_names()
 
 caracteristicas_generales <- caracteristicas_generales %>%
-  janitor::clean_names()
-
-listado_departamentos <- listado_departamentos %>%
   janitor::clean_names()
 
 # Nombres modificados de acuerdo a las demás bases
@@ -110,9 +114,44 @@ listado_departamentos <- listado_departamentos %>%
   ) %>%
   distinct()
 
-# Nombres de variables modificadas
-names(panel_buen_gobierno)
-names(caracteristicas_generales)
+
+# Base de municipios
+ejecuciones_municipios <- ejecuciones_municipios %>%
+  janitor::clean_names() %>%
+  rename(
+    codmpio = cod_mpios,
+    coddepto = cod_dpto,
+  ) %>%
+  mutate(
+    codmpio = as.integer(codmpio),
+    coddepto = as.integer(coddepto),
+    municipio = str_to_title(municipio, locale = "es")
+  )
+
+# Base de departamentos
+ejecuciones_departamentos <- ejecuciones_departamentos %>%
+  janitor::clean_names() %>%
+  rename(
+    coddepto = cod_dpto,
+  ) %>%
+  mutate(
+    coddepto = as.integer(coddepto)
+  )
+
+# Base TerriData
+terridata <- terridata %>%
+  janitor::clean_names() %>%
+  rename(
+    codmpio = codigo_entidad,
+    coddepto = codigo_departamento,
+    municipio = entidad
+  ) %>%
+  mutate(
+    codmpio = as.integer(codmpio),
+    coddepto = as.integer(coddepto),
+    municipio = str_to_title(municipio, locale = "es")
+  )
+
 
 # 2. UNIÓN DE BASES
 
@@ -146,19 +185,6 @@ panel_buen_gobierno <- panel_buen_gobierno %>%
     )
   )
 
-# Confirmar que no quedan departamentos faltantes
-panel_buen_gobierno %>%
-  filter(is.na(departamento)) %>%
-  distinct(codmpio)
-
-# Variables con menos NA
-na_buen_gobierno %>%
-  arrange(porcentaje_na) %>%
-  head(30)
-
-na_caracteristicas %>%
-  arrange(porcentaje_na) %>%
-  head(30)
 
 # 3. GUARDAR BASES CON NOMBRES ESTANDARIZADOS
 write_csv(
@@ -177,5 +203,29 @@ write_csv(
   )
 )
 
+write_csv(
+  caracteristicas_generales,
+  file.path(
+    processed,
+    "ejecuciones_departamentos_clean.csv"
+  )
+)
 
-##prueba
+write_csv(
+  caracteristicas_generales,
+  file.path(
+    processed,
+    "ejecuciones_municipios_clean.csv"
+  )
+  
+)
+write_csv(
+  caracteristicas_generales,
+  file.path(
+    processed,
+    "terridata_clean.csv"
+  )
+)
+
+
+#### TERCERA PARTE: DIAGNÓSTICO DE LOS DATOS

@@ -176,3 +176,6 @@ write_csv(
     "caracteristicas_generales_clean.csv"
   )
 )
+
+
+##prueba

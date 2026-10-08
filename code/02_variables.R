@@ -47,50 +47,30 @@ figures <- here::here(
 )
 
 # 4. IMPORTAR BASES LIMPIAS
-panel_buen_gobierno <- read_csv(
-  file.path(
-    processed,
-    "panel_buen_gobierno_clean.csv"
-  ),
-  show_col_types = FALSE
+base_municipal <- readRDS(
+  file.path(processed, "base_municipal.rds")
 )
 
-caracteristicas_generales <- read_csv(
-  file.path(
-    processed,
-    "caracteristicas_generales_clean.csv"
-  ),
-  show_col_types = FALSE
+ejecuciones_departamentos <- readRDS(
+  file.path(processed, "ejecuciones_departamentos.rds")
 )
 
-terridata <- read_csv(
-  file.path(
-    processed,
-    "terridata_clean.csv"
-  ),
-  show_col_types = FALSE
-)
-
-ejecuciones_departamentos <- read_csv(
-  file.path(
-    processed,
-    "ejecuciones_departamentos_clean.csv"
-  ),
-  show_col_types = FALSE
-)
-
-ejecuciones_municipios <- read_csv(
-  file.path(
-    processed,
-    "ejecuciones_municipios_clean.csv"
-  ),
-  show_col_types = FALSE
+ejecuciones_municipios <- readRDS(
+  file.path(processed, "ejecuciones_municipios.rds")
 )
 
 # 5. VARIABLES DE INTERÉS
 # 5.1. Variables de Buen Gobierno
 variables_buen_gobierno <- c(
   
+  # Identificación 
+  variables_identificacion <- c(
+    "municipio",
+    "codmpio",
+    "depto",
+    "coddepto",
+    "ano",
+    
   # Ingresos
   "y_total",
   "y_corr",
@@ -148,15 +128,8 @@ variables_buen_gobierno <- c(
   "inv_total"
 )
 
-# 5.2. Variables de Características Generales
+# 4.2. Variables de Características Generales
 variables_caracteristicas <- c(
-  
-  # Identificación
-  "codmpio",
-  "depto",
-  "provincia",
-  "municipio",
-  "ano",
   
   # Región
   "gandina",
@@ -197,9 +170,9 @@ variables_caracteristicas <- c(
 )
 
 
-# 6. CREAR BASES ANALÍTICAS PRELIMINARES
+# 5. CREAR BASES ANALÍTICAS PRELIMINARES
 
-# 6.1. Buen Gobierno
+# 5.1. Buen Gobierno
 base_buen_gobierno <- panel_buen_gobierno %>%
   select(
     codmpio,
@@ -207,14 +180,14 @@ base_buen_gobierno <- panel_buen_gobierno %>%
     all_of(variables_buen_gobierno)
   )
 
-# 6.2. Características Generales
+# 5.2. Características Generales
 base_caracteristicas <- caracteristicas_generales %>%
   select(
     all_of(variables_caracteristicas)
   )
 
 
-# 7. DIAGNÓSTICO UNIVARIADO
+# 6. DIAGNÓSTICO UNIVARIADO
 diagnostico_univariado <- function(data) {
   
   tibble(
@@ -412,24 +385,5 @@ diagnostico_caracteristicas %>%
   ) %>%
   print(n = Inf)
 
-
-# 12. GUARDAR BASES ANALÍTICAS EN CSV
-write_csv(
-  base_buen_gobierno,
-  file.path(
-    processed,
-    "base_buen_gobierno_variables.csv"
-  ),
-  na = ""
-)
-
-write_csv(
-  base_caracteristicas,
-  file.path(
-    processed,
-    "base_caracteristicas_variables.csv"
-  ),
-  na = ""
-)
 
 

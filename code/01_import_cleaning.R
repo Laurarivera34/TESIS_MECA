@@ -210,3 +210,20 @@ names(base_municipal)
 
 # 2. Años disponibles
 sort(unique(base_municipal$ano))
+
+
+### SEXTA PARTE: GUARDAR BASES PROCESADAS
+saveRDS(
+  base_municipal,
+  file.path(processed, "base_municipal.rds")
+)
+
+saveRDS(
+  ejecuciones_departamentos,
+  file.path(processed, "ejecuciones_departamentos.rds")
+)
+
+saveRDS(
+  ejecuciones_municipios,
+  file.path(processed, "ejecuciones_municipios.rds")
+)

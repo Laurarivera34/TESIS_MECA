@@ -4,7 +4,6 @@
 rm(list = ls())
 
 # 2. PAQUETES
-
 paquetes <- c(
   "tidyverse",
   "readxl",
@@ -63,14 +62,6 @@ caracteristicas_generales <- read_excel(
   )
 )
 
-listado_departamentos <- read_excel(
-  file.path(
-    data,
-    "Listado_Departamentos_DANE.xlsx"
-  ),
-  col_types = "text"
-)
-
 terridata <- read_excel(
   file.path(
     data,
@@ -94,173 +85,128 @@ ejecuciones_departamentos <- haven::read_dta(
   )
 )
 
-#### SEGUNDA PARTE: LIMPIEZA DE LOS DATOS
+#### SEGUNDA PARTE: REVISIÓN DE NOMBRES DE VARIABLES
 
-# 1. ESTANDARIZACIÓN DE NOMBRES
-panel_buen_gobierno <- panel_buen_gobierno %>%
-  janitor::clean_names()
+# 1. Panel Buen Gobierno
+names(panel_buen_gobierno)
 
+# 2. Características Generales
+names(caracteristicas_generales)
+
+# 3. TerriData
+names(terridata)
+
+# 4. Ejecuciones municipales
+names(ejecuciones_municipios)
+
+# 5. Ejecuciones departamentales
+names(ejecuciones_departamentos)
+
+
+#### TERCERA PARTE: ESTANDARIZACIÓN DE NOMBRES DE IDENTIFICADORES 
+
+# 1. CARACTERÍSTICAS GENERALES
 caracteristicas_generales <- caracteristicas_generales %>%
-  janitor::clean_names()
-
-# Nombres modificados de acuerdo a las demás bases
-listado_departamentos <- listado_departamentos %>%
-  janitor::clean_names() %>%
-  transmute(
-    codmpio = as.integer(codigo_municipio),
-    municipio = str_to_title(nombre_municipio, locale = "es"),
-    coddepto = as.integer(codigo_departamento),
-    departamento = nombre_departamento
-  ) %>%
-  distinct()
-
-
-# Base de municipios
-ejecuciones_municipios <- ejecuciones_municipios %>%
-  janitor::clean_names() %>%
   rename(
-    codmpio = cod_mpios,
-    coddepto = cod_dpto,
-  ) %>%
-  mutate(
-    codmpio = as.integer(codmpio),
-    coddepto = as.integer(coddepto),
-    municipio = str_to_title(municipio, locale = "es")
+    departamento = depto
   )
 
-# Base de departamentos
+
+# 2. EJECUCIONES DEPARTAMENTALES
 ejecuciones_departamentos <- ejecuciones_departamentos %>%
-  janitor::clean_names() %>%
   rename(
     coddepto = cod_dpto,
-  ) %>%
-  mutate(
-    coddepto = as.integer(coddepto)
+    ano = year
   )
 
-# Base TerriData
-terridata <- terridata %>%
-  janitor::clean_names() %>%
+
+# 3. EJECUCIONES MUNICIPALES
+ejecuciones_municipios <- ejecuciones_municipios %>%
   rename(
-    codmpio = codigo_entidad,
-    coddepto = codigo_departamento,
-    municipio = entidad
-  ) %>%
-  mutate(
-    codmpio = as.integer(codmpio),
-    coddepto = as.integer(coddepto),
-    municipio = str_to_title(municipio, locale = "es")
+    coddepto = cod_dpto,
+    codmpio = cod_mpios,
+    ano = year
   )
 
 
-# 2. UNIÓN DE BASES
-
-# Incorporar los datos del listado DANE
-panel_buen_gobierno <- panel_buen_gobierno %>%
-  mutate(codmpio = as.integer(codmpio)) %>%
-  left_join(
-    listado_departamentos %>%
-      mutate(codmpio = as.integer(codmpio)),
-    by = "codmpio",
-    na_matches = "never"
-  ) %>%
-  relocate(codmpio, municipio, coddepto, departamento, ano)
-
-# Revisar municipios que no encontraron correspondencia
-panel_buen_gobierno %>%
-  filter(is.na(departamento)) %>%
-  distinct(codmpio)
-
-# Completar la correspondencia del código histórico 23685
-panel_buen_gobierno <- panel_buen_gobierno %>%
-  mutate(
-    municipio = if_else(
-      codmpio == 23685, "San José de Uré", municipio
-    ),
-    coddepto = if_else(
-      codmpio == 23685, 23L, coddepto
-    ),
-    departamento = if_else(
-      codmpio == 23685, "Córdoba", departamento
-    )
+# 4. TERRIDATA
+terridata <- terridata %>%
+  rename(
+    coddepto = `Código Departamento`,
+    departamento = Departamento,
+    codmpio = `Código Entidad`,
+    municipio = Entidad,
+    ano = `Año`
   )
 
 
-# 3. GUARDAR BASES CON NOMBRES ESTANDARIZADOS
-write_csv(
+#### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
+
+# Se une las dos bases de los Andes
+base_municipal <- full_join(
+  caracteristicas_generales,
   panel_buen_gobierno,
-  file.path(
-    processed,
-    "panel_buen_gobierno_clean.csv"
-  )
-)
+  by = c("codmpio", "ano"),
+  na_matches = "never",
+  relationship = "one-to-one"
+) %>%
+  relocate(codmpio, coddepto, municipio, departamento, ano) %>%
+  arrange(codmpio, ano)
 
-write_csv(
-  caracteristicas_generales,
-  file.path(
-    processed,
-    "caracteristicas_generales_clean.csv"
-  )
-)
+View(base_municipal)
 
-write_csv(
-  caracteristicas_generales,
-  file.path(
-    processed,
-    "ejecuciones_departamentos_clean.csv"
-  )
-)
-
-write_csv(
-  caracteristicas_generales,
-  file.path(
-    processed,
-    "ejecuciones_municipios_clean.csv"
-  )
-  
-)
-write_csv(
-  caracteristicas_generales,
-  file.path(
-    processed,
-    "terridata_clean.csv"
-  )
-)
-
-
-#### TERCERA PARTE: DIAGNÓSTICO DE LOS DATOS
-
-# Catálogo de indicadores de TerriData
-variables_terridata_clea <- terridata %>%
-  distinct(
-    subcategoria,
-    indicador,
-    fuente,
-    unidad_de_medida
+# Pasar de formato largo a ancho Terridata
+terridata_ancha <- terridata %>%
+  select(
+    codmpio,
+    coddepto,
+    municipio,
+    departamento,
+    ano,
+    Indicador,
+    `Dato Numérico`
   ) %>%
-  arrange(subcategoria, indicador)
-
-View(variables_terridata)
-
-
-# Catálogo de indicadores con años disponibles
-variables_terridata <- terridata %>%
-  mutate(ano = as.integer(ano)) %>%
-  group_by(
-    subcategoria,
-    indicador,
-    fuente,
-    unidad_de_medida
-  ) %>%
-  summarise(
-    anos_disponibles = paste(
-      sort(unique(ano[!is.na(ano)])),
-      collapse = ", "
+  pivot_wider(
+    id_cols = c(
+      codmpio, coddepto, municipio, departamento, ano
     ),
-    numero_anos = n_distinct(ano, na.rm = TRUE),
-    .groups = "drop"
+    names_from = Indicador,
+    values_from = `Dato Numérico`
+  )
+
+
+# Unión con Terridata
+terridata_ancha <- terridata_ancha %>%
+  mutate(
+    codmpio = as.character(codmpio),
+    ano = as.integer(ano)
+  )
+
+base_municipal <- base_municipal %>%
+  mutate(
+    codmpio = as.character(codmpio),
+    ano = as.integer(ano)
   ) %>%
-  arrange(subcategoria, indicador)
+  full_join(
+    terridata_ancha,
+    by = c("codmpio", "ano"),
+    suffix = c("", "_td"),
+    na_matches = "never",
+    relationship = "one-to-one"
+  ) %>%
+  mutate(
+    coddepto = coalesce(as.character(coddepto), as.character(coddepto_td)),
+    municipio = coalesce(municipio, municipio_td),
+    departamento = coalesce(departamento, departamento_td)
+  ) %>%
+  select(-coddepto_td, -municipio_td, -departamento_td) %>%
+  relocate(codmpio, coddepto, municipio, departamento, ano) %>%
+  arrange(codmpio, ano)
 
-View(variables_terridata)
 
+#### QUINTA PARTE: DIAGNÓSTICO INICIAL DE BASE_MUNICIPAL
+# 1. Nombres de las variables
+names(base_municipal)
+
+# 2. Años disponibles
+sort(unique(base_municipal$ano))

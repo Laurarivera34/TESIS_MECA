@@ -155,6 +155,9 @@ base_municipal <- full_join(
 
 View(base_municipal)
 
+
+#### QUINTA PARTE: BASE TERRIDATA
+
 # Pasar de formato largo a ancho Terridata
 terridata_ancha <- terridata %>%
   select(
@@ -173,6 +176,54 @@ terridata_ancha <- terridata %>%
     names_from = Indicador,
     values_from = `Dato Numérico`
   )
+
+# Variables de interés en Terridata
+variables_td_interes <- c(
+  # Identificadores
+  "codmpio",
+  "coddepto",
+  "municipio",
+  "departamento",
+  "ano",
+  
+  # Ingresos
+  "Ingresos totales",
+  "Ingresos corrientes",
+  "Ingresos tributarios",
+  "Ingresos no tributarios",
+  "Ingresos de capital",
+  
+  # Transferencias
+  "Transferencias de los ingresos corrientes",
+  "Transferencias nacionales (SGP, etc.) per cápita",
+  "Total de recursos asignados per cápita - SGP",
+  
+  # Componentes sectoriales: definición pendiente de verificar
+  "Educación",
+  "Salud",
+  "Agua potable",
+  
+  # Gastos
+  "Gastos totales",
+  "Gastos corrientes",
+  "Funcionamiento",
+  "Gastos de capital (Inversión)",
+  
+  # Intereses y balances
+  "Intereses de deuda pública",
+  "Déficit o ahorro corriente",
+  "Déficit o superávit total",
+  
+  # Regalías
+  "Regalías per cápita (Valor efectivamente girado al municipio)"
+)
+
+terridata_seleccion <- terridata_ancha %>%
+  select(all_of(variables_td_interes))
+
+
+
+
 
 
 # Unión con Terridata

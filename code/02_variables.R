@@ -59,6 +59,10 @@ ejecuciones_municipios <- readRDS(
   file.path(processed, "ejecuciones_municipios.rds")
 )
 
+
+# 1. Comprobar que la variable existe
+"Crédito interno y externo" %in% names(base_municipal)
+
 # 5. VARIABLES DE INTERÉS
 # 5.1. Variables de Buen Gobierno
 variables_buen_gobierno <- c(
@@ -98,6 +102,8 @@ variables_buen_gobierno <- c(
   "finan_credito",
   "finan_credito_desemb",
   "finan_credito_amort",
+  "credito interno",
+  "credito externo",
   
   # Desempeño fiscal
   "df_deuda",
@@ -128,9 +134,6 @@ variables_buen_gobierno <- c(
   "inv_total"
 )
 
-# 4.2. Variables de Características Generales
-variables_caracteristicas <- c(
-  
   # Región
   "gandina",
   "gcaribe",

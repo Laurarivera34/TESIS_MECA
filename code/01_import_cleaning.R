@@ -83,6 +83,13 @@ superfinanciera <- read_excel(
   )
 )
 
+dane <- read_excel(
+  file.path(
+    data,
+    "Listado_Departamentos_DANE.xlsx"
+  )
+)
+
 
 #### SEGUNDA PARTE: REVISIÓN DE NOMBRES DE VARIABLES
 
@@ -124,25 +131,147 @@ ejecuciones_municipios <- ejecuciones_municipios %>%
     ano = year
   )
 
-# 4. SUPERFINANCIERA
+####Super financiera
+
+# 1. FUNCIÓN PARA HOMOLOGAR NOMBRES
+
+limpiar_municipio <- function(x) {
+  x %>%
+    as.character() %>%
+    stringi::stri_trans_general("Latin-ASCII") %>%
+    str_to_lower() %>%
+    str_replace_all("[^a-z0-9\\s]", " ") %>%
+    str_squish()
+}
+
+
+# 2. PREPARAR SUPERFINANCIERA
+
 superfinanciera <- superfinanciera %>%
   rename(
-    coddepto = `Código del departamento`,
-    codmpio = `Código del municipio`,
     municipio = `Nombre del municipio`
   ) %>%
   mutate(
-    ano = as.integer(substr(as.character(`Fecha de Corte`), 1, 4))
+    municipio = limpiar_municipio(municipio),
+    ano = as.integer(
+      substr(as.character(`Fecha de Corte`), 1, 4)
+    )
+  ) %>%
+  filter(
+    !is.na(municipio),
+    municipio != "",
+    !str_detect(municipio, "\\btotal\\b")
   )
 
 
+# 3. PREPARAR DANE
 
-# Municipios únicos de la Super
-municipios_super <- superfinanciera %>%
-  distinct(coddepto, codmpio, municipio) %>%
-  arrange(coddepto, codmpio)
+dane <- dane %>%
+  rename(
+    coddepto = `Código Departamento`,
+    codmpio = `Código Municipio`,
+    municipio = `Nombre Municipio`,
+    departamento = `Nombre Departamento`
+  ) %>%
+  mutate(
+    municipio = limpiar_municipio(municipio),
+    codmpio = str_pad(as.character(codmpio), 5, pad = "0"),
+    coddepto = str_pad(as.character(coddepto), 2, pad = "0")
+  ) %>%
+  filter(
+    !is.na(municipio),
+    municipio != "",
+    !str_detect(municipio, "\\btotal\\b")
+  )
 
-View(municipios_super)
+
+# 4. CORREGIR NOMBRES DE SUPERFINANCIERA
+
+superfinanciera <- superfinanciera %>%
+  mutate(
+    municipio = recode(
+      municipio,
+      
+      "belen de los andaqui" = "belen de los andaquies",
+      "bogota" = "bogota d c",
+      "brice o" = "briceno",
+      "ca asgordas" = "canasgordas",
+      "carmen de viboral" = "el carmen de viboral",
+      "cove as" = "covenas",
+      "cubarral" = "san luis de cubarral",
+      "don matias" = "donmatias",
+      "dos quebradas" = "dosquebradas",
+      "el canton de san pablo" = "el canton del san pablo",
+      "el pe ol" = "el penol",
+      "el pe on" = "el penon",
+      "el pi on" = "el pinon",
+      "guadalajara de buga buga" = "guadalajara de buga",
+      "herrera" = "olaya herrera",
+      "la monta ita" = "la montanita",
+      "la uribe" = "uribe",
+      "leguizamo puerto leguizamo" = "puerto leguizamo",
+      "manaure balcon dl ce" = "manaure",
+      "mariquita" = "san sebastian de mariquita",
+      "mo itos" = "monitos",
+      "nari o" = "narino",
+      "oca a" = "ocana",
+      "patia el bordo" = "patia",
+      "piji o del carmen" = "pijino del carmen",
+      "puerto carre o" = "puerto carreno",
+      "puerto inirida" = "inirida",
+      "puerto nare lamagdalena" = "puerto nare",
+      "puerto nari o" = "puerto narino",
+      "s antonio tequendama" = "san antonio del tequendama",
+      "salda a" = "saldana",
+      "san andres sotavento" = "san andres de sotavento",
+      "san bernardo del vie" = "san bernardo del viento",
+      "san carlos guaroa" = "san carlos de guaroa",
+      "san jose de fragua" = "san jose del fragua",
+      "san jose de la monta a" = "san jose de la montana",
+      "san jose de risaralda" = "risaralda",
+      "san sebastian buenav" = "san sebastian de buenavista",
+      "san vicente del cagu" = "san vicente del caguan",
+      "santa rosa de viterb" = "santa rosa de viterbo",
+      "santander de quilich" = "santander de quilichao",
+      "santiago de tolu tolu" = "santiago de tolu",
+      "since" = "san luis de since",
+      "toluviejo" = "tolu viejo",
+      "tumaco" = "san andres de tumaco",
+      "tutasa" = "tutaza",
+      "ubate" = "villa de san diego de ubate",
+      "ubate villa de sandiego de ubate" =
+        "villa de san diego de ubate",
+      "vista hermosa" = "vistahermosa",
+      
+      .default = municipio
+    )
+  )
+
+
+# 5. PREPARAR CATÁLOGO DANE
+
+dane_municipios <- dane %>%
+  select(municipio, codmpio, coddepto, departamento) %>%
+  distinct()
+
+
+# 6. UNIR SUPERFINANCIERA CON DANE
+
+superfinanciera_dane <- superfinanciera %>%
+  left_join(
+    dane_municipios,
+    by = "municipio",
+    relationship = "many-to-many"
+  )
+
+
+# 7. VER MUNICIPIOS QUE NO PEGARON
+
+municipios_no_pegados <- superfinanciera_dane %>%
+  filter(is.na(codmpio)) %>%
+  distinct(municipio)
+
+View(municipios_no_pegados)
 
 
 #### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
@@ -158,19 +287,39 @@ base_municipal <- full_join(
   relocate(codmpio, coddepto, municipio, departamento, ano) %>%
   arrange(codmpio, ano)
 
+# Unir superfinanciera con los Andes
+base_municipal <- base_municipal %>%
+  mutate(
+    codmpio = str_pad(as.character(codmpio), 5, pad = "0"),
+    coddepto = str_pad(as.character(coddepto), 2, pad = "0"),
+    ano = as.integer(ano)
+  )
+
+base_municipal_final <- base_municipal %>%
+  left_join(
+    superfinanciera_dane,
+    by = c(
+      "codmpio",
+      "municipio",
+      "coddepto",
+      "departamento",
+      "ano"
+    ),
+    relationship = "one-to-one"
+  )
 
 #### QUINTA PARTE: DIAGNÓSTICO INICIAL DE BASE_MUNICIPAL
 # 1. Nombres de las variables
-names(base_municipal)
+names(base_municipal_final)
 
 # 2. Años disponibles
-sort(unique(base_municipal$ano))
+sort(unique(base_municipal_final$ano))
 
 
 ### SEXTA PARTE: GUARDAR BASES PROCESADAS
 saveRDS(
-  base_municipal,
-  file.path(processed, "base_municipal.rds")
+  base_municipal_final,
+  file.path(processed, "base_municipal_final.rds")
 )
 
 saveRDS(

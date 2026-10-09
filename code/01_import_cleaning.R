@@ -62,15 +62,6 @@ caracteristicas_generales <- read_excel(
   )
 )
 
-terridata <- read_excel(
-  file.path(
-    data,
-    "TerriData_Dim7_2024.xlsx"
-  ),
-  col_types = "text"
-)
-
-
 ejecuciones_municipios <- haven::read_dta(
   file.path(
     data,
@@ -85,6 +76,14 @@ ejecuciones_departamentos <- haven::read_dta(
   )
 )
 
+superfinanciera <- read_excel(
+  file.path(
+    data,
+    "Saldo_de_las_captaciones_y_colocaciones_por_municipios_20261009.xlsx"
+  )
+)
+
+
 #### SEGUNDA PARTE: REVISIÓN DE NOMBRES DE VARIABLES
 
 # 1. Panel Buen Gobierno
@@ -93,13 +92,10 @@ names(panel_buen_gobierno)
 # 2. Características Generales
 names(caracteristicas_generales)
 
-# 3. TerriData
-names(terridata)
-
-# 4. Ejecuciones municipales
+# 3. Ejecuciones municipales
 names(ejecuciones_municipios)
 
-# 5. Ejecuciones departamentales
+# 4. Ejecuciones departamentales
 names(ejecuciones_departamentos)
 
 
@@ -128,16 +124,25 @@ ejecuciones_municipios <- ejecuciones_municipios %>%
     ano = year
   )
 
-
-# 4. TERRIDATA
-terridata <- terridata %>%
+# 4. SUPERFINANCIERA
+superfinanciera <- superfinanciera %>%
   rename(
-    coddepto = `Código Departamento`,
-    departamento = Departamento,
-    codmpio = `Código Entidad`,
-    municipio = Entidad,
-    ano = `Año`
+    coddepto = `Código del departamento`,
+    codmpio = `Código del municipio`,
+    municipio = `Nombre del municipio`
+  ) %>%
+  mutate(
+    ano = as.integer(substr(as.character(`Fecha de Corte`), 1, 4))
   )
+
+
+
+# Municipios únicos de la Super
+municipios_super <- superfinanciera %>%
+  distinct(coddepto, codmpio, municipio) %>%
+  arrange(coddepto, codmpio)
+
+View(municipios_super)
 
 
 #### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
@@ -150,107 +155,6 @@ base_municipal <- full_join(
   na_matches = "never",
   relationship = "one-to-one"
 ) %>%
-  relocate(codmpio, coddepto, municipio, departamento, ano) %>%
-  arrange(codmpio, ano)
-
-View(base_municipal)
-
-
-#### QUINTA PARTE: BASE TERRIDATA
-
-# Pasar de formato largo a ancho Terridata
-terridata_ancha <- terridata %>%
-  select(
-    codmpio,
-    coddepto,
-    municipio,
-    departamento,
-    ano,
-    Indicador,
-    `Dato Numérico`
-  ) %>%
-  pivot_wider(
-    id_cols = c(
-      codmpio, coddepto, municipio, departamento, ano
-    ),
-    names_from = Indicador,
-    values_from = `Dato Numérico`
-  )
-
-# Variables de interés en Terridata
-variables_td_interes <- c(
-  # Identificadores
-  "codmpio",
-  "coddepto",
-  "municipio",
-  "departamento",
-  "ano",
-  
-  # Ingresos
-  "Ingresos totales",
-  "Ingresos corrientes",
-  "Ingresos tributarios",
-  "Ingresos no tributarios",
-  "Ingresos de capital",
-  
-  # Transferencias
-  "Transferencias de los ingresos corrientes",
-  "Transferencias nacionales (SGP, etc.) per cápita",
-  "Total de recursos asignados per cápita - SGP",
-  
-  # Componentes sectoriales: definición pendiente de verificar
-  "Educación",
-  "Salud",
-  "Agua potable",
-  
-  # Gastos
-  "Gastos totales",
-  "Gastos corrientes",
-  "Funcionamiento",
-  "Gastos de capital (Inversión)",
-  
-  # Intereses y balances
-  "Intereses de deuda pública",
-  "Déficit o ahorro corriente",
-  "Déficit o superávit total",
-  
-  # Regalías
-  "Regalías per cápita (Valor efectivamente girado al municipio)"
-)
-
-terridata_seleccion <- terridata_ancha %>%
-  select(all_of(variables_td_interes))
-
-
-
-
-
-
-# Unión con Terridata
-terridata_ancha <- terridata_ancha %>%
-  mutate(
-    codmpio = as.character(codmpio),
-    ano = as.integer(ano)
-  )
-
-base_municipal <- base_municipal %>%
-  mutate(
-    codmpio = as.character(codmpio),
-    ano = as.integer(ano)
-  ) %>%
-  full_join(
-    terridata_ancha,
-    by = c("codmpio", "ano"),
-    suffix = c("", "_td"),
-    na_matches = "never",
-    relationship = "one-to-one"
-  ) %>%
-  mutate(
-    coddepto = coalesce(as.character(coddepto), as.character(coddepto_td)),
-    municipio = coalesce(municipio, municipio_td),
-    departamento = coalesce(departamento, departamento_td)
-  ) %>%
-  select(-coddepto_td, -municipio_td, -departamento_td) %>%
   relocate(codmpio, coddepto, municipio, departamento, ano) %>%
   arrange(codmpio, ano)
 

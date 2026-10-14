@@ -1,9 +1,9 @@
 #### PRIMER PARTE: IMPORTACIÓN DE LOS DATOS 
 
-# 1. LIMPIAR ENTORNO
+# Limpiar entorno
 rm(list = ls())
 
-# 2. PAQUETES
+# Paquetes
 paquetes <- c(
   "tidyverse",
   "readxl",
@@ -27,7 +27,7 @@ invisible(
 )
 
 
-# 3. RUTAS DEL PROYECTO
+# Rutas del proyecto
 
 root <- here::here() # Función here sirve para buscar la raíz de proyecto
 
@@ -46,7 +46,7 @@ diagnostics <- here::here(
 )
 
 
-# 4. IMPORTACIÓN DE DATOS
+# Importación de datos
 
 panel_buen_gobierno <- read_excel(
   file.path(
@@ -59,20 +59,6 @@ caracteristicas_generales <- read_excel(
   file.path(
     data,
     "PANEL_CARACTERISTICAS_GENERALES(2024).xlsx"
-  )
-)
-
-ejecuciones_municipios <- haven::read_dta(
-  file.path(
-    data,
-    "Ejecuciones_Municipios_PANEL_1984_2023.dta"
-  )
-)
-
-ejecuciones_departamentos <- haven::read_dta(
-  file.path(
-    data,
-    "Ejecuciones_Departamentos_PANEL_1984_2023.dta"
   )
 )
 
@@ -90,189 +76,234 @@ dane <- read_excel(
   )
 )
 
+#### SEGUNDA PARTE: UNIÓN DE BASES CEDE
 
-#### SEGUNDA PARTE: REVISIÓN DE NOMBRES DE VARIABLES
+# Unir las bases del CEDE
 
-# 1. Panel Buen Gobierno
-names(panel_buen_gobierno)
-
-# 2. Características Generales
-names(caracteristicas_generales)
-
-# 3. Ejecuciones municipales
-names(ejecuciones_municipios)
-
-# 4. Ejecuciones departamentales
-names(ejecuciones_departamentos)
-
-
-#### TERCERA PARTE: ESTANDARIZACIÓN DE NOMBRES DE IDENTIFICADORES 
-
-# 1. CARACTERÍSTICAS GENERALES
-caracteristicas_generales <- caracteristicas_generales %>%
-  rename(
-    departamento = depto
-  )
-
-
-# 2. EJECUCIONES DEPARTAMENTALES
-ejecuciones_departamentos <- ejecuciones_departamentos %>%
-  rename(
-    coddepto = cod_dpto,
-    ano = year
-  )
-
-
-# 3. EJECUCIONES MUNICIPALES
-ejecuciones_municipios <- ejecuciones_municipios %>%
-  rename(
-    coddepto = cod_dpto,
-    codmpio = cod_mpios,
-    ano = year
-  )
-
-####Super financiera
-
-# 1. FUNCIÓN PARA HOMOLOGAR NOMBRES
-
-limpiar_municipio <- function(x) {
-  x %>%
-    as.character() %>%
-    stringi::stri_trans_general("Latin-ASCII") %>%
-    str_to_lower() %>%
-    str_replace_all("[^a-z0-9\\s]", " ") %>%
-    str_squish()
-}
-
-
-# 2. PREPARAR SUPERFINANCIERA
-
-superfinanciera <- superfinanciera %>%
-  rename(
-    municipio = `Nombre del municipio`
+base_municipal <- panel_buen_gobierno %>%
+  left_join(
+    caracteristicas_generales %>%
+      select(-any_of(c("coddepto", "departamento", "codprovincia"))),
+    by = c("codmpio", "ano"),
+    na_matches = "never",
+    relationship = "one-to-one"
   ) %>%
-  mutate(
-    municipio = limpiar_municipio(municipio),
-    ano = as.integer(
-      substr(as.character(`Fecha de Corte`), 1, 4)
-    )
-  ) %>%
-  filter(
-    !is.na(municipio),
-    municipio != "",
-    !str_detect(municipio, "\\btotal\\b")
-  )
+  relocate(codmpio, municipio, ano) %>%
+  arrange(codmpio, ano)
 
 
-# 3. PREPARAR DANE
+## Unir las bases del CEDE con los nombres del Dane
+
+# Estandarizar nombres 
 
 dane <- dane %>%
   rename(
-    coddepto = `Código Departamento`,
     codmpio = `Código Municipio`,
-    municipio = `Nombre Municipio`,
-    departamento = `Nombre Departamento`
+    municipio = `Nombre Municipio`
   ) %>%
   mutate(
-    municipio = limpiar_municipio(municipio),
-    codmpio = str_pad(as.character(codmpio), 5, pad = "0"),
-    coddepto = str_pad(as.character(coddepto), 2, pad = "0")
+    # Eliminar el cero inicial y convertir a número
+    codmpio = as.numeric(codmpio),
+    
+    # Primera letra de cada palabra en mayúscula
+    municipio = str_to_title(
+      str_to_lower(
+        str_squish(municipio)
+      )
+    )
+  ) %>%
+  select(codmpio, municipio) %>%
+  distinct()
+
+# Completar únicamente los nombres de municipios faltantes
+base_municipal <- base_municipal %>%
+  left_join(
+    dane %>%
+      select(codmpio, municipio) %>%
+      rename(municipio_dane = municipio),
+    by = "codmpio",
+    na_matches = "never",
+    relationship = "many-to-one"
+  ) %>%
+  mutate(
+    municipio = coalesce(municipio, municipio_dane)
+  ) %>%
+  select(-municipio_dane) %>%
+  relocate(codmpio, municipio, ano) %>%
+  arrange(codmpio, ano)
+
+# Verificar duplicados
+base_municipal %>%
+  count(codmpio, ano) %>%
+  filter(n > 1)
+
+# Identificar municipios sin nombre
+base_municipal %>%
+  filter(is.na(municipio)) %>%
+  select(codmpio, ano, municipio)
+
+# Buscar ambos códigos en las bases originales
+caracteristicas_generales %>%
+  filter(codmpio %in% c(23682, 23685)) %>%
+  select(codmpio, ano, municipio) %>%
+  arrange(codmpio, ano)
+
+# Revisar en el DANE
+dane %>%
+  filter(codmpio %in% c(23682, 23685))
+
+
+base_municipal %>%
+  filter(
+    codmpio %in% c(23682, 23685),
+    ano %in% 2010:2012
+  ) %>%
+  select(codmpio, municipio, ano) %>%
+  arrange(ano, codmpio)
+
+
+# Comparar los registros de ambos nombres
+
+base_municipal %>%
+  filter(
+    codmpio %in% c(23682, 23685),
+    ano %in% 2010:2012
+  ) %>%
+  select(
+    codmpio, municipio, ano,
+    any_of(c(
+      "y_total",
+      "y_corr",
+      "y_transf",
+      "DF_deuda",
+      "finan_credito_desemb"
+    ))
+  ) %>%
+  arrange(ano, codmpio)
+
+# Eliminar código municipal 23685
+base_municipal <- base_municipal %>%
+  filter(codmpio != 23685) %>%
+  arrange(codmpio, ano)
+
+
+# Verificar resultados
+base_municipal %>%
+  summarise(
+    total_observaciones = n(),
+    municipios = n_distinct(codmpio, na.rm = TRUE),
+    años = n_distinct(ano, na.rm = TRUE),
+    sin_municipio = sum(is.na(municipio))
+  )
+
+
+#### TERCERA PARTE: UNIÓN DATOS DE LA SUPERFINANCIERA
+
+# 1. FUNCIÓN PARA HOMOLOGAR NOMBRES
+limpiar_municipio <- function(x) {
+  x %>%
+    str_to_lower() %>%
+    stringi::stri_trans_general("Latin-ASCII") %>%
+    str_replace_all("[^a-z0-9 ]", " ") %>%
+    str_squish()
+}
+
+# 2. PREPARAR SUPERFINANCIERA
+superfinanciera <- superfinanciera %>%
+  rename(municipio = `Nombre del municipio`) %>%
+  mutate(
+    municipio = str_to_title(str_to_lower(str_squish(municipio))),
+    ano = as.integer(substr(as.character(`Fecha de Corte`), 1, 4))
   ) %>%
   filter(
     !is.na(municipio),
     municipio != "",
-    !str_detect(municipio, "\\btotal\\b")
+    !str_detect(str_to_lower(municipio), "\\btotal\\b")
   )
 
-
-# 4. CORREGIR NOMBRES DE SUPERFINANCIERA
-
-superfinanciera <- superfinanciera %>%
-  mutate(
-    municipio = recode(
-      municipio,
-      
-      "belen de los andaqui" = "belen de los andaquies",
-      "bogota" = "bogota d c",
-      "brice o" = "briceno",
-      "ca asgordas" = "canasgordas",
-      "carmen de viboral" = "el carmen de viboral",
-      "cove as" = "covenas",
-      "cubarral" = "san luis de cubarral",
-      "don matias" = "donmatias",
-      "dos quebradas" = "dosquebradas",
-      "el canton de san pablo" = "el canton del san pablo",
-      "el pe ol" = "el penol",
-      "el pe on" = "el penon",
-      "el pi on" = "el pinon",
-      "guadalajara de buga buga" = "guadalajara de buga",
-      "herrera" = "olaya herrera",
-      "la monta ita" = "la montanita",
-      "la uribe" = "uribe",
-      "leguizamo puerto leguizamo" = "puerto leguizamo",
-      "manaure balcon dl ce" = "manaure",
-      "mariquita" = "san sebastian de mariquita",
-      "mo itos" = "monitos",
-      "nari o" = "narino",
-      "oca a" = "ocana",
-      "patia el bordo" = "patia",
-      "piji o del carmen" = "pijino del carmen",
-      "puerto carre o" = "puerto carreno",
-      "puerto inirida" = "inirida",
-      "puerto nare lamagdalena" = "puerto nare",
-      "puerto nari o" = "puerto narino",
-      "s antonio tequendama" = "san antonio del tequendama",
-      "salda a" = "saldana",
-      "san andres sotavento" = "san andres de sotavento",
-      "san bernardo del vie" = "san bernardo del viento",
-      "san carlos guaroa" = "san carlos de guaroa",
-      "san jose de fragua" = "san jose del fragua",
-      "san jose de la monta a" = "san jose de la montana",
-      "san jose de risaralda" = "risaralda",
-      "san sebastian buenav" = "san sebastian de buenavista",
-      "san vicente del cagu" = "san vicente del caguan",
-      "santa rosa de viterb" = "santa rosa de viterbo",
-      "santander de quilich" = "santander de quilichao",
-      "santiago de tolu tolu" = "santiago de tolu",
-      "since" = "san luis de since",
-      "toluviejo" = "tolu viejo",
-      "tumaco" = "san andres de tumaco",
-      "tutasa" = "tutaza",
-      "ubate" = "villa de san diego de ubate",
-      "ubate villa de sandiego de ubate" =
-        "villa de san diego de ubate",
-      "vista hermosa" = "vistahermosa",
-      
-      .default = municipio
-    )
-  )
-
-
-# 5. PREPARAR CATÁLOGO DANE
-
-dane_municipios <- dane %>%
-  select(municipio, codmpio, coddepto, departamento) %>%
-  distinct()
-
-
-# 6. UNIR SUPERFINANCIERA CON DANE
-
+# 3. UNIR CON DANE Y RECUPERAR NOMBRES OFICIALES
 superfinanciera_dane <- superfinanciera %>%
+  select(-any_of(c("Código del departamento", "Código del municipio"))) %>%
+  mutate(municipio_limpio = limpiar_municipio(municipio)) %>%
   left_join(
-    dane_municipios,
-    by = "municipio",
+    dane %>%
+      mutate(municipio_limpio = limpiar_municipio(municipio)) %>%
+      select(codmpio, municipio_limpio, municipio_dane = municipio),
+    by = "municipio_limpio",
     relationship = "many-to-many"
-  )
+  ) %>%
+  mutate(
+    municipio = coalesce(municipio_dane, municipio)
+  ) %>%
+  select(-municipio_limpio, -municipio_dane)
 
-
-# 7. VER MUNICIPIOS QUE NO PEGARON
-
+# 4. VER MUNICIPIOS SIN COINCIDENCIA
 municipios_no_pegados <- superfinanciera_dane %>%
   filter(is.na(codmpio)) %>%
   distinct(municipio)
 
 View(municipios_no_pegados)
 
+# CORREGIR MUNICIPIOS QUE NO COINCIDEN CON DANE
+
+superfinanciera_dane <- superfinanciera_dane %>%
+  mutate(
+    municipio = recode(
+      municipio,
+      "Guadalajara De Buga (Buga)" = "Guadalajara De Buga",
+      "Toluviejo" = "Tolú Viejo",
+      "Bogota" = "Bogotá",
+      "Mariquita" = "San Sebastián De Mariquita",
+      "Tumaco" = "San Andrés De Tumaco",
+      "Salda#A" = "Saldaña",
+      "Since" = "San Luis De Sincé",
+      "Carmen De Viboral" = "El Carmen De Viboral",
+      "Santa Rosa De Viterb" = "Santa Rosa De Viterbo",
+      "Ubate" = "Villa De San Diego De Ubaté",
+      "Dos Quebradas" = "Dosquebradas",
+      "San Vicente Del Cagu" = "San Vicente Del Caguán",
+      "Santiago De Tolu (Tolu)" = "Santiago De Tolú",
+      "Vista Hermosa" = "Vistahermosa",
+      "Leguizamo (Puerto Leguizamo)" = "Puerto Leguízamo",
+      "Oca#A" = "Ocaña",
+      "San Jose De Risaralda" = "Risaralda",
+      "Don Matias" = "Donmatías",
+      "Nari#O" = "Nariño",
+      "San Jose De La Monta#A" = "San José De La Montaña",
+      "San Andres Sotavento" = "San Andrés De Sotavento",
+      "Santander De Quilich" = "Santander De Quilichao",
+      "Puerto Carre#O" = "Puerto Carreño",
+      "S.antonio Tequendama" = "San Antonio Del Tequendama",
+      "San Carlos Guaroa" = "San Carlos De Guaroa",
+      "San Sebastian Buenav" = "San Sebastián De Buenavista",
+      "Cubarral" = "San Luis De Cubarral",
+      "Puerto Nare(Lamagdalena" = "Puerto Nare",
+      "Herrera" = "Olaya Herrera",
+      "Belen De Los Andaqui" = "Belén De Los Andaquíes",
+      "San Jose De Fragua" = "San José Del Fragua",
+      "Mo#Itos" = "Moñitos",
+      "Patia(El Bordo)" = "Patía",
+      "San Bernardo Del Vie" = "San Bernardo Del Viento",
+      "Puerto Inirida" = "Inírida",
+      "Manaure Balcon Dl Ce" = "Manaure",
+      "El Pi#On" = "El Piñón",
+      "El Canton De San Pablo" = "El Cantón Del San Pablo",
+      "El Pe#Ol" = "El Peñol",
+      "El Pe#On" = "El Peñón",
+      "Piji#O Del Carmen" = "Pijiño Del Carmen",
+      "La Uribe" = "Uribe",
+      "Tutasa" = "Tutazá",
+      "Puerto Nari#O" = "Puerto Nariño",
+      .default = municipio
+    )
+  )
+
+# 4. VER MUNICIPIOS SIN COINCIDENCIA
+municipios_no_pegados <- superfinanciera_dane %>%
+  filter(is.na(codmpio)) %>%
+  distinct(municipio)
+
+View(municipios_no_pegados)
 
 #### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
 
@@ -320,14 +351,4 @@ sort(unique(base_municipal_final$ano))
 saveRDS(
   base_municipal_final,
   file.path(processed, "base_municipal_final.rds")
-)
-
-saveRDS(
-  ejecuciones_departamentos,
-  file.path(processed, "ejecuciones_departamentos.rds")
-)
-
-saveRDS(
-  ejecuciones_municipios,
-  file.path(processed, "ejecuciones_municipios.rds")
 )

@@ -77,7 +77,7 @@ Universidad de los Andes
 
 Colombia
 
-Correo: lsrivera@shd.gov.co
+Correo: ls.riveras1@uniandes.edu.co
 
 
 ## Asesores

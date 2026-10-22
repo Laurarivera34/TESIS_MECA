@@ -76,25 +76,27 @@ dane <- read_excel(
   )
 )
 
+
 #### SEGUNDA PARTE: UNIÓN DE BASES CEDE
 
-# Unir las bases del CEDE
+base_completa <- full_join(
+  caracteristicas_generales,
+  panel_buen_gobierno,
+  by = c("codmpio", "ano")
+)
 
-base_municipal <- panel_buen_gobierno %>%
-  left_join(
-    caracteristicas_generales %>%
-      select(-any_of(c("coddepto", "departamento", "codprovincia"))),
-    by = c("codmpio", "ano"),
-    na_matches = "never",
-    relationship = "one-to-one"
-  ) %>%
-  relocate(codmpio, municipio, ano) %>%
-  arrange(codmpio, ano)
+# Verificar que no hayan duplicados
+base_completa |>
+  count(codmpio, ano) |>
+  filter(n > 1)
 
 
-## Unir las bases del CEDE con los nombres del Dane
 
-# Estandarizar nombres 
+
+
+#### TERCERA PARTE: UNIÓN DATOS DE LA SUPERFINANCIERA
+
+# Estandarizar nombres del Dane
 
 dane <- dane %>%
   rename(
@@ -115,111 +117,14 @@ dane <- dane %>%
   select(codmpio, municipio) %>%
   distinct()
 
-# Completar únicamente los nombres de municipios faltantes
-base_municipal <- base_municipal %>%
-  left_join(
-    dane %>%
-      select(codmpio, municipio) %>%
-      rename(municipio_dane = municipio),
-    by = "codmpio",
-    na_matches = "never",
-    relationship = "many-to-one"
-  ) %>%
-  mutate(
-    municipio = coalesce(municipio, municipio_dane)
-  ) %>%
-  select(-municipio_dane) %>%
-  relocate(codmpio, municipio, ano) %>%
-  arrange(codmpio, ano)
 
-# Verificar duplicados
-base_municipal %>%
-  count(codmpio, ano) %>%
-  filter(n > 1)
-
-# Identificar municipios sin nombre
-base_municipal %>%
-  filter(is.na(municipio)) %>%
-  select(codmpio, ano, municipio)
-
-# Buscar ambos códigos en las bases originales
-caracteristicas_generales %>%
-  filter(codmpio %in% c(23682, 23685)) %>%
-  select(codmpio, ano, municipio) %>%
-  arrange(codmpio, ano)
-
-# Revisar en el DANE
-dane %>%
-  filter(codmpio %in% c(23682, 23685))
-
-
-base_municipal %>%
-  filter(
-    codmpio %in% c(23682, 23685),
-    ano %in% 2010:2012
-  ) %>%
-  select(codmpio, municipio, ano) %>%
-  arrange(ano, codmpio)
-
-
-# Comparar los registros de ambos nombres
-
-base_municipal %>%
-  filter(
-    codmpio %in% c(23682, 23685),
-    ano %in% 2010:2012
-  ) %>%
-  select(
-    codmpio, municipio, ano,
-    any_of(c(
-      "y_total",
-      "y_corr",
-      "y_transf",
-      "DF_deuda",
-      "finan_credito_desemb"
-    ))
-  ) %>%
-  arrange(ano, codmpio)
-
-# Eliminar código municipal 23685
-base_municipal <- base_municipal %>%
-  filter(codmpio != 23685) %>%
-  arrange(codmpio, ano)
-
-
-# Verificar resultados
-base_municipal %>%
-  summarise(
-    total_observaciones = n(),
-    municipios = n_distinct(codmpio, na.rm = TRUE),
-    años = n_distinct(ano, na.rm = TRUE),
-    sin_municipio = sum(is.na(municipio))
-  )
-
-
-#### TERCERA PARTE: UNIÓN DATOS DE LA SUPERFINANCIERA
-
-# 1. FUNCIÓN PARA HOMOLOGAR NOMBRES
-limpiar_municipio <- function(x) {
-  x %>%
-    str_to_lower() %>%
-    stringi::stri_trans_general("Latin-ASCII") %>%
-    str_replace_all("[^a-z0-9 ]", " ") %>%
-    str_squish()
-}
-
-# 2. PREPARAR SUPERFINANCIERA
+# Se ponen tíldes a los nombres para que quede como los del dane
 superfinanciera <- superfinanciera %>%
-  rename(municipio = `Nombre del municipio`) %>%
-  mutate(
-    municipio = str_to_title(str_to_lower(str_squish(municipio))),
-    ano = as.integer(substr(as.character(`Fecha de Corte`), 1, 4))
-  ) %>%
-  filter(
-    !is.na(municipio),
-    municipio != "",
-    !str_detect(str_to_lower(municipio), "\\btotal\\b")
-  )
+  mutate(municipio = str_to_title(str_to_lower(str_squish(municipio))))
+
+
+############ aca toca revisar 
+
 
 # 3. UNIR CON DANE Y RECUPERAR NOMBRES OFICIALES
 superfinanciera_dane <- superfinanciera %>%

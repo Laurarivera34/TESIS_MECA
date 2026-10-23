@@ -12,7 +12,8 @@ paquetes <- c(
   "here",
   "skimr",
   "kableExtra",
-  "modelsummary"
+  "modelsummary",
+  "stringi"
 )
 paquetes_faltantes <- paquetes[
   !paquetes %in% rownames(installed.packages())
@@ -92,11 +93,9 @@ base_completa |>
 
 
 
-
-
 #### TERCERA PARTE: UNIÓN DATOS DE LA SUPERFINANCIERA
 
-# Estandarizar nombres del Dane
+# Conservar nombres oficiales con mayúsculas y tildes.
 
 dane <- dane %>%
   rename(
@@ -104,111 +103,254 @@ dane <- dane %>%
     municipio = `Nombre Municipio`
   ) %>%
   mutate(
-    # Eliminar el cero inicial y convertir a número
     codmpio = as.numeric(codmpio),
-    
-    # Primera letra de cada palabra en mayúscula
     municipio = str_to_title(
-      str_to_lower(
-        str_squish(municipio)
-      )
+      str_to_lower(str_squish(municipio), locale = "es"),
+      locale = "es"
     )
   ) %>%
   select(codmpio, municipio) %>%
   distinct()
 
 
-# Se ponen tíldes a los nombres para que quede como los del dane
+# 2. CORREGIR NOMBRES DE SUPERFINANCIERA
+
 superfinanciera <- superfinanciera %>%
-  mutate(municipio = str_to_title(str_to_lower(str_squish(municipio))))
+  rename(municipio = `Nombre del municipio`) %>%
+  mutate(
+    municipio = str_to_title(
+      str_to_lower(str_squish(municipio), locale = "es"),
+      locale = "es"
+    ),
+    
+    municipio = case_when(
+      
+      # Bogotá
+      municipio == "Bogota" ~ "Bogotá, D.c.",
+      
+      # Caracteres dañados (#)
+      municipio == "Salda#A" ~ "Saldaña",
+      municipio == "Oca#A" ~ "Ocaña",
+      municipio == "Nari#O" ~ "Nariño",
+      municipio == "San Jose De La Monta#A" ~ "San José De La Montaña",
+      municipio == "Puerto Carre#O" ~ "Puerto Carreño",
+      municipio == "Mo#Itos" ~ "Moñitos",
+      municipio == "El Pi#On" ~ "El Piñón",
+      municipio == "El Pe#Ol" ~ "El Peñol",
+      municipio == "El Pe#On" ~ "El Peñón",
+      municipio == "Puerto Nari#O" ~ "Puerto Nariño",
+      municipio == "Piji#O Del Carmen" ~ "Pijiño Del Carmen",
+      
+      # Equivalencias con nombres del DANE
+      municipio == "Guadalajara De Buga (Buga)" ~
+        "Guadalajara De Buga",
+      municipio == "Toluviejo" ~ "Tolú Viejo",
+      municipio == "Mariquita" ~ "San Sebastián De Mariquita",
+      municipio == "Tumaco" ~ "San Andrés De Tumaco",
+      municipio == "Carmen De Viboral" ~ "El Carmen De Viboral",
+      municipio == "Santa Rosa De Viterb" ~ "Santa Rosa De Viterbo",
+      municipio == "Ubate" ~ "Villa De San Diego De Ubaté",
+      municipio == "Dos Quebradas" ~ "Dosquebradas",
+      municipio == "San Vicente Del Cagu" ~ "San Vicente Del Caguán",
+      municipio == "Santiago De Tolu (Tolu)" ~ "Santiago De Tolú",
+      municipio == "Vista Hermosa" ~ "Vistahermosa",
+      municipio == "Leguizamo (Puerto Leguizamo)" ~ "Puerto Leguízamo",
+      municipio == "San Andres Sotavento" ~ "San Andrés De Sotavento",
+      municipio == "Santander De Quilich" ~ "Santander De Quilichao",
+      municipio == "S.antonio Tequendama" ~ "San Antonio Del Tequendama",
+      municipio == "San Carlos Guaroa" ~ "San Carlos De Guaroa",
+      municipio == "San Sebastian Buenav" ~ "San Sebastián De Buenavista",
+      municipio == "Puerto Nare(Lamagdalena" ~ "Puerto Nare",
+      municipio == "Belen De Los Andaqui" ~ "Belén De Los Andaquíes",
+      municipio == "San Jose De Fragua" ~ "San José Del Fragua",
+      municipio == "Patia(El Bordo)" ~ "Patía",
+      municipio == "San Bernardo Del Vie" ~ "San Bernardo Del Viento",
+      municipio == "Puerto Inirida" ~ "Inírida",
+      municipio == "El Canton De San Pablo" ~ "El Cantón Del San Pablo",
+      municipio == "Pijio Del Carmen" ~ "Pijiño Del Carmen",
+      municipio == "La Uribe" ~ "Uribe",
+      municipio == "Tutasa" ~ "Tutazá",
+      municipio == "Miriti-Parana" ~ "Mirití - Paraná",
+      municipio == "Since" ~ "San Luis De Sincé",
+      
+      # Otras tildes
+      municipio == "Medellin" ~ "Medellín",
+      municipio == "San Jose" ~ "San José",
+      municipio == "San Andres" ~ "San Andrés",
+      municipio == "Saldana" ~ "Saldaña",
+      municipio == "Tulua" ~ "Tuluá",
+      municipio == "Moniquira" ~ "Moniquirá",
+      municipio == "Tocancipa" ~ "Tocancipá",
+      municipio == "Don Matias" ~ "Donmatías",
+      municipio == "Jerico" ~ "Jericó",
+      municipio == "Bolivar" ~ "Bolívar",
+      municipio == "Cordoba" ~ "Córdoba",
+      municipio == "Alban" ~ "Albán",
+      municipio == "La Union" ~ "La Unión",
+      
+      # Nombre completo por cod
+      municipio == "San Pedro" &
+        `Código del municipio` == 664 ~ "San Pedro De Los Milagros",
+      
+      municipio == "Cubarral" &
+        `Código del municipio` == 223 ~ "San Luis De Cubarral",
+      
+      municipio == "Manaure Balcon Dl Ce" &
+        `Código del municipio` == 443 ~ "Manaure",
+      
+      municipio == "El Carmen" &
+        `Código del municipio` == 235 ~ "El Carmen De Chucurí",
+      
+      TRUE ~ municipio
+    )
+  ) %>%
+  filter(
+    !str_starts(municipio, regex("^Total", ignore_case = TRUE))
+  )
 
 
-############ aca toca revisar 
+# 3. FUNCIÓN AUXILIAR PARA EL CRUCE
+# No modifica los nombres originales.
+
+normalizar_municipio <- function(x) {
+  x %>%
+    str_squish() %>%
+    str_to_lower(locale = "es") %>%
+    stri_trans_general("Latin-ASCII") %>%
+    str_replace_all("[[:punct:]]", " ") %>%
+    str_squish()
+}
 
 
-# 3. UNIR CON DANE Y RECUPERAR NOMBRES OFICIALES
+# 4. PREPARAR SUPERFINANCIERA
+# No se realizan más correcciones de nombres.
+
+superfinanciera <- superfinanciera %>%
+  mutate(
+    municipio_union = normalizar_municipio(municipio),
+    codigo_aux = as.numeric(`Código del municipio`)
+  )
+
+
+# 5. PREPARAR DANE PARA EL CRUCE
+
+dane_union <- dane %>%
+  mutate(
+    municipio_union = normalizar_municipio(municipio),
+    codigo_aux = codmpio %% 1000
+  ) %>%
+  group_by(municipio_union, codigo_aux) %>%
+  summarise(
+    codmpio = if (n_distinct(codmpio) == 1) {
+      first(codmpio)
+    } else {
+      NA_real_
+    },
+    municipio_dane = if (n_distinct(codmpio) == 1) {
+      first(municipio)
+    } else {
+      NA_character_
+    },
+    .groups = "drop"
+  )
+
+
+# 6. PEGAR DANE A SUPERFINANCIERA
+# Se conserva el nombre oficial del DANE.
+
 superfinanciera_dane <- superfinanciera %>%
-  select(-any_of(c("Código del departamento", "Código del municipio"))) %>%
-  mutate(municipio_limpio = limpiar_municipio(municipio)) %>%
   left_join(
-    dane %>%
-      mutate(municipio_limpio = limpiar_municipio(municipio)) %>%
-      select(codmpio, municipio_limpio, municipio_dane = municipio),
-    by = "municipio_limpio",
-    relationship = "many-to-many"
+    dane_union,
+    by = c("municipio_union", "codigo_aux"),
+    relationship = "many-to-one"
   ) %>%
   mutate(
     municipio = coalesce(municipio_dane, municipio)
   ) %>%
-  select(-municipio_limpio, -municipio_dane)
+  select(-municipio_union, -codigo_aux, -municipio_dane)
 
-# 4. VER MUNICIPIOS SIN COINCIDENCIA
-municipios_no_pegados <- superfinanciera_dane %>%
+
+# 7. VERIFICAR QUE NO SE DUPLICARON OBSERVACIONES
+
+cat("Filas Superfinanciera:", nrow(superfinanciera), "\n")
+cat("Filas después del cruce:", nrow(superfinanciera_dane), "\n")
+
+stopifnot(
+  nrow(superfinanciera) == nrow(superfinanciera_dane)
+)
+
+
+# 8. REVISAR MUNICIPIOS SIN CÓDIGO DANE
+
+municipios_sin_codigo <- superfinanciera_dane %>%
   filter(is.na(codmpio)) %>%
-  distinct(municipio)
+  distinct(municipio, `Código del municipio`)
 
-View(municipios_no_pegados)
+print(municipios_sin_codigo, n = Inf)
 
-# CORREGIR MUNICIPIOS QUE NO COINCIDEN CON DANE
 
-superfinanciera_dane <- superfinanciera_dane %>%
-  mutate(
-    municipio = recode(
-      municipio,
-      "Guadalajara De Buga (Buga)" = "Guadalajara De Buga",
-      "Toluviejo" = "Tolú Viejo",
-      "Bogota" = "Bogotá",
-      "Mariquita" = "San Sebastián De Mariquita",
-      "Tumaco" = "San Andrés De Tumaco",
-      "Salda#A" = "Saldaña",
-      "Since" = "San Luis De Sincé",
-      "Carmen De Viboral" = "El Carmen De Viboral",
-      "Santa Rosa De Viterb" = "Santa Rosa De Viterbo",
-      "Ubate" = "Villa De San Diego De Ubaté",
-      "Dos Quebradas" = "Dosquebradas",
-      "San Vicente Del Cagu" = "San Vicente Del Caguán",
-      "Santiago De Tolu (Tolu)" = "Santiago De Tolú",
-      "Vista Hermosa" = "Vistahermosa",
-      "Leguizamo (Puerto Leguizamo)" = "Puerto Leguízamo",
-      "Oca#A" = "Ocaña",
-      "San Jose De Risaralda" = "Risaralda",
-      "Don Matias" = "Donmatías",
-      "Nari#O" = "Nariño",
-      "San Jose De La Monta#A" = "San José De La Montaña",
-      "San Andres Sotavento" = "San Andrés De Sotavento",
-      "Santander De Quilich" = "Santander De Quilichao",
-      "Puerto Carre#O" = "Puerto Carreño",
-      "S.antonio Tequendama" = "San Antonio Del Tequendama",
-      "San Carlos Guaroa" = "San Carlos De Guaroa",
-      "San Sebastian Buenav" = "San Sebastián De Buenavista",
-      "Cubarral" = "San Luis De Cubarral",
-      "Puerto Nare(Lamagdalena" = "Puerto Nare",
-      "Herrera" = "Olaya Herrera",
-      "Belen De Los Andaqui" = "Belén De Los Andaquíes",
-      "San Jose De Fragua" = "San José Del Fragua",
-      "Mo#Itos" = "Moñitos",
-      "Patia(El Bordo)" = "Patía",
-      "San Bernardo Del Vie" = "San Bernardo Del Viento",
-      "Puerto Inirida" = "Inírida",
-      "Manaure Balcon Dl Ce" = "Manaure",
-      "El Pi#On" = "El Piñón",
-      "El Canton De San Pablo" = "El Cantón Del San Pablo",
-      "El Pe#Ol" = "El Peñol",
-      "El Pe#On" = "El Peñón",
-      "Piji#O Del Carmen" = "Pijiño Del Carmen",
-      "La Uribe" = "Uribe",
-      "Tutasa" = "Tutazá",
-      "Puerto Nari#O" = "Puerto Nariño",
-      .default = municipio
+# 9. RESUMEN DEL CRUCE
+
+resumen_cruce <- superfinanciera_dane %>%
+  summarise(
+    total_observaciones = n(),
+    observaciones_con_codigo = sum(!is.na(codmpio)),
+    observaciones_sin_codigo = sum(is.na(codmpio)),
+    porcentaje_con_codigo = round(
+      100 * mean(!is.na(codmpio)), 2
     )
   )
 
-# 4. VER MUNICIPIOS SIN COINCIDENCIA
-municipios_no_pegados <- superfinanciera_dane %>%
-  filter(is.na(codmpio)) %>%
-  distinct(municipio)
+print(resumen_cruce)
 
-View(municipios_no_pegados)
+# Revisar coincidencias posibles por código auxiliar
+
+revision_pendientes <- municipios_sin_codigo %>%
+  rename(codigo_aux = `Código del municipio`) %>%
+  left_join(
+    dane %>%
+      mutate(codigo_aux = codmpio %% 1000) %>%
+      select(
+        codigo_aux,
+        municipio_dane = municipio,
+        codmpio
+      ),
+    by = "codigo_aux",
+    relationship = "many-to-many"
+  ) %>%
+  arrange(municipio, codmpio)
+
+print(revision_pendientes, n = Inf)
+
+
+superfinanciera_dane %>%
+  filter(
+    `Código del departamento` == 1,
+    !is.na(codmpio),
+    floor(codmpio / 1000) == 68
+  ) %>%
+  count(
+    municipio,
+    `Código del municipio`,
+    codmpio,
+    sort = TRUE
+  ) %>%
+  print(n = Inf)
+
+
+
+dane %>%
+  filter(
+    str_detect(
+      normalizar_municipio(municipio),
+      "bolivar"
+    )
+  ) %>%
+  arrange(codmpio) %>%
+  print(n = Inf)
+############ aca toca revisar 
+
+
 
 #### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
 

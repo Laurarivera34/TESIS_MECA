@@ -47,346 +47,91 @@ figures <- here::here(
 )
 
 # 4. IMPORTAR BASES LIMPIAS
-base_municipal <- readRDS(
-  file.path(processed, "base_municipal.rds")
+base_municipal_final <- readRDS(
+  file.path(processed, "base_municipal_final.rds")
 )
 
-ejecuciones_departamentos <- readRDS(
-  file.path(processed, "ejecuciones_departamentos.rds")
+base_completa <- readRDS(
+  file.path(processed, "base_completa.rds")
 )
-
-ejecuciones_municipios <- readRDS(
-  file.path(processed, "ejecuciones_municipios.rds")
-)
-
-
-# 1. Comprobar que la variable existe
-"Crédito interno y externo" %in% names(base_municipal)
 
 # 5. VARIABLES DE INTERÉS
-# 5.1. Variables de Buen Gobierno
-variables_buen_gobierno <- c(
+
+# Pasar todos los nombres a minúsculas
+base_municipal_final <- base_municipal_final %>%
+  rename_with(tolower)
+
+variables_conservar <- c(
+  # Identificación
+  "municipio", "codmpio", "depto", "coddepto", "ano",
   
-  # Identificación 
-  variables_identificacion <- c(
-    "municipio",
-    "codmpio",
-    "depto",
-    "coddepto",
-    "ano",
-    
   # Ingresos
-  "y_total",
-  "y_corr",
-  "y_transf",
-  "y_corr_tribut",
-  "y_no_tribut",
-  "y_transf_nal",
-  "y_transf_otra",
+  "y_total", "y_corr", "y_transf", "y_corr_tribut",
+  "y_no_tribut", "y_transf_nal", "y_transf_otra",
   
   # Gastos
-  "g_total",
-  "g_corr",
-  "g_func",
-  "g_func_general",
-  "g_func_personal",
-  "g_func_trans",
-  "g_int_deudap",
+  "g_total", "g_corr", "g_func", "g_func_general",
+  "g_func_personal", "g_func_trans", "g_int_deudap",
   
   # Ingresos de capital
-  "y_cap",
-  "y_cap_regalias",
-  "y_cap_transf",
+  "y_cap", "y_cap_regalias", "y_cap_transf",
   
   # Crédito
-  "finan_credito",
-  "finan_credito_desemb",
-  "finan_credito_amort",
-  "credito interno",
-  "credito externo",
+  "finan_credito", "finan_credito_desemb", "finan_credito_amort",
   
   # Desempeño fiscal
-  "df_deuda",
-  "df_desemp_fisc",
-  
-  # Desempeño fiscal 2021-2023
-  "df2_categoria",
-  "df2_endeudamientolp",
-  "df2_endeudamientolp_c",
-  "df2_ahorrocorriente",
-  "df2_ahorrocorriente_c",
-  "df2_balanceprimario",
-  "df2_balanceprimario_c",
-  "df2_resultados",
-  "df2_resultados_c",
-  "df2_califi_ceingreso",
-  "df2_califi_ceinversion",
-  "df2_calificaciongestio",
-  "df2_rango",
+  "df_deuda", "df_desemp_fisc",
+  "df2_categoria", "df2_endeudamientolp", "df2_endeudamientolp_c",
+  "df2_ahorrocorriente", "df2_ahorrocorriente_c",
+  "df2_balanceprimario", "df2_balanceprimario_c",
+  "df2_resultados", "df2_resultados_c",
+  "df2_califi_ceingreso", "df2_califi_ceinversion",
+  "df2_calificaciongestio", "df2_rango",
   
   # Sistema General de Participaciones
-  "sgp_total",
-  "sgp_educaciontot",
-  "sgp_saludtot",
+  "sgp_total", "sgp_educaciontot", "sgp_saludtot",
   "sgp_propgeneraltot",
   
   # Inversión
-  "inv_total"
-)
-
+  "inv_total",
+  
   # Región
-  "gandina",
-  "gcaribe",
-  "gpacifica",
-  "gorinoquia",
-  "gamazonia",
+  "gandina", "gcaribe", "gpacifica", "gorinoquia", "gamazonia",
   
   # Demografía
-  "pobl_tot",
-  "indrural",
+  "pobl_tot", "indrural",
   
   # Características territoriales
-  "areaoficialkm2",
-  "altura",
-  "disbogota",
+  "areaoficialkm2", "altura", "disbogota", "discapital", "dismdo",
   
   # PIB
-  "pib_cons",
-  "pib_total",
-  "pib_percapita",
+  "pib_cons", "pib_total", "pib_percapita",
   
   # Pobreza y condiciones sociales
-  "pobreza",
-  "nbi",
-  "nbicabecera",
-  "nbiresto",
-  "ipm",
-  "ipm_hacinam_p",
+  "pobreza", "nbi", "nbicabecera", "nbiresto",
+  "ipm", "ipm_hacinam_p",
   
-  # Características poblacionales específicas
-  "sisben_pobl_1",
-  "sisben_pobl_10",
+  # Características poblacionales
+  "sisben_pobl_1", "sisben_pobl_10",
   
   # Territorio
-  "minorias",
-  "parques"
-)
-
-
-# 5. CREAR BASES ANALÍTICAS PRELIMINARES
-
-# 5.1. Buen Gobierno
-base_buen_gobierno <- panel_buen_gobierno %>%
-  select(
-    codmpio,
-    ano,
-    all_of(variables_buen_gobierno)
-  )
-
-# 5.2. Características Generales
-base_caracteristicas <- caracteristicas_generales %>%
-  select(
-    all_of(variables_caracteristicas)
-  )
-
-
-# 6. DIAGNÓSTICO UNIVARIADO
-diagnostico_univariado <- function(data) {
+  "minorias", "parques",
   
-  tibble(
-    
-    variable = names(data),
-    
-    tipo = sapply(
-      data,
-      function(x) class(x)[1]
-    ),
-    
-    observaciones = sapply(
-      data,
-      length
-    ),
-    
-    missing = sapply(
-      data,
-      function(x) sum(is.na(x))
-    ),
-    
-    porcentaje_missing = sapply(
-      data,
-      function(x) mean(is.na(x)) * 100
-    ),
-    
-    valores_unicos = sapply(
-      data,
-      function(x) n_distinct(x, na.rm = TRUE)
-    ),
-    
-    minimo = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          min(x, na.rm = TRUE)
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    p1 = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          as.numeric(quantile(x, 0.01, na.rm = TRUE))
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    p25 = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          as.numeric(quantile(x, 0.25, na.rm = TRUE))
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    media = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          mean(x, na.rm = TRUE)
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    mediana = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          median(x, na.rm = TRUE)
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    p75 = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          as.numeric(quantile(x, 0.75, na.rm = TRUE))
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    p99 = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          as.numeric(quantile(x, 0.99, na.rm = TRUE))
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    maximo = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && any(!is.na(x))) {
-          max(x, na.rm = TRUE)
-        } else {
-          NA_real_
-        }
-      }
-    ),
-    
-    desviacion_estandar = sapply(
-      data,
-      function(x) {
-        if (is.numeric(x) && sum(!is.na(x)) > 1) {
-          sd(x, na.rm = TRUE)
-        } else {
-          NA_real_
-        }
-      }
-    )
-  )
-}
-
-
-# 8. APLICAR DIAGNÓSTICO
-diagnostico_buen_gobierno <- diagnostico_univariado(
-  base_buen_gobierno
+  # Superfinanciera
+  "cuenta_corriente", "cdt", "ahorro", "cartera",
+  "provision_consumo", "provision_microcreditos",
+  "provision_comercial", "cuentas_centralizadas", "oficinas"
 )
 
-diagnostico_caracteristicas <- diagnostico_univariado(
-  base_caracteristicas
-)
-
-# 9. REVISAR DIAGNÓSTICO
-
-View(diagnostico_buen_gobierno)
-View(diagnostico_caracteristicas)
+base_completa_final <- base_municipal_final %>%
+  filter(between(ano, 2000, 2023)) %>%
+  select(all_of(variables_conservar)) %>%
+  arrange(codmpio, ano)
 
 
-# 10. IDENTIFICAR VARIABLES CON ALTO MISSING
-
-diagnostico_buen_gobierno %>%
-  arrange(desc(porcentaje_missing)) %>%
-  print(n = Inf)
 
 
-diagnostico_caracteristicas %>%
-  arrange(desc(porcentaje_missing)) %>%
-  print(n = Inf)
 
-
-# 11. IDENTIFICAR POSIBLES VALORES EXTREMOS
-
-# 11.1. Buen Gobierno
-diagnostico_buen_gobierno %>%
-  filter(tipo %in% c("numeric", "integer")) %>%
-  select(
-    variable,
-    minimo,
-    p1,
-    p25,
-    mediana,
-    media,
-    p75,
-    p99,
-    maximo,
-    desviacion_estandar
-  ) %>%
-  print(n = Inf)
-
-
-# 11.2. Características Generales
-diagnostico_caracteristicas %>%
-  filter(tipo %in% c("numeric", "integer")) %>%
-  select(
-    variable,
-    minimo,
-    p1,
-    p25,
-    mediana,
-    media,
-    p75,
-    p99,
-    maximo,
-    desviacion_estandar
-  ) %>%
-  print(n = Inf)
-
+# diagnostico univariado,missing, valores externos
 
 

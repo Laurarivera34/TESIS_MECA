@@ -92,10 +92,17 @@ base_completa |>
   filter(n > 1)
 
 
+# Se guarda la base procesada
+saveRDS(
+  base_completa,
+  file.path(processed, "base_completa.rds")
+)
+
 
 #### TERCERA PARTE: UNIÓN DATOS DE LA SUPERFINANCIERA
 
-# Conservar nombres oficiales con mayúsculas y tildes.
+# 1. ESTANDARIZAR DANE
+# Ejecutar desde las bases recién importadas.
 
 dane <- dane %>%
   rename(
@@ -103,7 +110,7 @@ dane <- dane %>%
     municipio = `Nombre Municipio`
   ) %>%
   mutate(
-    codmpio = as.numeric(codmpio),
+    codmpio = as.integer(codmpio),
     municipio = str_to_title(
       str_to_lower(str_squish(municipio), locale = "es"),
       locale = "es"
@@ -128,11 +135,12 @@ superfinanciera <- superfinanciera %>%
       # Bogotá
       municipio == "Bogota" ~ "Bogotá, D.c.",
       
-      # Caracteres dañados (#)
+      # Caracteres dañados
       municipio == "Salda#A" ~ "Saldaña",
       municipio == "Oca#A" ~ "Ocaña",
       municipio == "Nari#O" ~ "Nariño",
-      municipio == "San Jose De La Monta#A" ~ "San José De La Montaña",
+      municipio == "San Jose De La Monta#A" ~
+        "San José De La Montaña",
       municipio == "Puerto Carre#O" ~ "Puerto Carreño",
       municipio == "Mo#Itos" ~ "Moñitos",
       municipio == "El Pi#On" ~ "El Piñón",
@@ -188,103 +196,160 @@ superfinanciera <- superfinanciera %>%
       municipio == "Alban" ~ "Albán",
       municipio == "La Union" ~ "La Unión",
       
-      # Nombre completo por cod
+      # Equivalencias previamente usadas:
+      # ahora se delimitan también por departamento.
       municipio == "San Pedro" &
+        `Código del departamento` == 1 &
         `Código del municipio` == 664 ~ "San Pedro De Los Milagros",
       
       municipio == "Cubarral" &
+        `Código del departamento` == 16 &
         `Código del municipio` == 223 ~ "San Luis De Cubarral",
       
       municipio == "Manaure Balcon Dl Ce" &
+        `Código del departamento` == 9 &
         `Código del municipio` == 443 ~ "Manaure",
       
       municipio == "El Carmen" &
+        `Código del departamento` == 21 &
         `Código del municipio` == 235 ~ "El Carmen De Chucurí",
       
       TRUE ~ municipio
     )
   ) %>%
   filter(
-    !str_starts(municipio, regex("^Total", ignore_case = TRUE))
+    !str_detect(
+      municipio,
+      regex("^Total", ignore_case = TRUE)
+    )
   )
 
 
 # 3. FUNCIÓN AUXILIAR PARA EL CRUCE
-# No modifica los nombres originales.
+# Crea una llave sin tildes ni puntuación.
+# Los nombres oficiales se conservan en otra columna.
 
 normalizar_municipio <- function(x) {
   x %>%
     str_squish() %>%
     str_to_lower(locale = "es") %>%
-    stri_trans_general("Latin-ASCII") %>%
+    stringi::stri_trans_general("Latin-ASCII") %>%
     str_replace_all("[[:punct:]]", " ") %>%
     str_squish()
 }
 
 
-# 4. PREPARAR SUPERFINANCIERA
-# No se realizan más correcciones de nombres.
+# 4. EQUIVALENCIA DE DEPARTAMENTOS
+# Correspondencia identificada en la tabla de referencia.
 
-superfinanciera <- superfinanciera %>%
-  mutate(
-    municipio_union = normalizar_municipio(municipio),
-    codigo_aux = as.numeric(`Código del municipio`)
+equivalencia_departamentos <- tibble(
+  departamento_super = 1:33,
+  coddepto_dane = c(
+    5,  8, 11, 13, 15, 17, 18, 19, 20, 23, 25,
+    27, 41, 44, 47, 50, 52, 54, 63, 66, 68, 70,
+    73, 76, 81, 85, 86, 88, 91, 94, 95, 97, 99
   )
+)
 
 
 # 5. PREPARAR DANE PARA EL CRUCE
 
 dane_union <- dane %>%
-  mutate(
+  transmute(
+    coddepto_dane = as.integer(codmpio %/% 1000),
     municipio_union = normalizar_municipio(municipio),
-    codigo_aux = codmpio %% 1000
+    codmpio,
+    municipio_dane = municipio
   ) %>%
-  group_by(municipio_union, codigo_aux) %>%
-  summarise(
-    codmpio = if (n_distinct(codmpio) == 1) {
-      first(codmpio)
-    } else {
-      NA_real_
-    },
-    municipio_dane = if (n_distinct(codmpio) == 1) {
-      first(municipio)
-    } else {
-      NA_character_
-    },
-    .groups = "drop"
-  )
+  distinct()
+
+# Verificar que departamento + nombre sea una llave única.
+# Si hay ambigüedades, detener el proceso para revisarlas.
+
+duplicados_dane <- dane_union %>%
+  count(coddepto_dane, municipio_union) %>%
+  filter(n > 1)
+
+if (nrow(duplicados_dane) > 0) {
+  print(duplicados_dane, n = Inf)
+  stop("Hay nombres ambiguos dentro de un departamento en DANE.")
+}
 
 
 # 6. PEGAR DANE A SUPERFINANCIERA
-# Se conserva el nombre oficial del DANE.
+# El cruce utiliza departamento + nombre.
+# No exige coincidencia entre códigos municipales de ambas fuentes.
 
 superfinanciera_dane <- superfinanciera %>%
-  left_join(
-    dane_union,
-    by = c("municipio_union", "codigo_aux"),
-    relationship = "many-to-one"
+  select(
+    -any_of(c(
+      "codmpio",
+      "coddepto_dane",
+      "municipio_super",
+      "municipio_dane",
+      "municipio_union",
+      "codigo_aux"
+    ))
   ) %>%
   mutate(
-    municipio = coalesce(municipio_dane, municipio)
+    municipio_super = municipio,
+    municipio_union = normalizar_municipio(municipio)
   ) %>%
-  select(-municipio_union, -codigo_aux, -municipio_dane)
+  left_join(
+    equivalencia_departamentos,
+    by = c(
+      "Código del departamento" = "departamento_super"
+    ),
+    relationship = "many-to-one",
+    na_matches = "never"
+  ) %>%
+  left_join(
+    dane_union,
+    by = c("coddepto_dane", "municipio_union"),
+    relationship = "many-to-one",
+    na_matches = "never"
+  ) %>%
+  mutate(
+    municipio = coalesce(municipio_dane, municipio_super)
+  ) %>%
+  select(-municipio_union, -municipio_dane)
 
 
-# 7. VERIFICAR QUE NO SE DUPLICARON OBSERVACIONES
+# 7. VERIFICAR QUE NO SE MULTIPLICARON OBSERVACIONES
 
-cat("Filas Superfinanciera:", nrow(superfinanciera), "\n")
-cat("Filas después del cruce:", nrow(superfinanciera_dane), "\n")
+cat(
+  "Filas Superfinanciera:",
+  nrow(superfinanciera),
+  "\n"
+)
+
+cat(
+  "Filas después del cruce:",
+  nrow(superfinanciera_dane),
+  "\n"
+)
 
 stopifnot(
-  nrow(superfinanciera) == nrow(superfinanciera_dane)
+  nrow(superfinanciera_dane) == nrow(superfinanciera)
 )
 
 
 # 8. REVISAR MUNICIPIOS SIN CÓDIGO DANE
+# Se conservan en la base; no se eliminan.
 
 municipios_sin_codigo <- superfinanciera_dane %>%
   filter(is.na(codmpio)) %>%
-  distinct(municipio, `Código del municipio`)
+  count(
+    `Código del departamento`,
+    coddepto_dane,
+    municipio_super,
+    `Código del municipio`,
+    name = "observaciones"
+  ) %>%
+  arrange(
+    `Código del departamento`,
+    municipio_super
+  )
 
 print(municipios_sin_codigo, n = Inf)
 
@@ -303,98 +368,70 @@ resumen_cruce <- superfinanciera_dane %>%
 
 print(resumen_cruce)
 
-# Revisar coincidencias posibles por código auxiliar
+#### CUARTA PARTE: BASE ANUAL DE SUPERFINANCIERA
 
-revision_pendientes <- municipios_sin_codigo %>%
-  rename(codigo_aux = `Código del municipio`) %>%
-  left_join(
-    dane %>%
-      mutate(codigo_aux = codmpio %% 1000) %>%
-      select(
-        codigo_aux,
-        municipio_dane = municipio,
-        codmpio
-      ),
-    by = "codigo_aux",
-    relationship = "many-to-many"
-  ) %>%
-  arrange(municipio, codmpio)
-
-print(revision_pendientes, n = Inf)
-
-
-superfinanciera_dane %>%
-  filter(
-    `Código del departamento` == 1,
-    !is.na(codmpio),
-    floor(codmpio / 1000) == 68
-  ) %>%
-  count(
-    municipio,
-    `Código del municipio`,
+superfinanciera_anual <- superfinanciera_dane %>%
+  filter(!is.na(codmpio)) %>%
+  transmute(
     codmpio,
-    sort = TRUE
+    municipio,
+    fecha = as.Date(`Fecha de Corte`),
+    cuenta_corriente = `Depósitos en cuenta corriente bancaria`,
+    cdt = `Certificados de depósito a término`,
+    ahorro = `Depósitos de ahorro`,
+    cartera = `Cartera de créditos`,
+    provision_consumo = `Provisión créditos y operaciones de leasing de consumo`,
+    provision_microcreditos = `Provisión microcréditos`,
+    provision_comercial = `Provisión créditos y operaciones de leasing comerciales`,
+    cuentas_centralizadas = `Número de cuentas centralizadas`,
+    oficinas = `Número de oficinas`
   ) %>%
-  print(n = Inf)
-
-
-
-dane %>%
-  filter(
-    str_detect(
-      normalizar_municipio(municipio),
-      "bolivar"
-    )
+  # Total municipal por fecha; conservar NA si falta algún componente
+  group_by(codmpio, municipio, fecha) %>%
+  summarise(
+    across(everything(), ~ sum(.x, na.rm = FALSE)),
+    .groups = "drop"
   ) %>%
-  arrange(codmpio) %>%
-  print(n = Inf)
-############ aca toca revisar 
-
-
-
-#### CUARTA PARTE: UNIÓN DE LAS BASES MUNICIPALES
-
-# Se une las dos bases de los Andes
-base_municipal <- full_join(
-  caracteristicas_generales,
-  panel_buen_gobierno,
-  by = c("codmpio", "ano"),
-  na_matches = "never",
-  relationship = "one-to-one"
-) %>%
-  relocate(codmpio, coddepto, municipio, departamento, ano) %>%
+  mutate(ano = lubridate::year(fecha)) %>%
+  group_by(codmpio, municipio, ano) %>%
+  mutate(
+    oficinas_promedio = if (all(is.na(oficinas))) {
+      NA_real_
+    } else {
+      mean(oficinas, na.rm = TRUE)
+    }
+  ) %>%
+  ungroup() %>%
+  filter(format(fecha, "%m-%d") == "12-31") %>%
+  select(codmpio, municipio, ano, everything(), -fecha) %>%
   arrange(codmpio, ano)
 
-# Unir superfinanciera con los Andes
-base_municipal <- base_municipal %>%
-  mutate(
-    codmpio = str_pad(as.character(codmpio), 5, pad = "0"),
-    coddepto = str_pad(as.character(coddepto), 2, pad = "0"),
-    ano = as.integer(ano)
-  )
+### QUINTA PARTE
 
-base_municipal_final <- base_municipal %>%
+# Unir CEDE con Superfinanciera, conservando todas las filas de CEDE
+
+base_municipal_final <- base_completa %>%
   left_join(
-    superfinanciera_dane,
-    by = c(
-      "codmpio",
-      "municipio",
-      "coddepto",
-      "departamento",
-      "ano"
-    ),
-    relationship = "one-to-one"
+    superfinanciera_anual %>% select(-municipio),
+    by = c("codmpio", "ano"),
+    relationship = "one-to-one",
+    na_matches = "never"
   )
 
-#### QUINTA PARTE: DIAGNÓSTICO INICIAL DE BASE_MUNICIPAL
-# 1. Nombres de las variables
+# Nombres de las variables
 names(base_municipal_final)
 
-# 2. Años disponibles
+# Años disponibles
 sort(unique(base_municipal_final$ano))
 
+# Verificar duplicados por municipio y año
+base_municipal_final %>%
+  count(codmpio, ano) %>%
+  filter(n > 1) %>%
+  print(n = Inf)
 
-### SEXTA PARTE: GUARDAR BASES PROCESADAS
+
+# Se guarda base procesada 
 saveRDS(
   base_municipal_final,
   file.path(processed, "base_municipal_final.rds")

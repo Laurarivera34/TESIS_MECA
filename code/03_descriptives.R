@@ -1,21 +1,23 @@
 # ESTADÍSTICAS DESCRIPTIVAS Y ANÁLISIS EXPLORATORIO
 
-
-# ================================================================
-# 1. LIMPIAR ENTORNO
-# ================================================================
-
+# LIMPIAR ENTORNO
 rm(list = ls())
 
-
-# ================================================================
-# 2. PAQUETES
-# ================================================================
-
+# PAQUETES
 paquetes <- c(
   "tidyverse",
+  "haven",
   "here",
-  "readr"
+  "skimr",
+  "plotly",      # Gráficos interactivos
+  "osmdata",     # Obtener información de open street maps
+  "sf",          # Leer/escribir/manipular datos espaciales
+  "leaflet",     # Mapas interactivos
+  "gridExtra",   # Graficar en grid
+  "tmaptools",   # Geocode_OMS()
+  "geosphere",   # Calcular distancias geográficas como Haversine
+  "tidymodels",  # Carga recipes, parsnip, rsample, tune, y otros paquetes relacionados
+  "spatialsample" # Muestreo espacial
 )
 
 paquetes_faltantes <- paquetes[
@@ -26,481 +28,139 @@ if (length(paquetes_faltantes) > 0) {
   install.packages(paquetes_faltantes)
 }
 
+
 invisible(
   lapply(paquetes, library, character.only = TRUE)
 )
 
-
-# ================================================================
 # 3. RUTAS
-# ================================================================
+root <- here::here() # Función here sirve para buscar la raíz de proyecto
 
-root <- here::here()
+data <- here::here("data", "raw")
 
-processed <- here::here(
-  "data",
-  "processed"
+processed <- here::here("data", "processed")
+
+figures <- here::here("output", "figures")
+
+tables <- here::here("output", "tables")
+
+# IMPORTAR BASES 
+base <- readRDS(
+  file.path(processed, "base.rds")
 )
 
-tables <- here::here(
-  "output",
-  "tables"
+# ESTADÍSTICAS DESCRIPTIVAS DE LAS VARIABLES PRINCIPALES
+
+variables_tesis <- c(
+  "finan_credito_desemb", "finan_credito_amort", "g_int_deudap",
+  "sgp_total", "y_corr", "y_corr_tribut",
+  "pobl_tot", "pib_total", "pib_percapita",
+  "indrural", "discapital", "dismdo", "oficinas"
 )
 
-figures <- here::here(
-  "output",
-  "figures"
-)
-
-
-# ================================================================
-# 4. CREAR CARPETAS SI NO EXISTEN
-# ================================================================
-
-dir.create(tables, recursive = TRUE, showWarnings = FALSE)
-
-dir.create(figures, recursive = TRUE, showWarnings = FALSE)
-
-
-# ================================================================
-# 5. IMPORTAR BASES ANALÍTICAS
-# ================================================================
-
-base_buen_gobierno <- read_csv(
-  file.path(
-    processed,
-    "base_buen_gobierno_variables.csv"
-  ),
-  show_col_types = FALSE
-)
-
-base_caracteristicas <- read_csv(
-  file.path(
-    processed,
-    "base_caracteristicas_variables.csv"
-  ),
-  show_col_types = FALSE
-)
-
-
-# ================================================================
-# 6. INSPECCIÓN
-# ================================================================
-
-dim(base_buen_gobierno)
-
-dim(base_caracteristicas)
-
-names(base_buen_gobierno)
-
-names(base_caracteristicas)
-
-
-# ================================================================
-# 7. ESTADÍSTICAS DESCRIPTIVAS
-# ================================================================
-
-estadisticas_numericas <- function(data) {
-  
-  data %>%
-    select(where(is.numeric)) %>%
-    summarise(
-      across(
-        everything(),
-        list(
-          observaciones = ~ sum(!is.na(.x)),
-          missing = ~ sum(is.na(.x)),
-          porcentaje_missing = ~ mean(is.na(.x)) * 100,
-          minimo = ~ min(.x, na.rm = TRUE),
-          p1 = ~ quantile(.x, 0.01, na.rm = TRUE),
-          p25 = ~ quantile(.x, 0.25, na.rm = TRUE),
-          media = ~ mean(.x, na.rm = TRUE),
-          mediana = ~ median(.x, na.rm = TRUE),
-          p75 = ~ quantile(.x, 0.75, na.rm = TRUE),
-          p99 = ~ quantile(.x, 0.99, na.rm = TRUE),
-          maximo = ~ max(.x, na.rm = TRUE),
-          desviacion_estandar = ~ sd(.x, na.rm = TRUE)
-        ),
-        .names = "{.col}__{.fn}"
-      )
-    ) %>%
-    pivot_longer(
-      cols = everything(),
-      names_to = c("variable", "estadistica"),
-      names_sep = "__",
-      values_to = "valor"
-    ) %>%
-    pivot_wider(
-      names_from = estadistica,
-      values_from = valor
-    )
-}
-
-
-# ================================================================
-# 8. ESTADÍSTICAS BUEN GOBIERNO
-# ================================================================
-
-estadisticas_buen_gobierno <- estadisticas_numericas(
-  base_buen_gobierno
-)
-
-write_csv(
-  estadisticas_buen_gobierno,
-  file.path(
-    tables,
-    "estadisticas_buen_gobierno.csv"
-  )
-)
-
-
-# ================================================================
-# 9. ESTADÍSTICAS CARACTERÍSTICAS GENERALES
-# ================================================================
-
-estadisticas_caracteristicas <- estadisticas_numericas(
-  base_caracteristicas
-)
-
-write_csv(
-  estadisticas_caracteristicas,
-  file.path(
-    tables,
-    "estadisticas_caracteristicas.csv"
-  )
-)
-
-
-# ================================================================
-# 10. DISTRIBUCIÓN DE VARIABLES CATEGÓRICAS
-# ================================================================
-
-# ------------------------------------------------
-# 10.1. Categoría de desempeño fiscal
-# ------------------------------------------------
-
-tabla_categoria <- base_buen_gobierno %>%
-  count(df2_categoria, sort = TRUE) %>%
-  mutate(
-    porcentaje = n / sum(n) * 100
-  )
-
-write_csv(
-  tabla_categoria,
-  file.path(
-    tables,
-    "distribucion_df2_categoria.csv"
-  )
-)
-
-
-# ------------------------------------------------
-# 10.2. Rango de desempeño fiscal
-# ------------------------------------------------
-
-tabla_rango <- base_buen_gobierno %>%
-  count(df2_rango, sort = TRUE) %>%
-  mutate(
-    porcentaje = n / sum(n) * 100
-  )
-
-write_csv(
-  tabla_rango,
-  file.path(
-    tables,
-    "distribucion_df2_rango.csv"
-  )
-)
-
-
-# ================================================================
-# 11. DISTRIBUCIÓN DE VARIABLES DUMMY REGIONALES
-# ================================================================
-
-variables_region <- c(
-  "gandina",
-  "gcaribe",
-  "gpacifica",
-  "gorinoquia",
-  "gamazonia"
-)
-
-tabla_regiones <- base_caracteristicas %>%
-  select(all_of(variables_region)) %>%
+estadisticas_tesis <- base %>%
+  select(all_of(variables_tesis)) %>%
   pivot_longer(
-    cols = everything(),
-    names_to = "region",
-    values_to = "dummy"
+    everything(),
+    names_to = "variable",
+    values_to = "valor"
   ) %>%
-  count(region, dummy) %>%
-  group_by(region) %>%
-  mutate(
-    porcentaje = n / sum(n) * 100
-  ) %>%
-  ungroup()
-
-write_csv(
-  tabla_regiones,
-  file.path(
-    tables,
-    "distribucion_regiones.csv"
-  )
-)
-
-
-# ================================================================
-# 12. GRÁFICOS DE DISTRIBUCIÓN
-# ================================================================
-
-# ------------------------------------------------
-# Función para generar histogramas
-# ------------------------------------------------
-
-graficar_histograma <- function(
-    data,
-    variable,
-    nombre_archivo
-) {
-  
-  p <- ggplot(
-    data,
-    aes(
-      x = .data[[variable]]
-    )
-  ) +
-    geom_histogram(
-      bins = 40,
-      na.rm = TRUE
-    ) +
-    labs(
-      title = paste(
-        "Distribución de",
-        variable
-      ),
-      x = variable,
-      y = "Frecuencia"
-    ) +
-    theme_minimal()
-  
-  ggsave(
-    file.path(
-      figures,
-      nombre_archivo
-    ),
-    p,
-    width = 8,
-    height = 5,
-    dpi = 300
-  )
-}
-
-
-# ================================================================
-# 13. HISTOGRAMAS DE VARIABLES FISCALES PRINCIPALES
-# ================================================================
-
-graficar_histograma(
-  base_buen_gobierno,
-  "y_total",
-  "hist_y_total.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "y_corr",
-  "hist_y_corr.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "y_transf",
-  "hist_y_transf.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "g_total",
-  "hist_g_total.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "g_corr",
-  "hist_g_corr.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "finan_credito",
-  "hist_finan_credito.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "df_deuda",
-  "hist_df_deuda.png"
-)
-
-graficar_histograma(
-  base_buen_gobierno,
-  "df_desemp_fisc",
-  "hist_df_desemp_fisc.png"
-)
-
-
-# ================================================================
-# 14. HISTOGRAMAS DE VARIABLES SOCIOECONÓMICAS
-# ================================================================
-
-graficar_histograma(
-  base_caracteristicas,
-  "pobl_tot",
-  "hist_poblacion.png"
-)
-
-graficar_histograma(
-  base_caracteristicas,
-  "indrural",
-  "hist_indice_ruralidad.png"
-)
-
-graficar_histograma(
-  base_caracteristicas,
-  "pib_percapita",
-  "hist_pib_percapita.png"
-)
-
-graficar_histograma(
-  base_caracteristicas,
-  "pobreza",
-  "hist_pobreza.png"
-)
-
-graficar_histograma(
-  base_caracteristicas,
-  "ipm",
-  "hist_ipm.png"
-)
-
-
-# ================================================================
-# 15. BOXPLOTS PARA IDENTIFICAR VALORES EXTREMOS
-# ================================================================
-
-graficar_boxplot <- function(
-    data,
-    variable,
-    nombre_archivo
-) {
-  
-  p <- ggplot(
-    data,
-    aes(
-      y = .data[[variable]]
-    )
-  ) +
-    geom_boxplot(
-      na.rm = TRUE
-    ) +
-    labs(
-      title = paste(
-        "Valores extremos de",
-        variable
-      ),
-      y = variable,
-      x = NULL
-    ) +
-    theme_minimal()
-  
-  ggsave(
-    file.path(
-      figures,
-      nombre_archivo
-    ),
-    p,
-    width = 6,
-    height = 5,
-    dpi = 300
-  )
-}
-
-
-# ------------------------------------------------
-# Variables fiscales
-# ------------------------------------------------
-
-graficar_boxplot(
-  base_buen_gobierno,
-  "y_total",
-  "box_y_total.png"
-)
-
-graficar_boxplot(
-  base_buen_gobierno,
-  "g_total",
-  "box_g_total.png"
-)
-
-graficar_boxplot(
-  base_buen_gobierno,
-  "finan_credito",
-  "box_finan_credito.png"
-)
-
-graficar_boxplot(
-  base_buen_gobierno,
-  "df_deuda",
-  "box_df_deuda.png"
-)
-
-
-# ------------------------------------------------
-# Variables socioeconómicas
-# ------------------------------------------------
-
-graficar_boxplot(
-  base_caracteristicas,
-  "pobl_tot",
-  "box_poblacion.png"
-)
-
-graficar_boxplot(
-  base_caracteristicas,
-  "pib_percapita",
-  "box_pib_percapita.png"
-)
-
-graficar_boxplot(
-  base_caracteristicas,
-  "pobreza",
-  "box_pobreza.png"
-)
-
-
-# ================================================================
-# 16. ESTADÍSTICAS POR AÑO
-# ================================================================
-
-estadisticas_anuales_fiscales <- base_buen_gobierno %>%
-  group_by(ano) %>%
+  group_by(variable) %>%
   summarise(
-    municipios = n_distinct(codmpio),
-    ingreso_total_medio = mean(y_total, na.rm = TRUE),
-    gasto_total_medio = mean(g_total, na.rm = TRUE),
-    credito_medio = mean(finan_credito, na.rm = TRUE),
-    deuda_media = mean(df_deuda, na.rm = TRUE),
-    desempeno_fiscal_medio = mean(
-      df_desemp_fisc,
-      na.rm = TRUE
-    ),
+    disponibles = sum(!is.na(valor)),
+    faltantes = sum(is.na(valor)),
+    porcentaje_faltante = 100 * mean(is.na(valor)),
+    media = mean(valor, na.rm = TRUE),
+    mediana = median(valor, na.rm = TRUE),
+    desviacion = sd(valor, na.rm = TRUE),
+    minimo = if (all(is.na(valor))) NA_real_ else min(valor, na.rm = TRUE),
+    p01 = quantile(valor, 0.01, na.rm = TRUE, names = FALSE),
+    p25 = quantile(valor, 0.25, na.rm = TRUE, names = FALSE),
+    p75 = quantile(valor, 0.75, na.rm = TRUE, names = FALSE),
+    p99 = quantile(valor, 0.99, na.rm = TRUE, names = FALSE),
+    maximo = if (all(is.na(valor))) NA_real_ else max(valor, na.rm = TRUE),
     .groups = "drop"
   )
 
-write_csv(
-  estadisticas_anuales_fiscales,
-  file.path(
-    tables,
-    "estadisticas_anuales_fiscales.csv"
+View(estadisticas_tesis)
+
+library(dplyr)
+library(leaflet)
+
+# Seleccionar un año del panel
+ano_mapa <- 2023
+
+datos_mapa <- base %>%
+  filter(
+    ano == ano_mapa,
+    is.finite(longitud),
+    is.finite(latitud),
+    between(longitud, -180, 180),
+    between(latitud, -90, 90),
+    is.finite(finan_credito_desemb),
+    finan_credito_desemb >= 0
   )
+
+# Escala de colores
+paleta <- colorNumeric(
+  palette = "YlOrRd",
+  domain = datos_mapa$finan_credito_desemb
 )
 
+# Mapa interactivo
+mapa_credito <- leaflet(datos_mapa) %>%
+  addTiles() %>%
+  setView(lng = -74, lat = 4.5, zoom = 5) %>%
+  addCircleMarkers(
+    lng = ~longitud,
+    lat = ~latitud,
+    radius = ~ifelse(
+      finan_credito_desemb == 0,
+      2,
+      3 + 2 * log10(1 + finan_credito_desemb)
+    ),
+    color = ~paleta(finan_credito_desemb),
+    stroke = FALSE,
+    fillOpacity = 0.7,
+    popup = ~paste0(
+      "<b>", municipio, "</b>",
+      "<br>Año: ", ano,
+      "<br>Desembolsos: $",
+      format(
+        round(finan_credito_desemb, 2),
+        big.mark = ".",
+        decimal.mark = ",",
+        scientific = FALSE,
+        trim = TRUE
+      ),
+      " millones"
+    )
+  ) %>%
+  addLegend(
+    position = "bottomright",
+    pal = paleta,
+    values = ~finan_credito_desemb,
+    title = paste0("Desembolsos ", ano_mapa, "<br>Millones de COP"),
+    opacity = 0.8
+  )
+
+mapa_credito
+
+
+# Seleccionar año y observaciones con información
+credito_ano <- base %>%
+  filter(ano == 2023, !is.na(finan_credito)) %>%
+  select(codmpio, municipio, depto, ano, finan_credito)
+
+# Top 10: valores más altos
+top10_mayores <- credito_ano %>%
+  slice_max(finan_credito, n = 10, with_ties = FALSE) %>%
+  arrange(desc(finan_credito))
+
+# Top 10: valores más bajos
+top10_menores <- credito_ano %>%
+  slice_min(finan_credito, n = 10, with_ties = FALSE) %>%
+  arrange(finan_credito)
+
+View(top10_mayores)
+View(top10_menores)

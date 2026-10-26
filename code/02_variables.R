@@ -118,9 +118,6 @@ variables_conservar <- c(
   # Características poblacionales
   "sisben_pobl_1", "sisben_pobl_10",
   
-  # Territorio
-  "minorias", "parques",
-  
   # Superfinanciera
   "cuenta_corriente", "cdt", "ahorro", "cartera",
   "provision_consumo", "provision_microcreditos",
@@ -173,3 +170,10 @@ base_completa_final <- base_completa_final %>%
       NA_real_
     )
   )
+
+# Se guarda base procesada 
+saveRDS(
+  base_completa_final,
+  file.path(processed, "base.rds")
+)
+

@@ -40,12 +40,6 @@ figures <- here::here("output", "figures")
 
 tables <- here::here("output", "tables")
 
-diagnostics <- here::here(
-  "output",
-  "tables",
-  "diagnostics"
-)
-
 
 # Importación de datos
 

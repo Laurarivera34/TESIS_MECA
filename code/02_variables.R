@@ -1,14 +1,23 @@
 #  SELECCIÓN Y DIAGNÓSTICO UNIVARIADO DE VARIABLES
 
-# 1. LIMPIAR ENTORNO
+# LIMPIAR ENTORNO
 rm(list = ls())
 
-# 2. PAQUETES
+# PAQUETES
 paquetes <- c(
   "tidyverse",
   "haven",
   "here",
-  "skimr"
+  "skimr",
+  "plotly",      # Gráficos interactivos
+  "osmdata",     # Obtener información de open street maps
+  "sf",          # Leer/escribir/manipular datos espaciales
+  "leaflet",     # Mapas interactivos
+  "gridExtra",   # Graficar en grid
+  "tmaptools",   # Geocode_OMS()
+  "geosphere",   # Calcular distancias geográficas como Haversine
+  "tidymodels",  # Carga recipes, parsnip, rsample, tune, y otros paquetes relacionados
+  "spatialsample" # Muestreo espacial
 )
 
 paquetes_faltantes <- paquetes[
@@ -25,28 +34,17 @@ invisible(
 )
 
 # 3. RUTAS
-root <- here::here()
+root <- here::here() # Función here sirve para buscar la raíz de proyecto
 
-processed <- here::here(
-  "data",
-  "processed"
-)
+data <- here::here("data", "raw")
 
-output <- here::here(
-  "output"
-)
+processed <- here::here("data", "processed")
 
-tables <- here::here(
-  "output",
-  "tables"
-)
+figures <- here::here("output", "figures")
 
-figures <- here::here(
-  "output",
-  "figures"
-)
+tables <- here::here("output", "tables")
 
-# 4. IMPORTAR BASES LIMPIAS
+# IMPORTAR BASES 
 base_municipal_final <- readRDS(
   file.path(processed, "base_municipal_final.rds")
 )
@@ -55,7 +53,13 @@ base_completa <- readRDS(
   file.path(processed, "base_completa.rds")
 )
 
-# 5. VARIABLES DE INTERÉS
+geoespacial <- readr::read_csv(
+  file.path(data, "divipolageo.csv"),
+  show_col_types = FALSE
+)
+
+
+# VARIABLES DE INTERÉS
 
 # Pasar todos los nombres a minúsculas
 base_municipal_final <- base_municipal_final %>%
@@ -128,10 +132,44 @@ base_completa_final <- base_municipal_final %>%
   select(all_of(variables_conservar)) %>%
   arrange(codmpio, ano)
 
+# BASE GEOESPACIAL
+geoespacial <- geoespacial %>%
+  rename(
+    codmpio = `Código Municipio`,
+    latitud = Latitud
+  ) %>%
+  mutate(
+    codmpio = as.integer(codmpio),
+    longitud = as.numeric(str_replace(as.character(longitud), ",", ".")),
+    latitud = as.numeric(str_replace(as.character(latitud), ",", ".")),
+    longitud = if_else(abs(longitud) > 180, longitud / 1e6, longitud)
+  )
 
+# Se une con mi base total
+base_completa_final <- base_completa_final %>%
+  mutate(codmpio = as.integer(codmpio)) %>%
+  left_join(
+    geoespacial %>% select(codmpio, longitud, latitud),
+    by = "codmpio",
+    relationship = "many-to-one",
+    na_matches = "never"
+  )
 
+# Comprobar si quedo alguno sin coordenadas
+base_completa_final %>%
+  filter(is.na(longitud) | is.na(latitud)) %>%
+  distinct(codmpio, municipio)
 
+geoespacial %>%
+  filter(codmpio %in% c(23685, 94663)) #No se encontraron correspondencias en la base geográfica para los códigos 23685 (sin nombre municipal registrado) y 94663 (Mapiripana [CD])
 
-# diagnostico univariado,missing, valores externos
-
-
+# SE CREAN VARIABLES DE LOS INDICADORES DE SOSTENIBILIDAD
+base_completa_final <- base_completa_final %>%
+  mutate(
+    servicio_deuda = g_int_deudap + finan_credito_amort,
+    carga_servicio_deuda = if_else(
+      y_corr > 0,
+      100 * servicio_deuda / y_corr,
+      NA_real_
+    )
+  )

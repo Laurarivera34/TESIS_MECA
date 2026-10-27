@@ -45,12 +45,12 @@ figures <- here::here("output", "figures")
 tables <- here::here("output", "tables")
 
 # IMPORTAR BASES 
-base_municipal_final <- readRDS(
-  file.path(processed, "base_municipal_final.rds")
+cede <- readRDS(
+  file.path(processed, "cede.rds")
 )
 
-base_completa <- readRDS(
-  file.path(processed, "base_completa.rds")
+cede_superfinanciera <- readRDS(
+  file.path(processed, "cede_superfinanciera.rds")
 )
 
 geoespacial <- readr::read_csv(
@@ -59,10 +59,10 @@ geoespacial <- readr::read_csv(
 )
 
 
-# VARIABLES DE INTERÉS
+############## PRIMER PARTE: VARIABLES DE INTERÉS
 
 # Pasar todos los nombres a minúsculas
-base_municipal_final <- base_municipal_final %>%
+base_completa_final <- cede_superfinanciera %>%
   rename_with(tolower)
 
 variables_conservar <- c(
@@ -121,15 +121,17 @@ variables_conservar <- c(
   # Superfinanciera
   "cuenta_corriente", "cdt", "ahorro", "cartera",
   "provision_consumo", "provision_microcreditos",
-  "provision_comercial", "cuentas_centralizadas", "oficinas"
+  "provision_comercial", "cuentas_centralizadas",
+  "oficinas", "oficinas_promedio", "trimestres_oficinas"
 )
 
-base_completa_final <- base_municipal_final %>%
+base_completa_final <- base_completa_final %>%
   filter(between(ano, 2000, 2023)) %>%
   select(all_of(variables_conservar)) %>%
   arrange(codmpio, ano)
 
-# BASE GEOESPACIAL
+
+############## SEGUNDA PARTE BASE GEOESPACIAL
 geoespacial <- geoespacial %>%
   rename(
     codmpio = `Código Municipio`,
@@ -158,9 +160,9 @@ base_completa_final %>%
   distinct(codmpio, municipio)
 
 geoespacial %>%
-  filter(codmpio %in% c(23685, 94663)) #No se encontraron correspondencias en la base geográfica para los códigos 23685 (sin nombre municipal registrado) y 94663 (Mapiripana [CD])
+  filter(codmpio %in% c(23685, 94663)) 
 
-# SE CREAN VARIABLES DE LOS INDICADORES DE SOSTENIBILIDAD
+############## TERCERA PARTE: SE CREAN VARIABLES DE LOS INDICADORES DE SOSTENIBILIDAD
 base_completa_final <- base_completa_final %>%
   mutate(
     servicio_deuda = g_int_deudap + finan_credito_amort,

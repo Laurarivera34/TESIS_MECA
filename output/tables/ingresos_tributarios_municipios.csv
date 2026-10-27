@@ -1,0 +1,2205 @@
+"codmpio","municipio","depto","ano","df2_categoria","y_corr_tribut"
+66001,"pereira","Risaralda",2021,"1",343928.631152
+5360,"itagui","Antioquia",2021,"1",312509.557242
+68081,"barrancabermeja","Santander",2021,"1",296069.706724
+54001,"cucuta","Norte de Santander",2021,"1",271113.667716
+5266,"envigado","Antioquia",2021,"1",270709.841435
+47001,"santa marta","Magdalena",2021,"1",247743.076548
+5615,"rionegro","Antioquia",2021,"1",235901.133431
+73001,"ibague","Tolima",2021,"1",225901.607758
+76892,"yumbo","Valle del Cauca",2021,"1",216435.159162
+50001,"villavicencio","Meta",2021,"1",214718.813049
+76520,"palmira","Valle del Cauca",2021,"1",196190.232221
+17001,"manizales","Caldas",2021,"1",193136.636348
+5088,"bello","Antioquia",2021,"1",178027.605003
+68276,"floridablanca","Santander",2021,"1",175710.677739
+25175,"chia","Cundinamarca",2021,"1",165391.795276
+25754,"soacha","Cundinamarca",2021,"1",162035.155862
+20001,"valledupar","Cesar",2021,"1",157353.943174
+15001,"tunja","Boyacá",2021,"1",156448.761764
+52001,"pasto","Nariño",2021,"1",155757.328312
+63001,"armenia","Quindio",2021,"1",146813.478145
+5631,"sabaneta","Antioquia",2021,"1",140719.006745
+41001,"neiva","Huila",2021,"1",136823.70378
+25286,"funza","Cundinamarca",2021,"1",133808.989042
+25473,"mosquera","Cundinamarca",2021,"1",122625.181886
+25214,"cota","Cundinamarca",2021,"2",140842.620924
+23001,"monteria","Córdoba",2021,"2",127671.786972
+76109,"buenaventura","Valle del Cauca",2021,"2",124412.57214
+19001,"popayan","Cauca",2021,"2",120231.492859
+25817,"tocancipa","Cundinamarca",2021,"2",114019.094241
+8758,"soledad","Atlántico",2021,"2",108699.08733
+70001,"sincelejo","Sucre",2021,"2",105781.431549
+66170,"dosquebradas","Risaralda",2021,"2",86157.34909
+25126,"cajica","Cundinamarca",2021,"2",86090.131271
+76364,"jamundi","Valle del Cauca",2021,"2",84814.178788
+68547,"piedecuesta","Santander",2021,"2",84406.94786
+68307,"giron","Santander",2021,"2",82259.651003
+85001,"yopal","Casanare",2021,"2",79745.014401
+76834,"tulua","Valle del Cauca",2021,"2",79319.634701
+25899,"zipaquira","Cundinamarca",2021,"2",73266.514988
+25290,"fusagasuga","Cundinamarca",2021,"2",72471.188966
+25430,"madrid","Cundinamarca",2021,"2",71971.213565
+5380,"la estrella","Antioquia",2021,"2",69654.152032
+15759,"sogamoso","Boyacá",2021,"2",62912.253263
+25269,"facatativa","Cundinamarca",2021,"2",59312.205079
+76111,"guadalajara de buga","Valle del Cauca",2021,"2",59046.977365
+25307,"girardot","Cundinamarca",2021,"2",54632.713891
+18001,"florencia","Caquetá",2021,"2",49163.896249
+25799,"tenjo","Cundinamarca",2021,"3",67590.022187
+8573,"puerto colombia","Atlántico",2021,"3",59468.629318
+50006,"acacias","Meta",2021,"3",59029.580684
+76130,"candelaria","Valle del Cauca",2021,"3",54916.333589
+5308,"girardota","Antioquia",2021,"3",52889.493487
+5376,"la ceja","Antioquia",2021,"3",52856.572048
+5607,"retiro","Antioquia",2021,"3",52354.773484
+50568,"puerto gaitan","Meta",2021,"3",47524.053467
+5045,"apartado","Antioquia",2021,"3",46381.716379
+15238,"duitama","Boyacá",2021,"3",44367.892582
+27001,"quibdo","Chocó",2021,"3",41927.545521
+5212,"copacabana","Antioquia",2021,"3",41567.708009
+5318,"guarne","Antioquia",2021,"3",40680.926705
+25758,"sopo","Cundinamarca",2021,"3",38417.30726
+5148,"el carmen de viboral","Antioquia",2021,"3",32512.050557
+5129,"caldas","Antioquia",2021,"3",31363.66718
+8433,"malambo","Atlántico",2021,"3",30692.130121
+52356,"ipiales","Nariño",2021,"3",27570.369749
+20400,"la jagua de ibirico","Cesar",2021,"3",22205.309098
+76147,"cartago","Valle del Cauca",2021,"4",49714.729244
+44001,"riohacha","La Guajira",2021,"4",44170.234513
+13836,"turbaco","Bolívar",2021,"4",37105.811311
+50573,"puerto lopez","Meta",2021,"4",37039.941305
+54405,"los patios","Norte de Santander",2021,"4",36871.018895
+5440,"marinilla","Antioquia",2021,"4",32377.735173
+73268,"espinal","Tolima",2021,"4",32192.184419
+41551,"pitalito","Huila",2021,"4",31857.812293
+54874,"villa del rosario","Norte de Santander",2021,"4",30084.312443
+81001,"arauca","Arauca",2021,"4",28105.254147
+52835,"san andres de tumaco","Nariño",2021,"4",27707.160405
+25035,"anapoima","Cundinamarca",2021,"4",27212.642395
+17380,"la dorada","Caldas",2021,"4",26860.440998
+25612,"ricaurte","Cundinamarca",2021,"4",25512.569106
+25377,"la calera","Cundinamarca",2021,"4",25305.218789
+5079,"barbosa","Antioquia",2021,"4",24463.309841
+44430,"maicao","La Guajira",2021,"4",23476.365585
+54498,"ocana","Norte de Santander",2021,"4",20758.051044
+20011,"aguachica","Cesar",2021,"4",18861.637294
+5736,"segovia","Antioquia",2021,"4",18588.366992
+44847,"uribia","La Guajira",2021,"4",15136.956614
+44560,"manaure","La Guajira",2021,"4",2543.882054
+70221,"covenas","Sucre",2021,"5",53390.515073
+15572,"puerto boyaca","Boyacá",2021,"5",51145.374174
+85010,"aguazul","Casanare",2021,"5",39475.870871
+73449,"melgar","Tolima",2021,"5",29649.511967
+15491,"nobsa","Boyacá",2021,"5",29046.465777
+85410,"tauramena","Casanare",2021,"5",27986.324205
+5837,"turbo","Antioquia",2021,"5",27757.331125
+5154,"caucasia","Antioquia",2021,"5",26266.547165
+50313,"granada","Meta",2021,"5",26197.385962
+25386,"la mesa","Cundinamarca",2021,"5",25186.130882
+76248,"el cerrito","Valle del Cauca",2021,"5",23630.06024
+66682,"santa rosa de cabal","Risaralda",2021,"5",22397.493984
+68679,"san gil","Santander",2021,"5",22350.388536
+25740,"sibate","Cundinamarca",2021,"5",22098.79271
+68406,"lebrija","Santander",2021,"5",21903.144795
+13430,"magangue","Bolívar",2021,"5",20667.875018
+76895,"zarzal","Valle del Cauca",2021,"5",20662.215141
+23660,"sahagun","Córdoba",2021,"5",20640.847463
+19698,"santander de quilichao","Cauca",2021,"5",20622.541199
+8296,"galapa","Atlántico",2021,"5",20279.298131
+44035,"albania","La Guajira",2021,"5",19844.860179
+47189,"cienaga","Magdalena",2021,"5",19411.693344
+5756,"sonson","Antioquia",2021,"5",19352.950338
+17174,"chinchina","Caldas",2021,"5",18901.911852
+63130,"calarca","Quindio",2021,"5",18603.27679
+15176,"chiquinquira","Boyacá",2021,"5",18507.175125
+19455,"miranda","Cauca",2021,"5",18347.950611
+19845,"villa rica","Cauca",2021,"5",17749.867551
+5042,"santafe de antioquia","Antioquia",2021,"5",17695.305679
+19573,"puerto tejada","Cauca",2021,"5",16954.307585
+85440,"villanueva","Casanare",2021,"5",16605.201504
+73275,"flandes","Tolima",2021,"5",16238.710207
+76113,"bugalagrande","Valle del Cauca",2021,"5",16063.877412
+91001,"leticia","Amazonas",2021,"5",15771.484857
+17873,"villamaria","Caldas",2021,"5",15698.181888
+15516,"paipa","Boyacá",2021,"5",15585.654382
+5604,"remedios","Antioquia",2021,"5",14982.374243
+5686,"santa rosa de osos","Antioquia",2021,"5",14423.501374
+50150,"castilla la nueva","Meta",2021,"5",14412.081114
+25200,"cogua","Cundinamarca",2021,"5",13907.76858
+23162,"cerete","Córdoba",2021,"5",13877.041909
+20770,"san martin","Cesar",2021,"5",12741.310673
+19300,"guachene","Cauca",2021,"5",12454.670788
+5893,"yondo","Antioquia",2021,"5",12097.669787
+25736,"sesquile","Cundinamarca",2021,"5",10459.938053
+5250,"el bagre","Antioquia",2021,"5",10386.391614
+27250,"el litoral del san juan","Chocó",2021,"5",9664.399909
+73124,"cajamarca","Tolima",2021,"5",8545.953067
+88564,"providencia","Archipiélago de San Andrés",2021,"5",2502.866544
+85162,"monterrey","Casanare",2021,"6",31906.123652
+76563,"pradera","Valle del Cauca",2021,"6",22836.849776
+5030,"amaga","Antioquia",2021,"6",19255.4746
+20013,"agustin codazzi","Cesar",2021,"6",18267.590751
+5579,"puerto berrio","Antioquia",2021,"6",18223.643611
+68190,"cimitarra","Santander",2021,"6",17665.283074
+41524,"palermo","Huila",2021,"6",17504.181113
+20178,"chiriguana","Cesar",2021,"6",17189.156748
+5172,"chigorodo","Antioquia",2021,"6",16644.083532
+5147,"carepa","Antioquia",2021,"6",16053.137229
+50226,"cumaral","Meta",2021,"6",15902.592805
+23417,"lorica","Córdoba",2021,"6",15582.325753
+8638,"sabanalarga","Atlántico",2021,"6",15496.25363
+23466,"montelibano","Córdoba",2021,"6",14770.317058
+15806,"tibasosa","Boyacá",2021,"6",14695.538271
+5664,"san pedro de los milagros","Antioquia",2021,"6",14632.42169
+23555,"planeta rica","Córdoba",2021,"6",14497.074734
+25875,"villeta","Cundinamarca",2021,"6",14471.088516
+70742,"san luis de since","Sucre",2021,"6",14380.032294
+5887,"yarumal","Antioquia",2021,"6",14305.743266
+15407,"villa de leyva","Boyacá",2021,"6",14020.260808
+41298,"garzon","Huila",2021,"6",13927.98051
+70215,"corozal","Sucre",2021,"6",13660.054513
+86568,"puerto asis","Putumayo",2021,"6",13541.896717
+25843,"villa de san diego de ubate","Cundinamarca",2021,"6",13528.86634
+19142,"caloto","Cauca",2021,"6",13380.415448
+63401,"la tebaida","Quindio",2021,"6",13364.579584
+73443,"san sebastian de mariquita","Tolima",2021,"6",13309.289253
+5697,"el santuario","Antioquia",2021,"6",13249.45658
+68755,"socorro","Santander",2021,"6",13188.848612
+73319,"guamo","Tolima",2021,"6",12431.117474
+25488,"nilo","Cundinamarca",2021,"6",12212.07309
+81736,"saravena","Arauca",2021,"6",12209.0237
+68655,"sabana de torres","Santander",2021,"6",12131.439132
+95001,"san jose del guaviare","Guaviare",2021,"6",12131.062264
+5656,"san jeronimo","Antioquia",2021,"6",11978.928937
+50606,"restrepo","Meta",2021,"6",11718.142628
+86001,"mocoa","Putumayo",2021,"6",11630.951869
+76275,"florida","Valle del Cauca",2021,"6",11428.445667
+25785,"tabio","Cundinamarca",2021,"6",11405.405363
+15646,"samaca","Boyacá",2021,"6",11375.390652
+50110,"barranca de upia","Meta",2021,"6",11364.884242
+25402,"la vega","Cundinamarca",2021,"6",11321.301664
+86320,"orito","Putumayo",2021,"6",11222.251175
+25295,"gachancipa","Cundinamarca",2021,"6",11102.323305
+85139,"mani","Casanare",2021,"6",11072.482924
+68575,"puerto wilches","Santander",2021,"6",11064.23048
+47745,"sitionuevo","Magdalena",2021,"6",10953.712846
+5895,"zaragoza","Antioquia",2021,"6",10936.039559
+41396,"la plata","Huila",2021,"6",10872.954208
+5490,"necocli","Antioquia",2021,"6",10794.283969
+25572,"puerto salgar","Cundinamarca",2021,"6",10770.389922
+5034,"andes","Antioquia",2021,"6",10759.712624
+85250,"paz de ariporo","Casanare",2021,"6",10754.508602
+27615,"riosucio","Chocó",2021,"6",10753.033604
+54810,"tibu","Norte de Santander",2021,"6",10700.896091
+50124,"cabuyaro","Meta",2021,"6",10584.236894
+76233,"dagua","Valle del Cauca",2021,"6",10572.269579
+76400,"la union","Valle del Cauca",2021,"6",10549.749436
+70820,"santiago de tolu","Sucre",2021,"6",10527.724673
+86573,"puerto leguizamo","Putumayo",2021,"6",10450.367841
+5234,"dabeiba","Antioquia",2021,"6",10340.810569
+76622,"roldanillo","Valle del Cauca",2021,"6",10207.27458
+76318,"guacari","Valle del Cauca",2021,"6",10194.132741
+5107,"briceno","Antioquia",2021,"6",9986.217585
+25245,"el colegio","Cundinamarca",2021,"6",9917.459528
+8078,"baranoa","Atlántico",2021,"6",9862.430416
+27025,"alto baudo","Chocó",2021,"6",9840.065352
+54518,"pamplona","Norte de Santander",2021,"6",9839.615459
+5761,"sopetran","Antioquia",2021,"6",9778.566348
+25322,"guasca","Cundinamarca",2021,"6",9775.122201
+25743,"silvania","Cundinamarca",2021,"6",9706.304502
+18753,"san vicente del caguan","Caquetá",2021,"6",9697.84952
+5400,"la union","Antioquia",2021,"6",9685.997702
+15837,"tuta","Boyacá",2021,"6",9582.982385
+20060,"bosconia","Cesar",2021,"6",9468.357751
+23580,"puerto libertador","Córdoba",2021,"6",9424.728528
+20621,"la paz","Cesar",2021,"6",9420.995115
+5585,"puerto nare","Antioquia",2021,"6",9404.235925
+20045,"becerril","Cesar",2021,"6",9345.250402
+73349,"honda","Tolima",2021,"6",9303.707827
+47288,"fundacion","Magdalena",2021,"6",9139.101902
+23182,"chinu","Córdoba",2021,"6",9121.262534
+5861,"venecia","Antioquia",2021,"6",9111.018847
+20383,"la gloria","Cesar",2021,"6",9051.829139
+63594,"quimbaya","Quindio",2021,"6",9036.137065
+23189,"cienaga de oro","Córdoba",2021,"6",9021.342425
+70708,"san marcos","Sucre",2021,"6",9014.917662
+15469,"moniquira","Boyacá",2021,"6",8943.183741
+5282,"fredonia","Antioquia",2021,"6",8915.083901
+15507,"otanche","Boyacá",2021,"6",8880.453397
+41615,"rivera","Huila",2021,"6",8849.40564
+68689,"san vicente de chucuri","Santander",2021,"6",8836.078107
+19418,"lopez","Cauca",2021,"6",8827.415236
+5321,"guatape","Antioquia",2021,"6",8803.811824
+47555,"plato","Magdalena",2021,"6",8705.344307
+85300,"sabanalarga","Casanare",2021,"6",8688.253412
+25320,"guaduas","Cundinamarca",2021,"6",8670.838908
+27077,"bajo baudo","Chocó",2021,"6",8619.760147
+5591,"puerto triunfo","Antioquia",2021,"6",8541.202931
+76890,"yotoco","Valle del Cauca",2021,"6",8504.538925
+73148,"carmen de apicala","Tolima",2021,"6",8432.670154
+23807,"tierralta","Córdoba",2021,"6",8368.506705
+94001,"inirida","Guainía",2021,"6",8311.525663
+73168,"chaparral","Tolima",2021,"6",8251.325471
+25183,"choconta","Cundinamarca",2021,"6",8243.536551
+25769,"subachoque","Cundinamarca",2021,"6",8242.855424
+50689,"san martin","Meta",2021,"6",8227.589968
+68572,"puente nacional","Santander",2021,"6",8210.813039
+81065,"arauquita","Arauca",2021,"6",8146.21697
+25260,"el rosal","Cundinamarca",2021,"6",8054.972767
+13052,"arjona","Bolívar",2021,"6",8019.898017
+19809,"timbiqui","Cauca",2021,"6",7919.795834
+23350,"la apartada","Córdoba",2021,"6",7825.297297
+85230,"orocue","Casanare",2021,"6",7809.696581
+86865,"valle del guamuez","Putumayo",2021,"6",7798.92428
+54261,"el zulia","Norte de Santander",2021,"6",7797.938128
+86885,"villagarzon","Putumayo",2021,"6",7729.245128
+99001,"puerto carreno","Vichada",2021,"6",7704.848855
+20710,"san alberto","Cesar",2021,"6",7691.170422
+81794,"tame","Arauca",2021,"6",7678.334325
+50680,"san carlos de guaroa","Meta",2021,"6",7672.961216
+85263,"pore","Casanare",2021,"6",7604.913467
+5237,"donmatias","Antioquia",2021,"6",7586.01484
+63470,"montenegro","Quindio",2021,"6",7569.470344
+25513,"pacho","Cundinamarca",2021,"6",7456.06913
+50318,"guamal","Meta",2021,"6",7445.766778
+44078,"barrancas","La Guajira",2021,"6",7428.241038
+17042,"anserma","Caldas",2021,"6",7405.83955
+15455,"miraflores","Boyacá",2021,"6",7382.871884
+20250,"el paso","Cesar",2021,"6",7332.189514
+70713,"san onofre","Sucre",2021,"6",7259.992843
+68077,"barbosa","Santander",2021,"6",7256.891598
+70823,"tolu viejo","Sucre",2021,"6",7252.79836
+54820,"toledo","Norte de Santander",2021,"6",7234.124756
+5809,"titiribi","Antioquia",2021,"6",7223.625016
+76126,"calima","Valle del Cauca",2021,"6",7187.950987
+66400,"la virginia","Risaralda",2021,"6",7121.158224
+73585,"purificacion","Tolima",2021,"6",7097.846844
+44090,"dibulla","La Guajira",2021,"6",7095.828511
+44650,"san juan del cesar","La Guajira",2021,"6",7091.295434
+76306,"ginebra","Valle del Cauca",2021,"6",6896.011722
+25815,"tocaima","Cundinamarca",2021,"6",6894.995281
+76736,"sevilla","Valle del Cauca",2021,"6",6882.291992
+73411,"libano","Tolima",2021,"6",6856.531057
+68615,"rionegro","Santander",2021,"6",6836.239883
+23068,"ayapel","Córdoba",2021,"6",6813.473866
+47980,"zona bananera","Magdalena",2021,"6",6808.92538
+25530,"paratebueno","Cundinamarca",2021,"6",6804.014048
+17614,"riosucio","Caldas",2021,"6",6759.313329
+5541,"penol","Antioquia",2021,"6",6738.669424
+5101,"ciudad bolivar","Antioquia",2021,"6",6696.248782
+27361,"istmina","Chocó",2021,"6",6676.732819
+73671,"saldana","Tolima",2021,"6",6669.681653
+68271,"florian","Santander",2021,"6",6667.087443
+5847,"urrao","Antioquia",2021,"6",6649.082659
+63190,"circasia","Quindio",2021,"6",6584.090766
+5674,"san vicente","Antioquia",2021,"6",6569.735044
+44279,"fonseca","La Guajira",2021,"6",6560.082915
+76036,"andalucia","Valle del Cauca",2021,"6",6511.672043
+41016,"aipe","Huila",2021,"6",6511.034498
+44378,"hatonuevo","La Guajira",2021,"6",6480.244767
+5690,"santo domingo","Antioquia",2021,"6",6422.636308
+13244,"el carmen de bolivar","Bolívar",2021,"6",6417.628109
+5264,"entrerrios","Antioquia",2021,"6",6410.528605
+41132,"campoalegre","Huila",2021,"6",6386.243788
+13688,"santa rosa del sur","Bolívar",2021,"6",6359.355886
+76616,"riofrio","Valle del Cauca",2021,"6",6317.587333
+68418,"los santos","Santander",2021,"6",6315.441377
+73408,"lerida","Tolima",2021,"6",6233.505222
+23570,"pueblo nuevo","Córdoba",2021,"6",6205.422401
+27425,"medio atrato","Chocó",2021,"6",6200.2775
+15367,"jenesano","Boyacá",2021,"6",6134.55046
+18150,"cartagena del chaira","Caquetá",2021,"6",6007.491671
+76122,"caicedonia","Valle del Cauca",2021,"6",5989.595231
+5138,"canasgordas","Antioquia",2021,"6",5970.672269
+73055,"armero","Tolima",2021,"6",5951.637438
+13442,"maria la baja","Bolívar",2021,"6",5945.891715
+5031,"amalfi","Antioquia",2021,"6",5908.434072
+23670,"san andres de sotavento","Córdoba",2021,"6",5754.502354
+23815,"tuchin","Córdoba",2021,"6",5743.635781
+47245,"el banco","Magdalena",2021,"6",5709.182883
+5480,"mutata","Antioquia",2021,"6",5640.899454
+5113,"buritica","Antioquia",2021,"6",5640.755008
+41885,"yaguara","Huila",2021,"6",5638.201937
+5368,"jerico","Antioquia",2021,"6",5605.790717
+17486,"neira","Caldas",2021,"6",5578.129647
+13468,"mompos","Bolívar",2021,"6",5575.554587
+68092,"betulia","Santander",2021,"6",5556.356348
+68079,"barichara","Santander",2021,"6",5551.566552
+23855,"valencia","Córdoba",2021,"6",5527.258931
+66088,"belen de umbria","Risaralda",2021,"6",5523.129581
+17524,"palestina","Caldas",2021,"6",5516.741873
+23079,"buenavista","Córdoba",2021,"6",5492.080608
+5051,"arboletes","Antioquia",2021,"6",5482.839663
+76670,"san pedro","Valle del Cauca",2021,"6",5477.267896
+25181,"choachi","Cundinamarca",2021,"6",5454.966883
+5361,"ituango","Antioquia",2021,"6",5425.984586
+25873,"villapinzon","Cundinamarca",2021,"6",5414.17248
+27430,"medio baudo","Chocó",2021,"6",5354.4273
+25486,"nemocon","Cundinamarca",2021,"6",5324.929725
+47551,"pivijay","Magdalena",2021,"6",5307.804396
+5665,"san pedro de uraba","Antioquia",2021,"6",5220.395208
+27800,"unguia","Chocó",2021,"6",5198.406912
+27150,"carmen del darien","Chocó",2021,"6",5080.782795
+66594,"quinchia","Risaralda",2021,"6",4985.868294
+25772,"suesca","Cundinamarca",2021,"6",4974.412861
+66075,"balboa","Risaralda",2021,"6",4875.90735
+5649,"san carlos","Antioquia",2021,"6",4863.646947
+15599,"ramiriqui","Boyacá",2021,"6",4861.269959
+17777,"supia","Caldas",2021,"6",4845.808692
+68861,"velez","Santander",2021,"6",4804.468505
+70670,"sampues","Sucre",2021,"6",4775.446081
+97001,"mitu","Vaupés",2021,"6",4759.750238
+68573,"puerto parra","Santander",2021,"6",4740.325786
+25099,"bojaca","Cundinamarca",2021,"6",4721.153126
+99524,"la primavera","Vichada",2021,"6",4717.533987
+5670,"san roque","Antioquia",2021,"6",4692.415344
+15861,"ventaquemada","Boyacá",2021,"6",4681.27832
+17013,"aguadas","Caldas",2021,"6",4677.009642
+19821,"toribio","Cauca",2021,"6",4645.770522
+25317,"guacheta","Cundinamarca",2021,"6",4644.017383
+5364,"jardin","Antioquia",2021,"6",4634.907495
+27491,"novita","Chocó",2021,"6",4617.437467
+27075,"bahia solano","Chocó",2021,"6",4607.765188
+73555,"planadas","Tolima",2021,"6",4607.328252
+19212,"corinto","Cauca",2021,"6",4595.441448
+5890,"yolombo","Antioquia",2021,"6",4593.149012
+63690,"salento","Quindio",2021,"6",4579.349056
+25151,"caqueza","Cundinamarca",2021,"6",4576.081357
+20228,"curumani","Cesar",2021,"6",4573.462483
+15514,"paez","Boyacá",2021,"6",4566.486743
+86571,"puerto guzman","Putumayo",2021,"6",4555.35125
+23672,"san antero","Córdoba",2021,"6",4542.390447
+5390,"la pintada","Antioquia",2021,"6",4521.913226
+68432,"malaga","Santander",2021,"6",4516.749349
+23686,"san pelayo","Córdoba",2021,"6",4500.761643
+18592,"puerto rico","Caquetá",2021,"6",4477.323312
+5190,"cisneros","Antioquia",2021,"6",4465.619772
+54172,"chinacota","Norte de Santander",2021,"6",4457.916916
+5789,"tamesis","Antioquia",2021,"6",4436.355525
+76606,"restrepo","Valle del Cauca",2021,"6",4429.882466
+18094,"belen de los andaquies","Caquetá",2021,"6",4416.4701
+15696,"santa sofia","Boyacá",2021,"6",4390.521356
+15690,"santa maria","Boyacá",2021,"6",4389.138815
+5659,"san juan de uraba","Antioquia",2021,"6",4380.735653
+5120,"caceres","Antioquia",2021,"6",4363.912565
+15299,"garagoa","Boyacá",2021,"6",4351.642531
+19548,"piendamo","Cauca",2021,"6",4346.76201
+73861,"venadillo","Tolima",2021,"6",4343.681423
+8421,"luruaco","Atlántico",2021,"6",4325.270283
+20238,"el copey","Cesar",2021,"6",4311.63574
+27745,"sipi","Chocó",2021,"6",4300.038193
+47058,"ariguani","Magdalena",2021,"6",4265.769279
+73026,"alvarado","Tolima",2021,"6",4259.538221
+18247,"el doncello","Caquetá",2021,"6",4216.877754
+19130,"cajibio","Cauca",2021,"6",4215.970427
+17877,"viterbo","Caldas",2021,"6",4198.978718
+13160,"cantagallo","Bolívar",2021,"6",4187.188854
+52240,"chachagui","Nariño",2021,"6",4160.106931
+76041,"ansermanuevo","Valle del Cauca",2021,"6",4150.214635
+5858,"vegachi","Antioquia",2021,"6",4145.03527
+76403,"la victoria","Valle del Cauca",2021,"6",4113.473988
+19807,"timbio","Cauca",2021,"6",4099.483836
+73283,"fresno","Tolima",2021,"6",4061.848461
+5790,"taraza","Antioquia",2021,"6",4060.42019
+13683,"santa rosa","Bolívar",2021,"6",4054.86425
+54673,"san cayetano","Norte de Santander",2021,"6",4048.381063
+41306,"gigante","Huila",2021,"6",4045.631352
+18410,"la montanita","Caquetá",2021,"6",4037.865423
+63272,"filandia","Quindio",2021,"6",4025.178254
+5679,"santa barbara","Antioquia",2021,"6",4001.528796
+50711,"vistahermosa","Meta",2021,"6",4000.915449
+5667,"san rafael","Antioquia",2021,"6",3992.891603
+50370,"uribe","Meta",2021,"6",3988.445511
+27450,"medio san juan","Chocó",2021,"6",3981.270098
+27205,"condoto","Chocó",2021,"6",3975.558473
+8685,"santo tomas","Atlántico",2021,"6",3929.993017
+13670,"san pablo","Bolívar",2021,"6",3911.568266
+23419,"los cordobas","Córdoba",2021,"6",3904.547519
+25658,"san francisco","Cundinamarca",2021,"6",3891.547859
+15897,"zetaquira","Boyacá",2021,"6",3884.746879
+5209,"concordia","Antioquia",2021,"6",3874.453389
+73200,"coello","Tolima",2021,"6",3854.082723
+52079,"barbacoas","Nariño",2021,"6",3822.799356
+70508,"ovejas","Sucre",2021,"6",3809.018875
+25123,"cachipay","Cundinamarca",2021,"6",3796.633644
+52352,"iles","Nariño",2021,"6",3780.304955
+52838,"tuquerres","Nariño",2021,"6",3777.470518
+13657,"san juan nepomuceno","Bolívar",2021,"6",3773.580188
+15763,"sotaquira","Boyacá",2021,"6",3750.021212
+99773,"cumaribo","Vichada",2021,"6",3749.310381
+50590,"puerto rico","Meta",2021,"6",3745.828363
+25178,"chipaque","Cundinamarca",2021,"6",3745.045873
+15322,"guateque","Boyacá",2021,"6",3740.251447
+5425,"maceo","Antioquia",2021,"6",3732.790409
+19050,"argelia","Cauca",2021,"6",3709.039739
+23090,"canalete","Córdoba",2021,"6",3691.090921
+85430,"trinidad","Casanare",2021,"6",3688.981853
+8634,"sabanagrande","Atlántico",2021,"6",3671.3382
+15204,"combita","Boyacá",2021,"6",3649.763644
+76497,"obando","Valle del Cauca",2021,"6",3641.399142
+25793,"tausa","Cundinamarca",2021,"6",3615.887095
+76020,"alcala","Valle del Cauca",2021,"6",3606.472257
+25745,"simijaca","Cundinamarca",2021,"6",3588.272129
+52260,"el tambo","Nariño",2021,"6",3584.815339
+13838,"turbana","Bolívar",2021,"6",3582.275321
+68368,"jesus maria","Santander",2021,"6",3551.441646
+68235,"el carmen de chucuri","Santander",2021,"6",3535.545527
+27099,"bojaya","Chocó",2021,"6",3526.893955
+8372,"juan de acosta","Atlántico",2021,"6",3522.680724
+23574,"puerto escondido","Córdoba",2021,"6",3508.809596
+25335,"guayabetal","Cundinamarca",2021,"6",3507.474211
+85325,"san luis de palenque","Casanare",2021,"6",3488.963803
+47053,"aracataca","Magdalena",2021,"6",3469.437158
+41668,"san agustin","Huila",2021,"6",3464.344278
+5873,"vigia del fuerte","Antioquia",2021,"6",3455.533
+8832,"tubara","Atlántico",2021,"6",3451.929037
+91540,"puerto narino","Amazonas",2021,"6",3448.447245
+54720,"sardinata","Norte de Santander",2021,"6",3443.048077
+5040,"anori","Antioquia",2021,"6",3429.911947
+86757,"san miguel","Putumayo",2021,"6",3419.511569
+5495,"nechi","Antioquia",2021,"6",3381.065094
+25878,"viota","Cundinamarca",2021,"6",3375.958956
+15135,"campohermoso","Boyacá",2021,"6",3369.665579
+66687,"santuario","Risaralda",2021,"6",3363.646732
+27073,"bagado","Chocó",2021,"6",3363.621277
+13744,"simiti","Bolívar",2021,"6",3351.624538
+86569,"puerto caicedo","Putumayo",2021,"6",3339.102956
+73483,"natagaima","Tolima",2021,"6",3334.806892
+20550,"pelaya","Cesar",2021,"6",3327.85119
+41020,"algeciras","Huila",2021,"6",3292.674408
+17541,"pensilvania","Caldas",2021,"6",3291.210922
+70429,"majagual","Sucre",2021,"6",3291.148956
+19355,"inza","Cauca",2021,"6",3265.772371
+50350,"la macarena","Meta",2021,"6",3258.667209
+5660,"san luis","Antioquia",2021,"6",3240.558027
+19780,"suarez","Cauca",2021,"6",3236.228713
+15757,"socha","Boyacá",2021,"6",3168.107595
+5310,"gomez plata","Antioquia",2021,"6",3164.711242
+68895,"zapatoca","Santander",2021,"6",3155.304797
+25645,"san antonio del tequendama","Cundinamarca",2021,"6",3150.660355
+27372,"jurado","Chocó",2021,"6",3149.379544
+76377,"la cumbre","Valle del Cauca",2021,"6",3146.359952
+5842,"uramita","Antioquia",2021,"6",3146.300886
+25288,"fuquene","Cundinamarca",2021,"6",3138.904185
+25797,"tena","Cundinamarca",2021,"6",3116.29818
+5284,"frontino","Antioquia",2021,"6",3115.446697
+15638,"sachica","Boyacá",2021,"6",3105.159851
+13222,"clemencia","Bolívar",2021,"6",3104.837126
+5642,"salgar","Antioquia",2021,"6",3103.752913
+68500,"oiba","Santander",2021,"6",3085.47237
+47460,"nueva granada","Magdalena",2021,"6",3066.04475
+20517,"pailitas","Cesar",2021,"6",3063.362525
+5093,"betulia","Antioquia",2021,"6",3040.629708
+76869,"vijes","Valle del Cauca",2021,"6",3029.999362
+68377,"la belleza","Santander",2021,"6",3029.264276
+25312,"granada","Cundinamarca",2021,"6",3023.894525
+5038,"angostura","Antioquia",2021,"6",3015.925072
+66440,"marsella","Risaralda",2021,"6",3014.228851
+5306,"giraldo","Antioquia",2021,"6",3011.181603
+13188,"cicuco","Bolívar",2021,"6",3004.656161
+70678,"san benito abad","Sucre",2021,"6",2988.774833
+15480,"muzo","Boyacá",2021,"6",2978.88976
+41006,"acevedo","Huila",2021,"6",2970.875321
+17653,"salamina","Caldas",2021,"6",2947.587044
+5854,"valdivia","Antioquia",2021,"6",2946.140708
+52788,"tangua","Nariño",2021,"6",2935.164297
+52678,"samaniego","Nariño",2021,"6",2924.945313
+73226,"cunday","Tolima",2021,"6",2923.707025
+52540,"policarpa","Nariño",2021,"6",2921.872663
+20787,"tamalameque","Cesar",2021,"6",2919.208169
+70265,"guaranda","Sucre",2021,"6",2916.016667
+20750,"san diego","Cesar",2021,"6",2913.978754
+25040,"anolaima","Cundinamarca",2021,"6",2913.025795
+54250,"el tarra","Norte de Santander",2021,"6",2891.837164
+76823,"toro","Valle del Cauca",2021,"6",2887.201318
+25224,"cucunuba","Cundinamarca",2021,"6",2860.497316
+50287,"fuente de oro","Meta",2021,"6",2860.014035
+5197,"cocorna","Antioquia",2021,"6",2851.606266
+50577,"puerto lleras","Meta",2021,"6",2837.741897
+15667,"san luis de gaceno","Boyacá",2021,"6",2836.218842
+52490,"olaya herrera","Nariño",2021,"6",2809.880885
+25599,"apulo","Cundinamarca",2021,"6",2807.302042
+25053,"arbelaez","Cundinamarca",2021,"6",2802.669886
+25001,"agua de dios","Cundinamarca",2021,"6",2801.336167
+5002,"abejorral","Antioquia",2021,"6",2801.051156
+19256,"el tambo","Cauca",2021,"6",2799.841734
+73547,"piedras","Tolima",2021,"6",2796.660274
+18256,"el paujil","Caquetá",2021,"6",2792.822204
+41770,"suaza","Huila",2021,"6",2777.411158
+25718,"sasaima","Cundinamarca",2021,"6",2746.722168
+13673,"santa catalina","Bolívar",2021,"6",2746.388605
+85225,"nunchia","Casanare",2021,"6",2731.256383
+17513,"pacora","Caldas",2021,"6",2721.818693
+52399,"la union","Nariño",2021,"6",2720.978197
+73504,"ortega","Tolima",2021,"6",2716.086206
+23675,"san bernardo del viento","Córdoba",2021,"6",2711.974151
+70235,"galeras","Sucre",2021,"6",2692.13158
+19473,"morales","Cauca",2021,"6",2688.265325
+17433,"manzanares","Caldas",2021,"6",2673.97506
+68229,"curiti","Santander",2021,"6",2650.491598
+17088,"belalcazar","Caldas",2021,"6",2642.611206
+20175,"chimichagua","Cesar",2021,"6",2635.897305
+17867,"victoria","Caldas",2021,"6",2628.456447
+73067,"ataco","Tolima",2021,"6",2622.261977
+15223,"cubara","Boyacá",2021,"6",2607.905704
+76828,"trujillo","Valle del Cauca",2021,"6",2607.039607
+73217,"coyaima","Tolima",2021,"6",2605.900859
+68167,"charala","Santander",2021,"6",2593.998359
+73624,"rovira","Tolima",2021,"6",2586.875173
+25293,"gachala","Cundinamarca",2021,"6",2579.760804
+25839,"ubala","Cundinamarca",2021,"6",2564.003573
+5792,"tarso","Antioquia",2021,"6",2557.747703
+27787,"tado","Chocó",2021,"6",2549.999054
+68255,"el playon","Santander",2021,"6",2545.138158
+25279,"fomeque","Cundinamarca",2021,"6",2540.430915
+20295,"gamarra","Cesar",2021,"6",2534.800128
+54385,"la esperanza","Norte de Santander",2021,"6",2527.397199
+54003,"abrego","Norte de Santander",2021,"6",2523.015759
+54206,"convencion","Norte de Santander",2021,"6",2520.179411
+20570,"pueblo bello","Cesar",2021,"6",2519.63851
+15047,"aquitania","Boyacá",2021,"6",2488.135436
+47707,"santa ana","Magdalena",2021,"6",2485.741664
+68464,"mogotes","Santander",2021,"6",2484.729728
+81300,"fortul","Arauca",2021,"6",2473.018139
+85125,"hato corozal","Casanare",2021,"6",2470.342696
+73678,"san luis","Tolima",2021,"6",2443.632997
+52786,"taminango","Nariño",2021,"6",2440.403786
+27413,"lloro","Chocó",2021,"6",2431.875315
+54800,"teorama","Norte de Santander",2021,"6",2429.37837
+41359,"isnos","Huila",2021,"6",2427.143618
+76100,"bolivar","Valle del Cauca",2021,"6",2425.842213
+41319,"guadalupe","Huila",2021,"6",2388.161705
+41797,"tesalia","Huila",2021,"6",2379.854309
+17665,"san jose","Caldas",2021,"6",2378.690363
+70124,"caimito","Sucre",2021,"6",2371.71308
+5411,"liborina","Antioquia",2021,"6",2366.694246
+41807,"timana","Huila",2021,"6",2364.775913
+50400,"lejanias","Meta",2021,"6",2355.316663
+17442,"marmato","Caldas",2021,"6",2340.937335
+52250,"el charco","Nariño",2021,"6",2307.653059
+15693,"santa rosa de viterbo","Boyacá",2021,"6",2299.93479
+41799,"tello","Huila",2021,"6",2292.466977
+52683,"sandona","Nariño",2021,"6",2286.140522
+5856,"valparaiso","Antioquia",2021,"6",2284.845376
+66045,"apia","Risaralda",2021,"6",2284.114924
+68385,"landazuri","Santander",2021,"6",2266.372473
+23500,"monitos","Córdoba",2021,"6",2258.64944
+68020,"albania","Santander",2021,"6",2257.322679
+76250,"el dovio","Valle del Cauca",2021,"6",2253.843295
+5091,"betania","Antioquia",2021,"6",2249.022448
+73616,"rioblanco","Tolima",2021,"6",2248.263099
+5315,"guadalupe","Antioquia",2021,"6",2246.484761
+47570,"puebloviejo","Magdalena",2021,"6",2236.43749
+66572,"pueblo rico","Risaralda",2021,"6",2223.286377
+68101,"bolivar","Santander",2021,"6",2214.037622
+25297,"gacheta","Cundinamarca",2021,"6",2211.857757
+52210,"contadero","Nariño",2021,"6",2210.378407
+5240,"ebejico","Antioquia",2021,"6",2206.465752
+17662,"samana","Caldas",2021,"6",2202.795178
+25148,"caparrapi","Cundinamarca",2021,"6",2190.280129
+17616,"risaralda","Caldas",2021,"6",2187.428142
+20614,"rio de oro","Cesar",2021,"6",2174.670108
+15776,"sutamarchan","Boyacá",2021,"6",2173.098056
+25326,"guatavita","Cundinamarca",2021,"6",2168.553519
+95025,"el retorno","Guaviare",2021,"6",2163.950954
+50325,"mapiripan","Meta",2021,"6",2155.274389
+27495,"nuqui","Chocó",2021,"6",2154.222072
+54174,"chitaga","Norte de Santander",2021,"6",2146.033756
+18610,"san jose del fragua","Caquetá",2021,"6",2143.781964
+68549,"pinchote","Santander",2021,"6",2142.008402
+66318,"guatica","Risaralda",2021,"6",2137.730821
+68820,"tona","Santander",2021,"6",2134.622248
+50450,"puerto concordia","Meta",2021,"6",2130.294928
+52317,"guachucal","Nariño",2021,"6",2119.406413
+8606,"repelon","Atlántico",2021,"6",2111.301382
+19110,"buenos aires","Cauca",2021,"6",2109.214473
+17495,"norcasia","Caldas",2021,"6",2101.358952
+15600,"raquira","Boyacá",2021,"6",2090.534641
+5576,"pueblorrico","Antioquia",2021,"6",2088.856662
+73563,"prado","Tolima",2021,"6",2086.508747
+25407,"lenguazaque","Cundinamarca",2021,"6",2085.650233
+50683,"san juan de arama","Meta",2021,"6",2081.296202
+68770,"suaita","Santander",2021,"6",2079.32936
+23464,"momil","Córdoba",2021,"6",2078.575653
+19100,"bolivar","Cauca",2021,"6",2056.819112
+18860,"valparaiso","Caquetá",2021,"6",2052.753248
+5475,"murindo","Antioquia",2021,"6",2045.683044
+15632,"saboya","Boyacá",2021,"6",2043.867525
+27660,"san jose del palmar","Chocó",2021,"6",2039.09632
+8560,"ponedera","Atlántico",2021,"6",2033.590843
+18460,"milan","Caquetá",2021,"6",2029.356874
+70204,"coloso","Sucre",2021,"6",2029.222858
+70418,"los palmitos","Sucre",2021,"6",2012.469368
+97666,"taraira","Vaupés",2021,"6",2004.727713
+70110,"buenavista","Sucre",2021,"6",2004.021151
+70702,"san juan de betulia","Sucre",2021,"6",1998.128276
+50251,"el castillo","Meta",2021,"6",1997.217293
+8520,"palmar de varela","Atlántico",2021,"6",1988.227358
+70717,"san pedro","Sucre",2021,"6",1987.753638
+27600,"rio quito","Chocó",2021,"6",1985.038204
+73347,"herveo","Tolima",2021,"6",1982.407436
+20032,"astrea","Cesar",2021,"6",1979.921555
+68745,"simacota","Santander",2021,"6",1978.540712
+19137,"caldono","Cauca",2021,"6",1955.14162
+23678,"san carlos","Córdoba",2021,"6",1953.365783
+15755,"socota","Boyacá",2021,"6",1947.247661
+54099,"bochalema","Norte de Santander",2021,"6",1943.792491
+15753,"soata","Boyacá",2021,"6",1937.859778
+15272,"firavitoba","Boyacá",2021,"6",1926.149664
+5885,"yali","Antioquia",2021,"6",1925.770548
+52110,"buesaco","Nariño",2021,"6",1923.493564
+44110,"el molino","La Guajira",2021,"6",1914.694224
+47798,"tenerife","Magdalena",2021,"6",1905.483329
+52585,"pupiales","Nariño",2021,"6",1894.855574
+25019,"alban","Cundinamarca",2021,"6",1894.769705
+50330,"mesetas","Meta",2021,"6",1892.134679
+15764,"soraca","Boyacá",2021,"6",1873.70492
+17050,"aranzazu","Caldas",2021,"6",1868.636139
+44874,"villanueva","La Guajira",2021,"6",1867.26358
+15087,"belen","Boyacá",2021,"6",1849.272444
+41026,"altamira","Huila",2021,"6",1846.062637
+25491,"nocaima","Cundinamarca",2021,"6",1827.595111
+41349,"hobo","Huila",2021,"6",1825.611773
+5142,"caracoli","Antioquia",2021,"6",1821.782893
+73030,"ambalema","Tolima",2021,"6",1805.439098
+15476,"motavita","Boyacá",2021,"6",1797.311834
+15804,"tibana","Boyacá",2021,"6",1796.86087
+47318,"guamal","Magdalena",2021,"6",1794.369827
+66456,"mistrato","Risaralda",2021,"6",1778.947167
+17272,"filadelfia","Caldas",2021,"6",1776.899074
+15686,"santana","Boyacá",2021,"6",1775.903966
+73770,"suarez","Tolima",2021,"6",1773.58359
+23682,"san jose de ure","Córdoba",2021,"6",1760.885817
+52233,"cumbitara","Nariño",2021,"6",1759.59109
+41791,"tarqui","Huila",2021,"6",1751.782197
+5086,"belmira","Antioquia",2021,"6",1750.172355
+15842,"umbita","Boyacá",2021,"6",1747.574641
+19517,"paez","Cauca",2021,"6",1746.443464
+13654,"san jacinto","Bolívar",2021,"6",1740.725021
+25592,"quebradanegra","Cundinamarca",2021,"6",1740.36876
+25662,"san juan de rio seco","Cundinamarca",2021,"6",1734.637565
+5125,"caicedo","Antioquia",2021,"6",1731.515514
+52612,"ricaurte","Nariño",2021,"6",1728.452141
+54670,"san calixto","Norte de Santander",2021,"6",1727.978558
+70400,"la union","Sucre",2021,"6",1724.805012
+73352,"icononzo","Tolima",2021,"6",1720.409939
+52573,"puerres","Nariño",2021,"6",1719.043136
+13894,"zambrano","Bolívar",2021,"6",1716.132623
+25426,"macheta","Cundinamarca",2021,"6",1708.383818
+15681,"san pablo de borbur","Boyacá",2021,"6",1707.766369
+54377,"labateca","Norte de Santander",2021,"6",1696.130188
+23300,"cotorra","Córdoba",2021,"6",1694.570753
+70473,"morroa","Sucre",2021,"6",1694.289189
+54245,"el carmen","Norte de Santander",2021,"6",1689.66374
+52224,"cuaspud","Nariño",2021,"6",1687.814078
+5313,"granada","Antioquia",2021,"6",1685.644525
+13433,"mahates","Bolívar",2021,"6",1684.920503
+54743,"silos","Norte de Santander",2021,"6",1677.903057
+5647,"san andres de cuerquia","Antioquia",2021,"6",1675.623665
+52427,"magui","Nariño",2021,"6",1674.966819
+41013,"agrado","Huila",2021,"6",1674.595676
+27810,"union panamericana","Chocó",2021,"6",1672.445177
+13042,"arenal","Bolívar",2021,"6",1672.022701
+68051,"aratoca","Santander",2021,"6",1671.599806
+44420,"la jagua del pilar","La Guajira",2021,"6",1667.249175
+52405,"leiva","Nariño",2021,"6",1653.248068
+15500,"oicata","Boyacá",2021,"6",1652.467898
+19364,"jambalo","Cauca",2021,"6",1647.241098
+13473,"morales","Bolívar",2021,"6",1645.992469
+15542,"pesca","Boyacá",2021,"6",1644.250308
+15664,"san jose de pare","Boyacá",2021,"6",1644.164003
+68669,"san andres","Santander",2021,"6",1644.096918
+15104,"boyaca","Boyacá",2021,"6",1642.609206
+47692,"san sebastian de buenavista","Magdalena",2021,"6",1631.76326
+20443,"manaure","Cesar",2021,"6",1631.022077
+15051,"arcabuco","Boyacá",2021,"6",1625.845098
+41378,"la argentina","Huila",2021,"6",1625.383985
+52418,"los andes","Nariño",2021,"6",1624.509205
+50223,"san luis de cubarral","Meta",2021,"6",1623.707803
+47545,"pijino del carmen","Magdalena",2021,"6",1618.749164
+27160,"certegui","Chocó",2021,"6",1612.869663
+86749,"sibundoy","Putumayo",2021,"6",1590.943828
+52621,"roberto payan","Nariño",2021,"6",1590.187786
+52258,"el tablon de gomez","Nariño",2021,"6",1589.803259
+52378,"la cruz","Nariño",2021,"6",1588.715385
+17444,"marquetalia","Caldas",2021,"6",1558.043293
+68327,"guepsa","Santander",2021,"6",1555.511868
+19513,"padilla","Cauca",2021,"6",1548.220606
+52885,"yacuanquer","Nariño",2021,"6",1548.024092
+41078,"baraya","Huila",2021,"6",1547.562715
+5467,"montebello","Antioquia",2021,"6",1545.012669
+95015,"calamar","Guaviare",2021,"6",1544.524583
+15778,"sutatenza","Boyacá",2021,"6",1538.425669
+63548,"pijao","Quindio",2021,"6",1525.138918
+47030,"algarrobo","Magdalena",2021,"6",1523.810804
+5134,"campamento","Antioquia",2021,"6",1523.436549
+25779,"susa","Cundinamarca",2021,"6",1523.365523
+15740,"siachoque","Boyacá",2021,"6",1521.356485
+41872,"villavieja","Huila",2021,"6",1517.46697
+27135,"el canton del san pablo","Chocó",2021,"6",1505.980142
+5145,"caramanta","Antioquia",2021,"6",1505.649611
+25885,"yacopi","Cundinamarca",2021,"6",1486.583949
+54520,"pamplonita","Norte de Santander",2021,"6",1469.681133
+68872,"villanueva","Santander",2021,"6",1467.322446
+19824,"totoro","Cauca",2021,"6",1462.309829
+15425,"macanal","Boyacá",2021,"6",1457.640516
+25535,"pasca","Cundinamarca",2021,"6",1453.376427
+13780,"talaigua nuevo","Bolívar",2021,"6",1443.919991
+13647,"san estanislao","Bolívar",2021,"6",1439.534034
+5347,"heliconia","Antioquia",2021,"6",1436.93576
+86760,"santiago","Putumayo",2021,"6",1436.935259
+15224,"cucaita","Boyacá",2021,"6",1432.475367
+23168,"chima","Córdoba",2021,"6",1429.846953
+25649,"san bernardo","Cundinamarca",2021,"6",1429.064515
+19743,"silvia","Cauca",2021,"6",1428.61865
+8549,"piojo","Atlántico",2021,"6",1421.31368
+81591,"puerto rondon","Arauca",2021,"6",1418.044185
+5044,"anza","Antioquia",2021,"6",1415.089866
+13074,"barranco de loba","Bolívar",2021,"6",1409.942888
+8849,"usiacuri","Atlántico",2021,"6",1400.304861
+52699,"santacruz","Nariño",2021,"6",1398.519771
+19075,"balboa","Cauca",2021,"6",1398.046427
+47660,"sabanas de san angel","Magdalena",2021,"6",1398.032747
+25781,"sutatausa","Cundinamarca",2021,"6",1397.385004
+44098,"distraccion","La Guajira",2021,"6",1396.834677
+73236,"dolores","Tolima",2021,"6",1390.397424
+41518,"paicol","Huila",2021,"6",1388.411771
+18029,"albania","Caquetá",2021,"6",1386.351216
+41548,"pital","Huila",2021,"6",1385.158685
+18756,"solano","Caquetá",2021,"6",1380.649799
+5206,"concepcion","Antioquia",2021,"6",1380.16496
+5150,"carolina","Antioquia",2021,"6",1376.301361
+52693,"san pablo","Nariño",2021,"6",1375.809261
+47268,"el reten","Magdalena",2021,"6",1374.809506
+73675,"san antonio","Tolima",2021,"6",1363.781644
+25851,"utica","Cundinamarca",2021,"6",1362.598286
+5819,"toledo","Antioquia",2021,"6",1361.54497
+13140,"calamar","Bolívar",2021,"6",1356.497654
+27006,"acandi","Chocó",2021,"6",1355.744713
+68162,"cerrito","Santander",2021,"6",1351.33316
+52227,"cumbal","Nariño",2021,"6",1351.289887
+27245,"el carmen de atrato","Chocó",2021,"6",1350.197293
+5652,"san francisco","Antioquia",2021,"6",1338.582755
+8137,"campo de la cruz","Atlántico",2021,"6",1337.776412
+52215,"cordoba","Nariño",2021,"6",1334.143426
+70523,"palmito","Sucre",2021,"6",1333.316663
+15676,"san miguel de sema","Boyacá",2021,"6",1329.743665
+63302,"genova","Quindio",2021,"6",1328.421371
+25154,"carmen de carupa","Cundinamarca",2021,"6",1321.707371
+54871,"villa caro","Norte de Santander",2021,"6",1316.264688
+5353,"hispania","Antioquia",2021,"6",1310.798237
+5055,"argelia","Antioquia",2021,"6",1305.52915
+47703,"san zenon","Magdalena",2021,"6",1296.967994
+19585,"purace","Cauca",2021,"6",1296.228711
+27580,"rio iro","Chocó",2021,"6",1295.258738
+15494,"nuevo colon","Boyacá",2021,"6",1292.717376
+18205,"curillo","Caquetá",2021,"6",1289.247524
+13062,"arroyohondo","Bolívar",2021,"6",1288.118214
+15531,"pauna","Boyacá",2021,"6",1286.92235
+5036,"angelopolis","Antioquia",2021,"6",1282.382324
+52687,"san lorenzo","Nariño",2021,"6",1276.200753
+15822,"tota","Boyacá",2021,"6",1269.575484
+25841,"ubaque","Cundinamarca",2021,"6",1269.283233
+52390,"la tola","Nariño",2021,"6",1269.259622
+13006,"achi","Bolívar",2021,"6",1267.486162
+15215,"corrales","Boyacá",2021,"6",1261.288423
+25898,"zipacon","Cundinamarca",2021,"6",1260.103935
+25086,"beltran","Cundinamarca",2021,"6",1258.972117
+68855,"valle de san jose","Santander",2021,"6",1247.145957
+15814,"toca","Boyacá",2021,"6",1243.945886
+52320,"guaitarilla","Nariño",2021,"6",1241.222557
+68533,"paramo","Santander",2021,"6",1237.629666
+68444,"matanza","Santander",2021,"6",1237.086309
+15537,"paz de rio","Boyacá",2021,"6",1229.182731
+5483,"narino","Antioquia",2021,"6",1219.684842
+5628,"sabanalarga","Antioquia",2021,"6",1217.650698
+52354,"imues","Nariño",2021,"6",1217.415798
+18479,"morelia","Caquetá",2021,"6",1210.446147
+25862,"vergara","Cundinamarca",2021,"6",1206.378134
+47675,"salamina","Magdalena",2021,"6",1204.334913
+25489,"nimaima","Cundinamarca",2021,"6",1200.131598
+18785,"solita","Caquetá",2021,"6",1187.467962
+15466,"mongui","Boyacá",2021,"6",1179.474619
+85400,"tamara","Casanare",2021,"6",1177.570541
+8141,"candelaria","Atlántico",2021,"6",1175.980345
+25394,"la palma","Cundinamarca",2021,"6",1175.334919
+68322,"guapota","Santander",2021,"6",1175.032737
+15244,"el cocuy","Boyacá",2021,"6",1168.09159
+54660,"salazar","Norte de Santander",2021,"6",1164.557239
+13667,"san martin de loba","Bolívar",2021,"6",1162.275732
+25438,"medina","Cundinamarca",2021,"6",1159.060261
+25594,"quetame","Cundinamarca",2021,"6",1157.537359
+52385,"la llanada","Nariño",2021,"6",1155.223401
+25777,"supata","Cundinamarca",2021,"6",1147.151472
+13549,"pinillos","Bolívar",2021,"6",1143.888839
+73870,"villahermosa","Tolima",2021,"6",1143.570889
+41676,"santa maria","Huila",2021,"6",1136.168821
+8436,"manati","Atlántico",2021,"6",1135.200019
+47170,"chivolo","Magdalena",2021,"6",1133.476267
+13300,"hatillo de loba","Bolívar",2021,"6",1132.935155
+25483,"narino","Cundinamarca",2021,"6",1120.490284
+5543,"peque","Antioquia",2021,"6",1119.279976
+13873,"villanueva","Bolívar",2021,"6",1116.920077
+52019,"alban","Nariño",2021,"6",1114.75992
+15185,"chitaraque","Boyacá",2021,"6",1109.155591
+50270,"el dorado","Meta",2021,"6",1101.390869
+76863,"versalles","Valle del Cauca",2021,"6",1094.799585
+25845,"une","Cundinamarca",2021,"6",1085.340455
+54344,"hacari","Norte de Santander",2021,"6",1081.460764
+76845,"ulloa","Valle del Cauca",2021,"6",1081.305254
+19785,"sucre","Cauca",2021,"6",1078.023478
+95200,"miraflores","Guaviare",2021,"6",1076.561001
+52323,"gualmatan","Nariño",2021,"6",1076.436417
+15790,"tasco","Boyacá",2021,"6",1069.093725
+52254,"el penol","Nariño",2021,"6",1066.569842
+15325,"guayata","Boyacá",2021,"6",1062.22623
+73520,"palocabildo","Tolima",2021,"6",1061.433744
+66383,"la celia","Risaralda",2021,"6",1059.371806
+15808,"tinjaca","Boyacá",2021,"6",1056.221844
+15580,"quipama","Boyacá",2021,"6",1055.078512
+5059,"armenia","Antioquia",2021,"6",1044.068324
+19450,"mercaderes","Cauca",2021,"6",1042.687979
+27050,"atrato","Chocó",2021,"6",1036.505899
+15187,"chivata","Boyacá",2021,"6",1035.980584
+68147,"capitanejo","Santander",2021,"6",1034.861034
+25372,"junin","Cundinamarca",2021,"6",1032.038784
+76243,"el aguila","Valle del Cauca",2021,"6",1030.03757
+41503,"oporapa","Huila",2021,"6",1029.26616
+44855,"urumita","La Guajira",2021,"6",1024.459307
+25805,"tibacuy","Cundinamarca",2021,"6",1024.313224
+15835,"turmeque","Boyacá",2021,"6",1023.61003
+15180,"chiscas","Boyacá",2021,"6",1021.37354
+52381,"la florida","Nariño",2021,"6",1016.98375
+15232,"chiquiza","Boyacá",2021,"6",1015.962629
+15183,"chita","Boyacá",2021,"6",1015.487201
+8558,"polonuevo","Atlántico",2021,"6",1014.35051
+73024,"alpujarra","Tolima",2021,"6",1012.312805
+52696,"santa barbara","Nariño",2021,"6",1011.864661
+15533,"paya","Boyacá",2021,"6",1010.138012
+99624,"santa rosalia","Vichada",2021,"6",1009.137806
+19022,"almaguer","Cauca",2021,"6",1003.425027
+19397,"la vega","Cauca",2021,"6",999.962564
+25524,"pandi","Cundinamarca",2021,"6",998.916417
+54239,"durania","Norte de Santander",2021,"6",994.732301
+13600,"rio viejo","Bolívar",2021,"6",981.657234
+68296,"galan","Santander",2021,"6",978.645543
+76054,"argelia","Valle del Cauca",2021,"6",978.178819
+25324,"guataqui","Cundinamarca",2021,"6",978.140179
+23586,"purisima","Córdoba",2021,"6",970.904682
+85015,"chameza","Casanare",2021,"6",963.744396
+13650,"san fernando","Bolívar",2021,"6",957.319066
+68169,"charta","Santander",2021,"6",956.460191
+73043,"anzoategui","Tolima",2021,"6",940.902597
+25867,"viani","Cundinamarca",2021,"6",940.762119
+13580,"regidor","Bolívar",2021,"6",939.906316
+68320,"guadalupe","Santander",2021,"6",934.678528
+68176,"chima","Santander",2021,"6",933.464015
+68318,"guaca","Santander",2021,"6",928.698324
+68179,"chipata","Santander",2021,"6",919.480816
+15332,"guican","Boyacá",2021,"6",915.157308
+76246,"el cairo","Valle del Cauca",2021,"6",914.831072
+52287,"funes","Nariño",2021,"6",909.209734
+68298,"gambita","Santander",2021,"6",904.370994
+15832,"tunungua","Boyacá",2021,"6",902.121319
+19533,"piamonte","Cauca",2021,"6",901.972956
+25120,"cabrera","Cundinamarca",2021,"6",901.945396
+68468,"molagavita","Santander",2021,"6",898.922637
+68209,"confines","Santander",2021,"6",890.880648
+15131,"caldas","Boyacá",2021,"6",887.663927
+41801,"teruel","Huila",2021,"6",887.499562
+5501,"olaya","Antioquia",2021,"6",885.34339
+25596,"quipile","Cundinamarca",2021,"6",884.091322
+41357,"iquira","Huila",2021,"6",879.090561
+25168,"chaguani","Cundinamarca",2021,"6",874.105797
+15442,"maripi","Boyacá",2021,"6",871.795445
+54128,"cachira","Norte de Santander",2021,"6",865.298839
+68498,"ocamonte","Santander",2021,"6",865.248449
+52411,"linares","Nariño",2021,"6",858.674193
+52506,"ospina","Nariño",2021,"6",855.073852
+41660,"saladoblanco","Huila",2021,"6",854.330369
+52473,"mosquera","Nariño",2021,"6",851.718368
+54051,"arboledas","Norte de Santander",2021,"6",850.846852
+15816,"togui","Boyacá",2021,"6",848.734809
+13030,"altos del rosario","Bolívar",2021,"6",847.444838
+68705,"santa barbara","Santander",2021,"6",845.877666
+25368,"jerusalen","Cundinamarca",2021,"6",840.510842
+73270,"falan","Tolima",2021,"6",836.638198
+73461,"murillo","Tolima",2021,"6",832.803528
+19622,"rosas","Cauca",2021,"6",832.058942
+15097,"boavita","Boyacá",2021,"6",831.270211
+15109,"buenavista","Boyacá",2021,"6",818.554063
+54109,"bucarasica","Norte de Santander",2021,"6",816.682389
+41530,"palestina","Huila",2021,"6",816.522625
+15762,"sora","Boyacá",2021,"6",816.293288
+13248,"el guamo","Bolívar",2021,"6",815.473797
+86219,"colon","Putumayo",2021,"6",814.828969
+5658,"san jose de la montana","Antioquia",2021,"6",810.349799
+52694,"san pedro de cartago","Nariño",2021,"6",809.740239
+13440,"margarita","Bolívar",2021,"6",808.722316
+17388,"la merced","Caldas",2021,"6",805.19012
+47605,"remolino","Magdalena",2021,"6",802.845866
+52256,"el rosario","Nariño",2021,"6",802.823354
+25281,"fosca","Cundinamarca",2021,"6",801.177445
+13458,"montecristo","Bolívar",2021,"6",799.725012
+13212,"cordoba","Bolívar",2021,"6",797.519713
+5021,"alejandria","Antioquia",2021,"6",795.36765
+63212,"cordoba","Quindio",2021,"6",795.333887
+47258,"el pinon","Magdalena",2021,"6",782.897025
+54553,"puerto santander","Norte de Santander",2021,"6",782.131029
+52207,"consaca","Nariño",2021,"6",779.944376
+25095,"bituima","Cundinamarca",2021,"6",779.804105
+15293,"gachantiva","Boyacá",2021,"6",778.382606
+54223,"cucutilla","Norte de Santander",2021,"6",777.98317
+25328,"guayabal de siquima","Cundinamarca",2021,"6",774.061562
+41206,"colombia","Huila",2021,"6",773.933575
+15189,"cienega","Boyacá",2021,"6",770.22838
+15212,"coper","Boyacá",2021,"6",767.957358
+68324,"guavata","Santander",2021,"6",765.14071
+68773,"sucre","Santander",2021,"6",763.58793
+68207,"concepcion","Santander",2021,"6",762.635796
+85315,"sacama","Casanare",2021,"6",761.727539
+41244,"elias","Huila",2021,"6",761.635861
+25807,"tibirita","Cundinamarca",2021,"6",753.301217
+15464,"mongua","Boyacá",2021,"6",751.939967
+15761,"somondoco","Boyacá",2021,"6",749.14183
+68720,"santa helena del opon","Santander",2021,"6",748.908688
+52520,"francisco pizarro","Nariño",2021,"6",740.461423
+15798,"tenza","Boyacá",2021,"6",735.682676
+73854,"valle de san juan","Tolima",2021,"6",734.435232
+52560,"potosi","Nariño",2021,"6",734.241594
+73152,"casabianca","Tolima",2021,"6",732.185594
+15377,"labranzagrande","Boyacá",2021,"6",730.378291
+73686,"santa isabel","Tolima",2021,"6",728.633845
+68217,"coromoro","Santander",2021,"6",724.013258
+47720,"santa barbara de pinto","Magdalena",2021,"6",723.366402
+52685,"san bernardo","Nariño",2021,"6",722.828808
+25398,"la pena","Cundinamarca",2021,"6",720.986997
+52720,"sapuyes","Nariño",2021,"6",714.731146
+63111,"buenavista","Quindio",2021,"6",711.630055
+73622,"roncesvalles","Tolima",2021,"6",711.404129
+52480,"narino","Nariño",2021,"6",707.339569
+25506,"venecia","Cundinamarca",2021,"6",706.709684
+70233,"el roble","Sucre",2021,"6",706.151589
+25339,"gutierrez","Cundinamarca",2021,"6",705.706736
+54398,"la playa","Norte de Santander",2021,"6",699.605006
+19392,"la sierra","Cauca",2021,"6",699.017622
+68397,"la paz","Santander",2021,"6",688.861531
+15368,"jerico","Boyacá",2021,"6",686.497287
+15022,"almeida","Boyacá",2021,"6",685.07569
+68502,"onzaga","Santander",2021,"6",679.186299
+15518,"pajarito","Boyacá",2021,"6",674.474849
+15296,"gameza","Boyacá",2021,"6",661.129926
+25258,"el penon","Cundinamarca",2021,"6",655.466076
+15172,"chinavita","Boyacá",2021,"6",653.556981
+15276,"floresta","Boyacá",2021,"6",645.588412
+68250,"el penon","Santander",2021,"6",643.967023
+15511,"pachavita","Boyacá",2021,"6",643.931338
+68684,"san jose de miranda","Santander",2021,"6",637.568117
+15401,"la victoria","Boyacá",2021,"6",635.15782
+52083,"belen","Nariño",2021,"6",633.769168
+15248,"el espino","Boyacá",2021,"6",628.957324
+15820,"topaga","Boyacá",2021,"6",628.673139
+19290,"florencia","Cauca",2021,"6",623.04755
+15218,"covarachia","Boyacá",2021,"6",618.547676
+68344,"hato","Santander",2021,"6",615.24512
+25436,"manta","Cundinamarca",2021,"6",615.006286
+97161,"caruru","Vaupés",2021,"6",614.651202
+19693,"san sebastian","Cauca",2021,"6",610.894725
+25580,"puli","Cundinamarca",2021,"6",606.227443
+19760,"sotara","Cauca",2021,"6",604.598581
+68211,"contratacion","Santander",2021,"6",604.462308
+25653,"san cayetano","Cundinamarca",2021,"6",601.741476
+15092,"beteitiva","Boyacá",2021,"6",600.481763
+15810,"tipacoque","Boyacá",2021,"6",596.384264
+25518,"paime","Cundinamarca",2021,"6",595.020851
+68245,"el guacamayo","Santander",2021,"6",592.520355
+54680,"santiago","Norte de Santander",2021,"6",592.0574
+68264,"encino","Santander",2021,"6",588.798442
+68152,"carcasi","Santander",2021,"6",582.488698
+13810,"tiquisio","Bolívar",2021,"6",582.191619
+8770,"suan","Atlántico",2021,"6",581.848759
+54313,"gramalote","Norte de Santander",2021,"6",581.764908
+15317,"guacamayas","Boyacá",2021,"6",581.50304
+15226,"cuitiva","Boyacá",2021,"6",575.257401
+85279,"recetor","Casanare",2021,"6",574.090089
+13268,"el penon","Bolívar",2021,"6",570.723918
+52565,"providencia","Nariño",2021,"6",570.307841
+25871,"villagomez","Cundinamarca",2021,"6",570.1669
+17446,"marulanda","Caldas",2021,"6",568.543516
+68524,"palmas del socorro","Santander",2021,"6",566.78946
+25299,"gama","Cundinamarca",2021,"6",554.681218
+52203,"colon","Nariño",2021,"6",554.292339
+54347,"herran","Norte de Santander",2021,"6",554.284547
+68522,"palmar","Santander",2021,"6",554.079257
+52435,"mallama","Nariño",2021,"6",548.615398
+19701,"santa rosa","Cauca",2021,"6",545.754626
+15621,"rondon","Boyacá",2021,"6",544.072826
+15236,"chivor","Boyacá",2021,"6",543.124553
+68780,"surata","Santander",2021,"6",541.58449
+68121,"cabrera","Santander",2021,"6",534.442538
+15403,"la uvita","Boyacá",2021,"6",531.467724
+73873,"villarrica","Tolima",2021,"6",529.52335
+52036,"ancuya","Nariño",2021,"6",520.615756
+54418,"lourdes","Norte de Santander",2021,"6",519.086046
+52022,"aldana","Nariño",2021,"6",513.179108
+15839,"tutaza","Boyacá",2021,"6",512.161331
+54599,"ragonvalia","Norte de Santander",2021,"6",512.116277
+54125,"cacota","Norte de Santander",2021,"6",498.41452
+15106,"briceno","Boyacá",2021,"6",494.98611
+15162,"cerinza","Boyacá",2021,"6",488.411255
+68266,"enciso","Santander",2021,"6",476.05262
+68686,"san miguel","Santander",2021,"6",475.393746
+15660,"san eduardo","Boyacá",2021,"6",475.24412
+47541,"pedraza","Magdalena",2021,"6",463.19279
+25823,"topaipi","Cundinamarca",2021,"6",459.879498
+50686,"san juanito","Meta",2021,"6",456.315123
+20310,"gonzalez","Cesar",2021,"6",449.218653
+81220,"cravo norte","Arauca",2021,"6",443.909275
+15720,"sativanorte","Boyacá",2021,"6",443.419871
+15380,"la capilla","Boyacá",2021,"6",441.216777
+47205,"concordia","Magdalena",2021,"6",439.217934
+68132,"california","Santander",2021,"6",438.915102
+5004,"abriaqui","Antioquia",2021,"6",438.119555
+68425,"macaravita","Santander",2021,"6",433.635809
+47161,"cerro san antonio","Magdalena",2021,"6",431.154425
+52051,"arboleda","Nariño",2021,"6",429.915162
+85136,"la salina","Casanare",2021,"6",424.470336
+54480,"mutiscua","Norte de Santander",2021,"6",419.695015
+41483,"nataga","Huila",2021,"6",407.781866
+68867,"vetas","Santander",2021,"6",399.018469
+68160,"cepita","Santander",2021,"6",395.165473
+68673,"san benito","Santander",2021,"6",393.209332
+15362,"iza","Boyacá",2021,"6",390.77101
+70230,"chalan","Sucre",2021,"6",383.442818
+15522,"panqueba","Boyacá",2021,"6",373.932694
+15673,"san mateo","Boyacá",2021,"6",366.146417
+13490,"norosi","Bolívar",2021,"6",350.068931
+15090,"berbeo","Boyacá",2021,"6",349.649963
+47960,"zapayan","Magdalena",2021,"6",348.520296
+15550,"pisba","Boyacá",2021,"6",346.500836
+15114,"busbanza","Boyacá",2021,"6",346.298205
+13620,"san cristobal","Bolívar",2021,"6",346.195118
+13760,"soplaviento","Bolívar",2021,"6",331.884466
+15879,"viracacha","Boyacá",2021,"6",321.319832
+68013,"aguada","Santander",2021,"6",312.242545
+13655,"san jacinto del cauca","Bolívar",2021,"6",306.798568
+68682,"san joaquin","Santander",2021,"6",301.260384
+15774,"susacon","Boyacá",2021,"6",262.544575
+50245,"el calvario","Meta",2021,"6",251.172947
+8675,"santa lucia","Atlántico",2021,"6",244.86067
+68370,"jordan","Santander",2021,"6",222.776302
+15723,"sativasur","Boyacá",2021,"6",193.603269
+94343,"barranco minas","Guainía",2021,"6",178.666123
+86755,"san francisco","Putumayo",2021,"6",162.74966
+19318,"guapi","Cauca",2021,"6",0
+19532,"patia","Cauca",2021,"6",0
+70771,"sucre","Sucre",2021,"6",0
+11001,"bogota d c","Bogotá, D.C.",2021,"E",9379558.9967
+5001,"medellin","Antioquia",2021,"E",2116992.813728
+76001,"cali","Valle del Cauca",2021,"E",1656801.559684
+8001,"barranquilla","Atlántico",2021,"E",1226382.720276
+13001,"cartagena","Bolívar",2021,"E",755410.983565
+68001,"bucaramanga","Santander",2021,"E",519274.730232
+66001,"pereira","Risaralda",2022,"1",441386.26154
+5360,"itagui","Antioquia",2022,"1",379838.520648
+68081,"barrancabermeja","Santander",2022,"1",360352.804097
+5266,"envigado","Antioquia",2022,"1",330142.660476
+47001,"santa marta","Magdalena",2022,"1",314572.084804
+54001,"cucuta","Norte de Santander",2022,"1",313668.422516
+5615,"rionegro","Antioquia",2022,"1",304918.007552
+73001,"ibague","Tolima",2022,"1",267088.231735
+76892,"yumbo","Valle del Cauca",2022,"1",257411.738136
+17001,"manizales","Caldas",2022,"1",250817.859905
+50001,"villavicencio","Meta",2022,"1",249991.762494
+76520,"palmira","Valle del Cauca",2022,"1",238651.859253
+25754,"soacha","Cundinamarca",2022,"1",226814.353699
+5088,"bello","Antioquia",2022,"1",216413.556611
+20001,"valledupar","Cesar",2022,"1",201034.978745
+25175,"chia","Cundinamarca",2022,"1",200650.706315
+68276,"floridablanca","Santander",2022,"1",193624.499497
+5631,"sabaneta","Antioquia",2022,"1",175947.586817
+23001,"monteria","Córdoba",2022,"1",173087.505028
+52001,"pasto","Nariño",2022,"1",172437.628251
+15001,"tunja","Boyacá",2022,"1",172304.484606
+41001,"neiva","Huila",2022,"1",164339.031809
+63001,"armenia","Quindio",2022,"1",160569.226124
+76109,"buenaventura","Valle del Cauca",2022,"1",159575.605578
+25473,"mosquera","Cundinamarca",2022,"1",158158.063817
+25286,"funza","Cundinamarca",2022,"1",156619.248774
+19001,"popayan","Cauca",2022,"1",137724.749635
+25214,"cota","Cundinamarca",2022,"2",180754.595772
+25817,"tocancipa","Cundinamarca",2022,"2",146297.673654
+85001,"yopal","Casanare",2022,"2",132909.178513
+8758,"soledad","Atlántico",2022,"2",131509.949044
+70001,"sincelejo","Sucre",2022,"2",127017.271694
+66170,"dosquebradas","Risaralda",2022,"2",108471.449742
+25126,"cajica","Cundinamarca",2022,"2",103925.288399
+68547,"piedecuesta","Santander",2022,"2",101175.926708
+68307,"giron","Santander",2022,"2",96047.175629
+76364,"jamundi","Valle del Cauca",2022,"2",95405.002527
+25290,"fusagasuga","Cundinamarca",2022,"2",94032.192572
+25430,"madrid","Cundinamarca",2022,"2",93669.455368
+5380,"la estrella","Antioquia",2022,"2",92914.151427
+76834,"tulua","Valle del Cauca",2022,"2",88049.992378
+25899,"zipaquira","Cundinamarca",2022,"2",86920.815142
+76111,"guadalajara de buga","Valle del Cauca",2022,"2",70875.185344
+15759,"sogamoso","Boyacá",2022,"2",69224.160981
+25269,"facatativa","Cundinamarca",2022,"2",63922.510207
+5318,"guarne","Antioquia",2022,"2",60272.12628
+25799,"tenjo","Cundinamarca",2022,"3",80097.859265
+5148,"el carmen de viboral","Antioquia",2022,"3",74817.335115
+8573,"puerto colombia","Atlántico",2022,"3",71215.432269
+5607,"retiro","Antioquia",2022,"3",70185.155885
+50568,"puerto gaitan","Meta",2022,"3",70097.559445
+5376,"la ceja","Antioquia",2022,"3",67302.28515
+5308,"girardota","Antioquia",2022,"3",66707.205832
+25307,"girardot","Cundinamarca",2022,"3",63833.442745
+76130,"candelaria","Valle del Cauca",2022,"3",63464.027965
+44001,"riohacha","La Guajira",2022,"3",61781.284272
+76147,"cartago","Valle del Cauca",2022,"3",61265.948437
+18001,"florencia","Caquetá",2022,"3",58229.947885
+50006,"acacias","Meta",2022,"3",57456.736441
+15238,"duitama","Boyacá",2022,"3",53890.847039
+5212,"copacabana","Antioquia",2022,"3",50515.219842
+27001,"quibdo","Chocó",2022,"3",48964.450418
+25758,"sopo","Cundinamarca",2022,"3",47652.37547
+13836,"turbaco","Bolívar",2022,"3",47586.466138
+5045,"apartado","Antioquia",2022,"3",47547.924588
+15572,"puerto boyaca","Boyacá",2022,"3",47098.951785
+41551,"pitalito","Huila",2022,"3",42039.884265
+5440,"marinilla","Antioquia",2022,"3",39247.946982
+73268,"espinal","Tolima",2022,"3",38550.976434
+5129,"caldas","Antioquia",2022,"3",37245.399528
+5736,"segovia","Antioquia",2022,"3",25075.921129
+70221,"covenas","Sucre",2022,"4",103520.390534
+8433,"malambo","Atlántico",2022,"4",43225.242063
+54405,"los patios","Norte de Santander",2022,"4",41297.406198
+54874,"villa del rosario","Norte de Santander",2022,"4",34176.67313
+52356,"ipiales","Nariño",2022,"4",34069.707504
+85410,"tauramena","Casanare",2022,"4",33953.080083
+25612,"ricaurte","Cundinamarca",2022,"4",33281.796517
+15491,"nobsa","Boyacá",2022,"4",33153.78407
+52835,"san andres de tumaco","Nariño",2022,"4",31657.467595
+81001,"arauca","Arauca",2022,"4",31535.924178
+25377,"la calera","Cundinamarca",2022,"4",30710.285909
+5837,"turbo","Antioquia",2022,"4",30118.497918
+44430,"maicao","La Guajira",2022,"4",27891.307017
+44847,"uribia","La Guajira",2022,"4",22828.56813
+99773,"cumaribo","Vichada",2022,"4",8130.980467
+44560,"manaure","La Guajira",2022,"4",4719.73641
+50573,"puerto lopez","Meta",2022,"5",40810.997177
+85010,"aguazul","Casanare",2022,"5",36745.088283
+73449,"melgar","Tolima",2022,"5",34645.299856
+5154,"caucasia","Antioquia",2022,"5",33068.729851
+44035,"albania","La Guajira",2022,"5",31036.556484
+66682,"santa rosa de cabal","Risaralda",2022,"5",30617.393689
+25035,"anapoima","Cundinamarca",2022,"5",30050.388196
+5079,"barbosa","Antioquia",2022,"5",29829.365808
+23660,"sahagun","Córdoba",2022,"5",29800.342261
+17380,"la dorada","Caldas",2022,"5",29783.081215
+50313,"granada","Meta",2022,"5",29342.999171
+25740,"sibate","Cundinamarca",2022,"5",28805.794623
+19698,"santander de quilichao","Cauca",2022,"5",27375.699918
+47189,"cienaga","Magdalena",2022,"5",27309.574297
+19300,"guachene","Cauca",2022,"5",26702.318961
+13430,"magangue","Bolívar",2022,"5",26590.999619
+76248,"el cerrito","Valle del Cauca",2022,"5",26094.650934
+68406,"lebrija","Santander",2022,"5",25579.320138
+85440,"villanueva","Casanare",2022,"5",25564.261255
+68679,"san gil","Santander",2022,"5",25394.80442
+25386,"la mesa","Cundinamarca",2022,"5",24904.139684
+63130,"calarca","Quindio",2022,"5",24721.707403
+19845,"villa rica","Cauca",2022,"5",24057.55032
+76895,"zarzal","Valle del Cauca",2022,"5",23751.773456
+5756,"sonson","Antioquia",2022,"5",22419.819456
+5042,"santafe de antioquia","Antioquia",2022,"5",22123.434486
+15176,"chiquinquira","Boyacá",2022,"5",21091.243902
+5030,"amaga","Antioquia",2022,"5",20914.946678
+17174,"chinchina","Caldas",2022,"5",20030.14119
+17873,"villamaria","Caldas",2022,"5",19966.080049
+15516,"paipa","Boyacá",2022,"5",19778.344708
+76113,"bugalagrande","Valle del Cauca",2022,"5",19336.729995
+54498,"ocana","Norte de Santander",2022,"5",19299.318338
+91001,"leticia","Amazonas",2022,"5",19289.687055
+8638,"sabanalarga","Atlántico",2022,"5",19139.422905
+19455,"miranda","Cauca",2022,"5",18865.849273
+5604,"remedios","Antioquia",2022,"5",18340.034695
+19573,"puerto tejada","Cauca",2022,"5",18107.670495
+5893,"yondo","Antioquia",2022,"5",17305.223838
+25200,"cogua","Cundinamarca",2022,"5",16742.647352
+5686,"santa rosa de osos","Antioquia",2022,"5",15912.022815
+88564,"providencia","Archipiélago de San Andrés",2022,"5",4163.450256
+8296,"galapa","Atlántico",2022,"6",33440.32807
+85162,"monterrey","Casanare",2022,"6",32262.750878
+20400,"la jagua de ibirico","Cesar",2022,"6",29804.175217
+23466,"montelibano","Córdoba",2022,"6",24249.931127
+81736,"saravena","Arauca",2022,"6",23278.924196
+41524,"palermo","Huila",2022,"6",23158.534957
+20011,"aguachica","Cesar",2022,"6",22314.959209
+20013,"agustin codazzi","Cesar",2022,"6",22313.172511
+5579,"puerto berrio","Antioquia",2022,"6",21299.939051
+68190,"cimitarra","Santander",2022,"6",19620.255104
+5887,"yarumal","Antioquia",2022,"6",19523.237983
+15806,"tibasosa","Boyacá",2022,"6",18909.624916
+41298,"garzon","Huila",2022,"6",18716.679368
+85139,"mani","Casanare",2022,"6",18669.686642
+5147,"carepa","Antioquia",2022,"6",18354.392448
+25843,"villa de san diego de ubate","Cundinamarca",2022,"6",18126.447099
+23555,"planeta rica","Córdoba",2022,"6",17980.785126
+73275,"flandes","Tolima",2022,"6",17785.925881
+20770,"san martin","Cesar",2022,"6",17735.069147
+85230,"orocue","Casanare",2022,"6",17506.372873
+50150,"castilla la nueva","Meta",2022,"6",17433.175247
+86568,"puerto asis","Putumayo",2022,"6",17355.364831
+23417,"lorica","Córdoba",2022,"6",17306.153435
+68575,"puerto wilches","Santander",2022,"6",17053.616998
+15407,"villa de leyva","Boyacá",2022,"6",17048.477227
+5172,"chigorodo","Antioquia",2022,"6",17048.442751
+23162,"cerete","Córdoba",2022,"6",17039.865934
+47745,"sitionuevo","Magdalena",2022,"6",17005.484143
+63401,"la tebaida","Quindio",2022,"6",16966.234147
+5697,"el santuario","Antioquia",2022,"6",16878.706107
+70215,"corozal","Sucre",2022,"6",16587.814302
+5664,"san pedro de los milagros","Antioquia",2022,"6",16402.123583
+95001,"san jose del guaviare","Guaviare",2022,"6",16323.669624
+70820,"santiago de tolu","Sucre",2022,"6",16022.593001
+19142,"caloto","Cauca",2022,"6",15993.777069
+8078,"baranoa","Atlántico",2022,"6",15986.140904
+50226,"cumaral","Meta",2022,"6",15950.547316
+25875,"villeta","Cundinamarca",2022,"6",15849.226492
+70742,"san luis de since","Sucre",2022,"6",15748.542743
+73319,"guamo","Tolima",2022,"6",15629.450526
+68755,"socorro","Santander",2022,"6",15216.270122
+50680,"san carlos de guaroa","Meta",2022,"6",15182.947156
+86001,"mocoa","Putumayo",2022,"6",14958.027074
+50124,"cabuyaro","Meta",2022,"6",14787.493466
+27615,"riosucio","Chocó",2022,"6",14696.348109
+25295,"gachancipa","Cundinamarca",2022,"6",14584.628616
+23189,"cienaga de oro","Córdoba",2022,"6",14341.250761
+68655,"sabana de torres","Santander",2022,"6",14274.776
+41396,"la plata","Huila",2022,"6",13994.807104
+23182,"chinu","Córdoba",2022,"6",13994.518387
+76233,"dagua","Valle del Cauca",2022,"6",13963.958765
+76563,"pradera","Valle del Cauca",2022,"6",13785.944998
+23580,"puerto libertador","Córdoba",2022,"6",13640.131688
+76890,"yotoco","Valle del Cauca",2022,"6",13517.262745
+86865,"valle del guamuez","Putumayo",2022,"6",13455.908778
+25402,"la vega","Cundinamarca",2022,"6",13430.982684
+50606,"restrepo","Meta",2022,"6",13341.252864
+20621,"la paz","Cesar",2022,"6",13334.433314
+5234,"dabeiba","Antioquia",2022,"6",13109.309405
+68689,"san vicente de chucuri","Santander",2022,"6",13099.447793
+20045,"becerril","Cesar",2022,"6",13071.863158
+44090,"dibulla","La Guajira",2022,"6",12950.976755
+44279,"fonseca","La Guajira",2022,"6",12541.384029
+13052,"arjona","Bolívar",2022,"6",12503.951163
+25572,"puerto salgar","Cundinamarca",2022,"6",12329.215289
+54810,"tibu","Norte de Santander",2022,"6",12328.146577
+76318,"guacari","Valle del Cauca",2022,"6",12308.277361
+5250,"el bagre","Antioquia",2022,"6",12289.076418
+23570,"pueblo nuevo","Córdoba",2022,"6",12287.974839
+5034,"andes","Antioquia",2022,"6",12173.607637
+81794,"tame","Arauca",2022,"6",12125.962708
+25785,"tabio","Cundinamarca",2022,"6",12038.316955
+5761,"sopetran","Antioquia",2022,"6",12027.461522
+73443,"san sebastian de mariquita","Tolima",2022,"6",12012.735292
+25488,"nilo","Cundinamarca",2022,"6",11984.621779
+5656,"san jeronimo","Antioquia",2022,"6",11956.903796
+15837,"tuta","Boyacá",2022,"6",11915.694286
+5400,"la union","Antioquia",2022,"6",11885.592909
+76400,"la union","Valle del Cauca",2022,"6",11863.120075
+50110,"barranca de upia","Meta",2022,"6",11675.080392
+73168,"chaparral","Tolima",2022,"6",11666.35129
+5490,"necocli","Antioquia",2022,"6",11592.837351
+25736,"sesquile","Cundinamarca",2022,"6",11549.136746
+20250,"el paso","Cesar",2022,"6",11470.292085
+5591,"puerto triunfo","Antioquia",2022,"6",11437.708211
+5895,"zaragoza","Antioquia",2022,"6",11384.236264
+41615,"rivera","Huila",2022,"6",11373.215778
+76622,"roldanillo","Valle del Cauca",2022,"6",11254.773652
+23807,"tierralta","Córdoba",2022,"6",11194.829179
+85300,"sabanalarga","Casanare",2022,"6",11187.084652
+15507,"otanche","Boyacá",2022,"6",11034.916871
+81065,"arauquita","Arauca",2022,"6",10923.288465
+18753,"san vicente del caguan","Caquetá",2022,"6",10895.424559
+50318,"guamal","Meta",2022,"6",10860.738174
+5107,"briceno","Antioquia",2022,"6",10841.031133
+27250,"el litoral del san juan","Chocó",2022,"6",10828.024539
+25743,"silvania","Cundinamarca",2022,"6",10754.414553
+15646,"samaca","Boyacá",2022,"6",10700.033422
+20178,"chiriguana","Cesar",2022,"6",10627.755976
+76275,"florida","Valle del Cauca",2022,"6",10595.248111
+68572,"puente nacional","Santander",2022,"6",10580.424808
+5321,"guatape","Antioquia",2022,"6",10572.763192
+25245,"el colegio","Cundinamarca",2022,"6",10554.64015
+20383,"la gloria","Cesar",2022,"6",10537.598433
+54518,"pamplona","Norte de Santander",2022,"6",10386.16599
+73349,"honda","Tolima",2022,"6",10336.279042
+63594,"quimbaya","Quindio",2022,"6",10316.13436
+25260,"el rosal","Cundinamarca",2022,"6",10280.199317
+25322,"guasca","Cundinamarca",2022,"6",10224.491483
+15469,"moniquira","Boyacá",2022,"6",10152.153571
+25815,"tocaima","Cundinamarca",2022,"6",10136.140972
+47288,"fundacion","Magdalena",2022,"6",10114.598335
+20060,"bosconia","Cesar",2022,"6",10110.481362
+70508,"ovejas","Sucre",2022,"6",10071.504502
+20710,"san alberto","Cesar",2022,"6",10028.43221
+85250,"paz de ariporo","Casanare",2022,"6",9928.603379
+5264,"entrerrios","Antioquia",2022,"6",9896.794841
+70708,"san marcos","Sucre",2022,"6",9799.76229
+73585,"purificacion","Tolima",2022,"6",9666.493941
+47555,"plato","Magdalena",2022,"6",9642.836695
+41020,"algeciras","Huila",2022,"6",9639.936349
+5282,"fredonia","Antioquia",2022,"6",9510.592053
+47980,"zona bananera","Magdalena",2022,"6",9467.682358
+50689,"san martin","Meta",2022,"6",9437.280168
+5585,"puerto nare","Antioquia",2022,"6",9428.279413
+5541,"penol","Antioquia",2022,"6",9416.01953
+99001,"puerto carreno","Vichada",2022,"6",9288.015977
+5237,"donmatias","Antioquia",2022,"6",9283.15586
+15455,"miraflores","Boyacá",2022,"6",9278.90665
+86885,"villagarzon","Putumayo",2022,"6",9255.018518
+76126,"calima","Valle del Cauca",2022,"6",9209.159789
+27077,"bajo baudo","Chocó",2022,"6",9149.564616
+25769,"subachoque","Cundinamarca",2022,"6",9101.117989
+73148,"carmen de apicala","Tolima",2022,"6",9028.402119
+23672,"san antero","Córdoba",2022,"6",8984.882443
+23068,"ayapel","Córdoba",2022,"6",8974.09474
+20238,"el copey","Cesar",2022,"6",8972.039619
+13244,"el carmen de bolivar","Bolívar",2022,"6",8961.220233
+25320,"guaduas","Cundinamarca",2022,"6",8940.394298
+5101,"ciudad bolivar","Antioquia",2022,"6",8908.996852
+54820,"toledo","Norte de Santander",2022,"6",8893.912287
+54261,"el zulia","Norte de Santander",2022,"6",8803.529723
+41016,"aipe","Huila",2022,"6",8799.297188
+44078,"barrancas","La Guajira",2022,"6",8671.597859
+68077,"barbosa","Santander",2022,"6",8618.045486
+86573,"puerto leguizamo","Putumayo",2022,"6",8585.84005
+85263,"pore","Casanare",2022,"6",8509.081846
+68271,"florian","Santander",2022,"6",8440.025712
+13473,"morales","Bolívar",2022,"6",8401.730313
+5138,"canasgordas","Antioquia",2022,"6",8392.826471
+27745,"sipi","Chocó",2022,"6",8367.669145
+27361,"istmina","Chocó",2022,"6",8348.781102
+66400,"la virginia","Risaralda",2022,"6",8310.404181
+25513,"pacho","Cundinamarca",2022,"6",8294.369723
+94001,"inirida","Guainía",2022,"6",8283.337142
+5861,"venecia","Antioquia",2022,"6",8255.582189
+76306,"ginebra","Valle del Cauca",2022,"6",8255.141362
+5113,"buritica","Antioquia",2022,"6",8246.84431
+13688,"santa rosa del sur","Bolívar",2022,"6",8241.742466
+5368,"jerico","Antioquia",2022,"6",8231.641122
+47245,"el banco","Magdalena",2022,"6",8205.346394
+70713,"san onofre","Sucre",2022,"6",8180.323173
+70823,"tolu viejo","Sucre",2022,"6",8179.968204
+17042,"anserma","Caldas",2022,"6",8097.014567
+44650,"san juan del cesar","La Guajira",2022,"6",8020.779467
+68615,"rionegro","Santander",2022,"6",8015.605449
+23855,"valencia","Córdoba",2022,"6",8008.947461
+86320,"orito","Putumayo",2022,"6",7987.050664
+73124,"cajamarca","Tolima",2022,"6",7968.059666
+5674,"san vicente","Antioquia",2022,"6",7963.241801
+63190,"circasia","Quindio",2022,"6",7890.300437
+76736,"sevilla","Valle del Cauca",2022,"6",7885.96694
+76670,"san pedro","Valle del Cauca",2022,"6",7870.662849
+25183,"choconta","Cundinamarca",2022,"6",7860.32734
+76036,"andalucia","Valle del Cauca",2022,"6",7795.13763
+41885,"yaguara","Huila",2022,"6",7752.798941
+18150,"cartagena del chaira","Caquetá",2022,"6",7733.920968
+23686,"san pelayo","Córdoba",2022,"6",7724.140782
+18592,"puerto rico","Caquetá",2022,"6",7668.684991
+54172,"chinacota","Norte de Santander",2022,"6",7651.497365
+86757,"san miguel","Putumayo",2022,"6",7566.891036
+15367,"jenesano","Boyacá",2022,"6",7510.577554
+73411,"libano","Tolima",2022,"6",7465.873971
+5031,"amalfi","Antioquia",2022,"6",7353.058688
+86571,"puerto guzman","Putumayo",2022,"6",7255.843124
+13468,"mompos","Bolívar",2022,"6",7190.871488
+23350,"la apartada","Córdoba",2022,"6",7112.803394
+25530,"paratebueno","Cundinamarca",2022,"6",7079.269101
+20750,"san diego","Cesar",2022,"6",7030.458071
+73671,"saldana","Tolima",2022,"6",7017.167454
+23815,"tuchin","Córdoba",2022,"6",7007.153152
+23079,"buenavista","Córdoba",2022,"6",7004.210392
+5809,"titiribi","Antioquia",2022,"6",6974.715869
+68079,"barichara","Santander",2022,"6",6888.586986
+5480,"mutata","Antioquia",2022,"6",6869.826535
+19809,"timbiqui","Cauca",2022,"6",6795.4118
+95025,"el retorno","Guaviare",2022,"6",6778.624729
+5847,"urrao","Antioquia",2022,"6",6760.158696
+76616,"riofrio","Valle del Cauca",2022,"6",6722.726297
+41132,"campoalegre","Huila",2022,"6",6709.560069
+25317,"guacheta","Cundinamarca",2022,"6",6682.330204
+63470,"montenegro","Quindio",2022,"6",6621.38331
+73408,"lerida","Tolima",2022,"6",6611.135814
+25486,"nemocon","Cundinamarca",2022,"6",6587.273049
+20228,"curumani","Cesar",2022,"6",6577.929299
+17524,"palestina","Caldas",2022,"6",6553.38651
+17614,"riosucio","Caldas",2022,"6",6532.99954
+50330,"mesetas","Meta",2022,"6",6526.83847
+70670,"sampues","Sucre",2022,"6",6505.136811
+73055,"armero","Tolima",2022,"6",6479.240768
+5649,"san carlos","Antioquia",2022,"6",6449.771511
+5051,"arboletes","Antioquia",2022,"6",6436.788938
+27025,"alto baudo","Chocó",2022,"6",6386.837382
+23670,"san andres de sotavento","Córdoba",2022,"6",6299.639983
+13160,"cantagallo","Bolívar",2022,"6",6259.13635
+25181,"choachi","Cundinamarca",2022,"6",6241.809718
+25873,"villapinzon","Cundinamarca",2022,"6",6199.112096
+68418,"los santos","Santander",2022,"6",6180.868128
+13683,"santa rosa","Bolívar",2022,"6",6170.003258
+27150,"carmen del darien","Chocó",2022,"6",6158.355027
+73283,"fresno","Tolima",2022,"6",6136.761455
+5665,"san pedro de uraba","Antioquia",2022,"6",6132.540601
+73026,"alvarado","Tolima",2022,"6",6067.175668
+17777,"supia","Caldas",2022,"6",6021.706044
+15861,"ventaquemada","Boyacá",2022,"6",5954.005253
+76122,"caicedonia","Valle del Cauca",2022,"6",5909.190001
+68861,"velez","Santander",2022,"6",5855.254142
+66088,"belen de umbria","Risaralda",2022,"6",5825.911014
+15514,"paez","Boyacá",2022,"6",5806.951418
+5361,"ituango","Antioquia",2022,"6",5784.011928
+5390,"la pintada","Antioquia",2022,"6",5781.755107
+97001,"mitu","Vaupés",2022,"6",5659.753338
+47551,"pivijay","Magdalena",2022,"6",5650.859891
+27430,"medio baudo","Chocó",2022,"6",5644.703553
+8421,"luruaco","Atlántico",2022,"6",5643.819426
+25151,"caqueza","Cundinamarca",2022,"6",5642.152197
+63690,"salento","Quindio",2022,"6",5612.792084
+73200,"coello","Tolima",2022,"6",5596.172396
+70678,"san benito abad","Sucre",2022,"6",5548.39982
+5306,"giraldo","Antioquia",2022,"6",5526.519107
+19548,"piendamo","Cauca",2022,"6",5520.307653
+27425,"medio atrato","Chocó",2022,"6",5500.175193
+15599,"ramiriqui","Boyacá",2022,"6",5487.424112
+15696,"santa sofia","Boyacá",2022,"6",5455.060701
+17486,"neira","Caldas",2022,"6",5431.033241
+19532,"patia","Cauca",2022,"6",5410.963133
+8685,"santo tomas","Atlántico",2022,"6",5360.440112
+17013,"aguadas","Caldas",2022,"6",5345.036358
+66075,"balboa","Risaralda",2022,"6",5331.522622
+20175,"chimichagua","Cesar",2022,"6",5319.089766
+25099,"bojaca","Cundinamarca",2022,"6",5309.353307
+19807,"timbio","Cauca",2022,"6",5257.813453
+5120,"caceres","Antioquia",2022,"6",5253.588255
+25658,"san francisco","Cundinamarca",2022,"6",5246.501882
+8634,"sabanagrande","Atlántico",2022,"6",5245.828745
+19318,"guapi","Cauca",2022,"6",5238.273498
+68432,"malaga","Santander",2022,"6",5223.791573
+5364,"jardin","Antioquia",2022,"6",5202.052395
+47058,"ariguani","Magdalena",2022,"6",5199.307575
+13657,"san juan nepomuceno","Bolívar",2022,"6",5178.643055
+50590,"puerto rico","Meta",2022,"6",5153.575561
+19050,"argelia","Cauca",2022,"6",5138.588109
+47053,"aracataca","Magdalena",2022,"6",5117.412627
+73555,"planadas","Tolima",2022,"6",5113.019859
+23419,"los cordobas","Córdoba",2022,"6",5108.081758
+19130,"cajibio","Cauca",2022,"6",5106.613822
+68092,"betulia","Santander",2022,"6",5092.20307
+25772,"suesca","Cundinamarca",2022,"6",5082.073245
+70124,"caimito","Sucre",2022,"6",5070.419932
+5890,"yolombo","Antioquia",2022,"6",5045.690437
+76606,"restrepo","Valle del Cauca",2022,"6",5030.175647
+15299,"garagoa","Boyacá",2022,"6",5003.152869
+66594,"quinchia","Risaralda",2022,"6",4996.115974
+76020,"alcala","Valle del Cauca",2022,"6",4984.570862
+54673,"san cayetano","Norte de Santander",2022,"6",4938.801053
+44378,"hatonuevo","La Guajira",2022,"6",4938.069402
+41306,"gigante","Huila",2022,"6",4919.739995
+73861,"venadillo","Tolima",2022,"6",4908.553491
+5858,"vegachi","Antioquia",2022,"6",4895.740793
+68573,"puerto parra","Santander",2022,"6",4843.032681
+76041,"ansermanuevo","Valle del Cauca",2022,"6",4835.497198
+17877,"viterbo","Caldas",2022,"6",4817.337235
+25224,"cucunuba","Cundinamarca",2022,"6",4813.907847
+85430,"trinidad","Casanare",2022,"6",4807.220293
+13670,"san pablo","Bolívar",2022,"6",4793.353786
+86569,"puerto caicedo","Putumayo",2022,"6",4778.642579
+27075,"bahia solano","Chocó",2022,"6",4769.244651
+15897,"zetaquira","Boyacá",2022,"6",4732.641814
+20550,"pelaya","Cesar",2022,"6",4703.652827
+52838,"tuquerres","Nariño",2022,"6",4643.835447
+23574,"puerto escondido","Córdoba",2022,"6",4614.037593
+15204,"combita","Boyacá",2022,"6",4588.129048
+68368,"jesus maria","Santander",2022,"6",4584.06056
+50711,"vistahermosa","Meta",2022,"6",4578.436593
+76497,"obando","Valle del Cauca",2022,"6",4560.098616
+15638,"sachica","Boyacá",2022,"6",4549.815565
+5190,"cisneros","Antioquia",2022,"6",4536.427454
+76403,"la victoria","Valle del Cauca",2022,"6",4530.312496
+52240,"chachagui","Nariño",2022,"6",4514.108317
+99524,"la primavera","Vichada",2022,"6",4510.770154
+5789,"tamesis","Antioquia",2022,"6",4500.890291
+5425,"maceo","Antioquia",2022,"6",4495.274314
+5667,"san rafael","Antioquia",2022,"6",4490.389789
+25793,"tausa","Cundinamarca",2022,"6",4437.952222
+5670,"san roque","Antioquia",2022,"6",4430.588605
+54003,"abrego","Norte de Santander",2022,"6",4413.703168
+15763,"sotaquira","Boyacá",2022,"6",4411.044573
+41668,"san agustin","Huila",2022,"6",4407.131007
+13838,"turbana","Bolívar",2022,"6",4402.473153
+63272,"filandia","Quindio",2022,"6",4402.423951
+18247,"el doncello","Caquetá",2022,"6",4386.002664
+52540,"policarpa","Nariño",2022,"6",4383.755761
+25123,"cachipay","Cundinamarca",2022,"6",4362.132656
+5495,"nechi","Antioquia",2022,"6",4358.083837
+5679,"santa barbara","Antioquia",2022,"6",4314.618373
+25745,"simijaca","Cundinamarca",2022,"6",4302.918151
+15223,"cubara","Boyacá",2022,"6",4291.156165
+20517,"pailitas","Cesar",2022,"6",4283.770355
+19212,"corinto","Cauca",2022,"6",4267.024717
+5659,"san juan de uraba","Antioquia",2022,"6",4257.677845
+23682,"san jose de ure","Córdoba",2022,"6",4239.78967
+27450,"medio san juan","Chocó",2022,"6",4237.84707
+5690,"santo domingo","Antioquia",2022,"6",4236.57226
+27491,"novita","Chocó",2022,"6",4222.739772
+20570,"pueblo bello","Cesar",2022,"6",4181.961334
+23500,"monitos","Córdoba",2022,"6",4176.111001
+15690,"santa maria","Boyacá",2022,"6",4128.11172
+19473,"morales","Cauca",2022,"6",4100.347826
+70429,"majagual","Sucre",2022,"6",4070.038214
+27006,"acandi","Chocó",2022,"6",4068.677468
+8372,"juan de acosta","Atlántico",2022,"6",4064.468844
+25645,"san antonio del tequendama","Cundinamarca",2022,"6",4054.787796
+52352,"iles","Nariño",2022,"6",4049.944763
+5209,"concordia","Antioquia",2022,"6",4038.406294
+52786,"taminango","Nariño",2022,"6",4033.502456
+73483,"natagaima","Tolima",2022,"6",4021.047267
+27099,"bojaya","Chocó",2022,"6",4015.102736
+25878,"viota","Cundinamarca",2022,"6",4010.188287
+25797,"tena","Cundinamarca",2022,"6",4005.479944
+25178,"chipaque","Cundinamarca",2022,"6",3989.998623
+19780,"suarez","Cauca",2022,"6",3983.47311
+5040,"anori","Antioquia",2022,"6",3962.328024
+41006,"acevedo","Huila",2022,"6",3958.358934
+15135,"campohermoso","Boyacá",2022,"6",3921.264329
+17541,"pensilvania","Caldas",2022,"6",3919.434203
+13188,"cicuco","Bolívar",2022,"6",3906.686846
+13222,"clemencia","Bolívar",2022,"6",3885.899638
+50350,"la macarena","Meta",2022,"6",3885.560604
+20787,"tamalameque","Cesar",2022,"6",3884.732004
+66440,"marsella","Risaralda",2022,"6",3883.443784
+50370,"uribe","Meta",2022,"6",3861.229915
+23090,"canalete","Córdoba",2022,"6",3857.100473
+52399,"la union","Nariño",2022,"6",3855.021931
+97666,"taraira","Vaupés",2022,"6",3842.845633
+85225,"nunchia","Casanare",2022,"6",3832.002608
+70418,"los palmitos","Sucre",2022,"6",3822.68991
+5002,"abejorral","Antioquia",2022,"6",3807.010856
+8520,"palmar de varela","Atlántico",2022,"6",3799.067319
+5197,"cocorna","Antioquia",2022,"6",3776.687255
+25001,"agua de dios","Cundinamarca",2022,"6",3766.958283
+66687,"santuario","Risaralda",2022,"6",3764.728475
+68167,"charala","Santander",2022,"6",3753.876151
+5873,"vigia del fuerte","Antioquia",2022,"6",3738.461744
+5660,"san luis","Antioquia",2022,"6",3727.659897
+47460,"nueva granada","Magdalena",2022,"6",3727.008679
+85325,"san luis de palenque","Casanare",2022,"6",3715.294132
+5642,"salgar","Antioquia",2022,"6",3694.135162
+73616,"rioblanco","Tolima",2022,"6",3690.369768
+70265,"guaranda","Sucre",2022,"6",3681.857645
+50287,"fuente de oro","Meta",2022,"6",3676.14538
+5310,"gomez plata","Antioquia",2022,"6",3654.711268
+68235,"el carmen de chucuri","Santander",2022,"6",3644.510471
+25718,"sasaima","Cundinamarca",2022,"6",3637.548969
+15322,"guateque","Boyacá",2022,"6",3617.161421
+20295,"gamarra","Cesar",2022,"6",3616.989472
+27245,"el carmen de atrato","Chocó",2022,"6",3615.922863
+68895,"zapatoca","Santander",2022,"6",3600.861324
+5038,"angostura","Antioquia",2022,"6",3564.380246
+5854,"valdivia","Antioquia",2022,"6",3549.687065
+73547,"piedras","Tolima",2022,"6",3548.558547
+73504,"ortega","Tolima",2022,"6",3541.666013
+73217,"coyaima","Tolima",2022,"6",3534.563831
+52210,"contadero","Nariño",2022,"6",3529.240679
+41359,"isnos","Huila",2022,"6",3519.004512
+68500,"oiba","Santander",2022,"6",3510.989544
+15480,"muzo","Boyacá",2022,"6",3503.159954
+19256,"el tambo","Cauca",2022,"6",3494.35477
+68549,"pinchote","Santander",2022,"6",3494.267971
+66572,"pueblo rico","Risaralda",2022,"6",3481.801068
+5856,"valparaiso","Antioquia",2022,"6",3473.48974
+17867,"victoria","Caldas",2022,"6",3471.802919
+25599,"apulo","Cundinamarca",2022,"6",3467.74769
+8832,"tubara","Atlántico",2022,"6",3463.08511
+13744,"simiti","Bolívar",2022,"6",3442.760545
+54250,"el tarra","Norte de Santander",2022,"6",3436.875868
+25040,"anolaima","Cundinamarca",2022,"6",3435.306146
+25288,"fuquene","Cundinamarca",2022,"6",3420.81813
+54720,"sardinata","Norte de Santander",2022,"6",3407.293053
+15757,"socha","Boyacá",2022,"6",3372.908064
+76377,"la cumbre","Valle del Cauca",2022,"6",3371.895846
+70717,"san pedro","Sucre",2022,"6",3367.974109
+73624,"rovira","Tolima",2022,"6",3366.192228
+44874,"villanueva","La Guajira",2022,"6",3364.655125
+23675,"san bernardo del viento","Córdoba",2022,"6",3364.466397
+52678,"samaniego","Nariño",2022,"6",3361.386841
+8606,"repelon","Atlántico",2022,"6",3360.576643
+27580,"rio iro","Chocó",2022,"6",3344.434548
+5790,"taraza","Antioquia",2022,"6",3327.845604
+25312,"granada","Cundinamarca",2022,"6",3314.434254
+17653,"salamina","Caldas",2022,"6",3303.180325
+27073,"bagado","Chocó",2022,"6",3274.290486
+68377,"la belleza","Santander",2022,"6",3250.55098
+73563,"prado","Tolima",2022,"6",3245.063128
+27372,"jurado","Chocó",2022,"6",3232.602688
+18410,"la montanita","Caquetá",2022,"6",3232.116084
+41807,"timana","Huila",2022,"6",3222.954477
+52506,"ospina","Nariño",2022,"6",3209.069525
+18094,"belen de los andaquies","Caquetá",2022,"6",3197.219071
+68255,"el playon","Santander",2022,"6",3193.064338
+5284,"frontino","Antioquia",2022,"6",3192.634619
+41770,"suaza","Huila",2022,"6",3171.414617
+19355,"inza","Cauca",2022,"6",3159.441806
+76828,"trujillo","Valle del Cauca",2022,"6",3157.724604
+17088,"belalcazar","Caldas",2022,"6",3156.171853
+50577,"puerto lleras","Meta",2022,"6",3129.029588
+52079,"barbacoas","Nariño",2022,"6",3118.463391
+20614,"rio de oro","Cesar",2022,"6",3116.846607
+17513,"pacora","Caldas",2022,"6",3116.700086
+15047,"aquitania","Boyacá",2022,"6",3112.717824
+52354,"imues","Nariño",2022,"6",3089.180377
+81300,"fortul","Arauca",2022,"6",3084.188068
+23168,"chima","Córdoba",2022,"6",3068.685567
+20443,"manaure","Cesar",2022,"6",3059.399762
+41797,"tesalia","Huila",2022,"6",3052.926362
+25335,"guayabetal","Cundinamarca",2022,"6",2995.861491
+5093,"betulia","Antioquia",2022,"6",2977.053829
+5842,"uramita","Antioquia",2022,"6",2974.272371
+76823,"toro","Valle del Cauca",2022,"6",2964.517377
+50450,"puerto concordia","Meta",2022,"6",2963.659521
+25839,"ubala","Cundinamarca",2022,"6",2959.742913
+19110,"buenos aires","Cauca",2022,"6",2950.897473
+27787,"tado","Chocó",2022,"6",2946.705342
+54385,"la esperanza","Norte de Santander",2022,"6",2939.857428
+19418,"lopez","Cauca",2022,"6",2933.89935
+17495,"norcasia","Caldas",2022,"6",2930.15094
+47318,"guamal","Magdalena",2022,"6",2923.747079
+18610,"san jose del fragua","Caquetá",2022,"6",2915.243985
+41349,"hobo","Huila",2022,"6",2881.330203
+68229,"curiti","Santander",2022,"6",2880.205603
+85125,"hato corozal","Casanare",2022,"6",2878.485195
+41319,"guadalupe","Huila",2022,"6",2874.163966
+70400,"la union","Sucre",2022,"6",2862.515498
+70235,"galeras","Sucre",2022,"6",2846.479034
+20032,"astrea","Cesar",2022,"6",2841.842062
+5240,"ebejico","Antioquia",2022,"6",2835.121809
+15632,"saboya","Boyacá",2022,"6",2834.7094
+17662,"samana","Caldas",2022,"6",2817.053586
+19100,"bolivar","Cauca",2022,"6",2779.852297
+68101,"bolivar","Santander",2022,"6",2763.940111
+25053,"arbelaez","Cundinamarca",2022,"6",2763.919307
+52227,"cumbal","Nariño",2022,"6",2762.675689
+27495,"nuqui","Chocó",2022,"6",2759.598227
+54800,"teorama","Norte de Santander",2022,"6",2723.428712
+15693,"santa rosa de viterbo","Boyacá",2022,"6",2720.740918
+54099,"bochalema","Norte de Santander",2022,"6",2719.871316
+52683,"sandona","Nariño",2022,"6",2715.742565
+23464,"momil","Córdoba",2022,"6",2715.125361
+68464,"mogotes","Santander",2022,"6",2714.419347
+54206,"convencion","Norte de Santander",2022,"6",2709.257128
+86749,"sibundoy","Putumayo",2022,"6",2708.997058
+50325,"mapiripan","Meta",2022,"6",2692.766499
+52699,"santacruz","Nariño",2022,"6",2679.207887
+47692,"san sebastian de buenavista","Magdalena",2022,"6",2676.678093
+27135,"el canton del san pablo","Chocó",2022,"6",2673.276279
+76869,"vijes","Valle del Cauca",2022,"6",2671.207868
+76100,"bolivar","Valle del Cauca",2022,"6",2665.529446
+25407,"lenguazaque","Cundinamarca",2022,"6",2665.001667
+47570,"puebloviejo","Magdalena",2022,"6",2657.397119
+66045,"apia","Risaralda",2022,"6",2657.153232
+70204,"coloso","Sucre",2022,"6",2656.021621
+27413,"lloro","Chocó",2022,"6",2654.572456
+47268,"el reten","Magdalena",2022,"6",2651.960635
+27600,"rio quito","Chocó",2022,"6",2645.908004
+52788,"tangua","Nariño",2022,"6",2645.740897
+19022,"almaguer","Cauca",2022,"6",2634.206908
+73067,"ataco","Tolima",2022,"6",2615.152032
+18256,"el paujil","Caquetá",2022,"6",2606.417605
+27205,"condoto","Chocó",2022,"6",2600.653866
+66318,"guatica","Risaralda",2022,"6",2593.179381
+68385,"landazuri","Santander",2022,"6",2579.646503
+50400,"lejanias","Meta",2022,"6",2567.219983
+52405,"leiva","Nariño",2022,"6",2565.841888
+25297,"gacheta","Cundinamarca",2022,"6",2561.248021
+47707,"santa ana","Magdalena",2022,"6",2560.829301
+52490,"olaya herrera","Nariño",2022,"6",2557.146657
+15087,"belen","Boyacá",2022,"6",2553.26257
+25326,"guatavita","Cundinamarca",2022,"6",2552.580773
+54377,"labateca","Norte de Santander",2022,"6",2549.418188
+19364,"jambalo","Cauca",2022,"6",2546.901392
+52621,"roberto payan","Nariño",2022,"6",2532.489985
+27160,"certegui","Chocó",2022,"6",2532.144827
+13433,"mahates","Bolívar",2022,"6",2529.984164
+27800,"unguia","Chocó",2022,"6",2527.537304
+66456,"mistrato","Risaralda",2022,"6",2521.866597
+54174,"chitaga","Norte de Santander",2022,"6",2521.823366
+68770,"suaita","Santander",2022,"6",2517.434111
+52250,"el charco","Nariño",2022,"6",2505.590475
+68745,"simacota","Santander",2022,"6",2501.667362
+17433,"manzanares","Caldas",2022,"6",2486.310327
+19693,"san sebastian","Cauca",2022,"6",2479.451615
+15804,"tibana","Boyacá",2022,"6",2475.207343
+17442,"marmato","Caldas",2022,"6",2469.737479
+25279,"fomeque","Cundinamarca",2022,"6",2457.424323
+70702,"san juan de betulia","Sucre",2022,"6",2455.336031
+15681,"san pablo de borbur","Boyacá",2022,"6",2450.425123
+25019,"alban","Cundinamarca",2022,"6",2448.671882
+13212,"cordoba","Bolívar",2022,"6",2448.567584
+5576,"pueblorrico","Antioquia",2022,"6",2447.675137
+68020,"albania","Santander",2022,"6",2447.522286
+73678,"san luis","Tolima",2022,"6",2444.074492
+73675,"san antonio","Tolima",2022,"6",2441.293016
+68820,"tona","Santander",2022,"6",2439.25008
+5313,"granada","Antioquia",2022,"6",2430.571655
+52612,"ricaurte","Nariño",2022,"6",2401.040377
+50251,"el castillo","Meta",2022,"6",2399.717971
+95015,"calamar","Guaviare",2022,"6",2388.749706
+41799,"tello","Huila",2022,"6",2383.973175
+13442,"maria la baja","Bolívar",2022,"6",2348.403055
+5885,"yali","Antioquia",2022,"6",2340.07861
+70473,"morroa","Sucre",2022,"6",2337.517228
+50683,"san juan de arama","Meta",2022,"6",2336.561036
+17050,"aranzazu","Caldas",2022,"6",2334.70552
+19517,"paez","Cauca",2022,"6",2330.596312
+13647,"san estanislao","Bolívar",2022,"6",2329.600089
+52696,"santa barbara","Nariño",2022,"6",2321.694838
+70110,"buenavista","Sucre",2022,"6",2314.65066
+18460,"milan","Caquetá",2022,"6",2314.589915
+5091,"betania","Antioquia",2022,"6",2305.376867
+68051,"aratoca","Santander",2022,"6",2305.20879
+17616,"risaralda","Caldas",2022,"6",2290.063327
+5792,"tarso","Antioquia",2022,"6",2288.307189
+18860,"valparaiso","Caquetá",2022,"6",2287.557879
+47545,"pijino del carmen","Magdalena",2022,"6",2273.782498
+15814,"toca","Boyacá",2022,"6",2268.753765
+52585,"pupiales","Nariño",2022,"6",2265.461671
+25293,"gachala","Cundinamarca",2022,"6",2260.666253
+52110,"buesaco","Nariño",2022,"6",2253.68603
+17444,"marquetalia","Caldas",2022,"6",2246.177892
+8436,"manati","Atlántico",2022,"6",2229.371614
+25148,"caparrapi","Cundinamarca",2022,"6",2227.720111
+52418,"los andes","Nariño",2022,"6",2222.627206
+15667,"san luis de gaceno","Boyacá",2022,"6",2216.053101
+54245,"el carmen","Norte de Santander",2022,"6",2214.861698
+15272,"firavitoba","Boyacá",2022,"6",2209.353465
+68872,"villanueva","Santander",2022,"6",2194.423312
+25491,"nocaima","Cundinamarca",2022,"6",2187.620112
+52693,"san pablo","Nariño",2022,"6",2174.688694
+18756,"solano","Caquetá",2022,"6",2173.53829
+5411,"liborina","Antioquia",2022,"6",2164.874118
+15753,"soata","Boyacá",2022,"6",2158.571517
+5150,"carolina","Antioquia",2022,"6",2156.680659
+27660,"san jose del palmar","Chocó",2022,"6",2143.464456
+15740,"siachoque","Boyacá",2022,"6",2142.039073
+15104,"boyaca","Boyacá",2022,"6",2139.278066
+73347,"herveo","Tolima",2022,"6",2135.68849
+5347,"heliconia","Antioquia",2022,"6",2110.833258
+5044,"anza","Antioquia",2022,"6",2104.867143
+5353,"hispania","Antioquia",2022,"6",2101.434767
+18029,"albania","Caquetá",2022,"6",2087.724862
+54520,"pamplonita","Norte de Santander",2022,"6",2086.537572
+81591,"puerto rondon","Arauca",2022,"6",2069.17331
+27050,"atrato","Chocó",2022,"6",2061.975327
+13006,"achi","Bolívar",2022,"6",2044.726639
+15476,"motavita","Boyacá",2022,"6",2044.495702
+13780,"talaigua nuevo","Bolívar",2022,"6",2038.457435
+76250,"el dovio","Valle del Cauca",2022,"6",2035.658512
+23678,"san carlos","Córdoba",2022,"6",2031.23072
+19821,"toribio","Cauca",2022,"6",2031.020826
+23586,"purisima","Córdoba",2022,"6",2027.392532
+41872,"villavieja","Huila",2022,"6",2019.610906
+41013,"agrado","Huila",2022,"6",2016.78257
+25898,"zipacon","Cundinamarca",2022,"6",2012.930614
+8560,"ponedera","Atlántico",2022,"6",2007.095361
+18785,"solita","Caquetá",2022,"6",2005.430489
+19075,"balboa","Cauca",2022,"6",2001.828794
+17665,"san jose","Caldas",2022,"6",2000.81244
+23300,"cotorra","Córdoba",2022,"6",1998.666471
+15764,"soraca","Boyacá",2022,"6",1998.572015
+5086,"belmira","Antioquia",2022,"6",1991.672757
+13062,"arroyohondo","Bolívar",2022,"6",1978.978747
+15425,"macanal","Boyacá",2022,"6",1977.729057
+5647,"san andres de cuerquia","Antioquia",2022,"6",1975.982028
+15542,"pesca","Boyacá",2022,"6",1968.361627
+13300,"hatillo de loba","Bolívar",2022,"6",1946.976432
+15051,"arcabuco","Boyacá",2022,"6",1946.512178
+73030,"ambalema","Tolima",2022,"6",1946.18607
+15500,"oicata","Boyacá",2022,"6",1938.082647
+18205,"curillo","Caquetá",2022,"6",1936.407326
+54743,"silos","Norte de Santander",2022,"6",1931.396261
+41078,"baraya","Huila",2022,"6",1930.350638
+15600,"raquira","Boyacá",2022,"6",1925.572174
+41518,"paicol","Huila",2022,"6",1922.954239
+52233,"cumbitara","Nariño",2022,"6",1914.615345
+15676,"san miguel de sema","Boyacá",2022,"6",1906.894314
+52520,"francisco pizarro","Nariño",2022,"6",1903.529479
+17272,"filadelfia","Caldas",2022,"6",1899.999867
+52224,"cuaspud","Nariño",2022,"6",1891.580709
+19743,"silvia","Cauca",2022,"6",1887.263396
+52411,"linares","Nariño",2022,"6",1886.616554
+5315,"guadalupe","Antioquia",2022,"6",1885.8315
+13894,"zambrano","Bolívar",2022,"6",1885.396605
+25781,"sutatausa","Cundinamarca",2022,"6",1884.861833
+73352,"icononzo","Tolima",2022,"6",1880.027417
+5819,"toledo","Antioquia",2022,"6",1879.816982
+73770,"suarez","Tolima",2022,"6",1878.691537
+25438,"medina","Cundinamarca",2022,"6",1871.490832
+13458,"montecristo","Bolívar",2022,"6",1867.075478
+52317,"guachucal","Nariño",2022,"6",1858.529581
+5021,"alejandria","Antioquia",2022,"6",1858.294399
+25851,"utica","Cundinamarca",2022,"6",1857.275338
+41026,"altamira","Huila",2022,"6",1846.108237
+15224,"cucaita","Boyacá",2022,"6",1840.572291
+15776,"sutamarchan","Boyacá",2022,"6",1838.768107
+8549,"piojo","Atlántico",2022,"6",1834.946942
+44110,"el molino","La Guajira",2022,"6",1827.148619
+19513,"padilla","Cauca",2022,"6",1798.816417
+19137,"caldono","Cauca",2022,"6",1796.540289
+41548,"pital","Huila",2022,"6",1793.492451
+41378,"la argentina","Huila",2022,"6",1776.695865
+25535,"pasca","Cundinamarca",2022,"6",1770.220481
+15537,"paz de rio","Boyacá",2022,"6",1765.115021
+13673,"santa catalina","Bolívar",2022,"6",1761.260213
+68669,"san andres","Santander",2022,"6",1756.636443
+52378,"la cruz","Nariño",2022,"6",1751.469456
+25779,"susa","Cundinamarca",2022,"6",1750.569387
+91540,"puerto narino","Amazonas",2022,"6",1740.674227
+8558,"polonuevo","Atlántico",2022,"6",1740.089276
+5142,"caracoli","Antioquia",2022,"6",1737.199624
+13140,"calamar","Bolívar",2022,"6",1734.060834
+5206,"concepcion","Antioquia",2022,"6",1733.842754
+15686,"santana","Boyacá",2022,"6",1732.757808
+25662,"san juan de rio seco","Cundinamarca",2022,"6",1719.214217
+85015,"chameza","Casanare",2022,"6",1717.335752
+13440,"margarita","Bolívar",2022,"6",1712.379586
+50223,"san luis de cubarral","Meta",2022,"6",1709.895027
+25649,"san bernardo","Cundinamarca",2022,"6",1706.133428
+47170,"chivolo","Magdalena",2022,"6",1695.51102
+52260,"el tambo","Nariño",2022,"6",1694.044993
+25841,"ubaque","Cundinamarca",2022,"6",1682.697087
+68327,"guepsa","Santander",2022,"6",1672.570252
+8141,"candelaria","Atlántico",2022,"6",1669.297454
+68296,"galan","Santander",2022,"6",1661.163614
+44420,"la jagua del pilar","La Guajira",2022,"6",1646.154076
+76863,"versalles","Valle del Cauca",2022,"6",1630.98674
+19533,"piamonte","Cauca",2022,"6",1628.552841
+25845,"une","Cundinamarca",2022,"6",1621.076064
+5036,"angelopolis","Antioquia",2022,"6",1600.474198
+52287,"funes","Nariño",2022,"6",1597.794976
+19824,"totoro","Cauca",2022,"6",1590.185293
+47030,"algarrobo","Magdalena",2022,"6",1588.614544
+15325,"guayata","Boyacá",2022,"6",1588.527433
+13074,"barranco de loba","Bolívar",2022,"6",1587.600395
+27810,"union panamericana","Chocó",2022,"6",1583.884738
+25426,"macheta","Cundinamarca",2022,"6",1579.903709
+85279,"recetor","Casanare",2022,"6",1573.757992
+70233,"el roble","Sucre",2022,"6",1570.270729
+41791,"tarqui","Huila",2022,"6",1562.615907
+47675,"salamina","Magdalena",2022,"6",1552.326908
+5125,"caicedo","Antioquia",2022,"6",1538.411268
+13042,"arenal","Bolívar",2022,"6",1535.093576
+41660,"saladoblanco","Huila",2022,"6",1533.826995
+8137,"campo de la cruz","Atlántico",2022,"6",1530.298275
+52215,"cordoba","Nariño",2022,"6",1521.984588
+15755,"socota","Boyacá",2022,"6",1517.702632
+15580,"quipama","Boyacá",2022,"6",1508.293263
+5475,"murindo","Antioquia",2022,"6",1503.315404
+86760,"santiago","Putumayo",2022,"6",1490.842781
+47258,"el pinon","Magdalena",2022,"6",1484.922365
+25592,"quebradanegra","Cundinamarca",2022,"6",1479.877322
+73854,"valle de san juan","Tolima",2022,"6",1477.201928
+15531,"pauna","Boyacá",2022,"6",1476.867288
+25489,"nimaima","Cundinamarca",2022,"6",1473.542303
+15215,"corrales","Boyacá",2022,"6",1467.258042
+15664,"san jose de pare","Boyacá",2022,"6",1453.908044
+13873,"villanueva","Bolívar",2022,"6",1450.965148
+68684,"san jose de miranda","Santander",2022,"6",1446.905461
+68162,"cerrito","Santander",2022,"6",1442.745791
+15494,"nuevo colon","Boyacá",2022,"6",1438.04777
+25154,"carmen de carupa","Cundinamarca",2022,"6",1437.636583
+52427,"magui","Nariño",2022,"6",1434.918334
+5055,"argelia","Antioquia",2022,"6",1434.808999
+5483,"narino","Antioquia",2022,"6",1433.940839
+52390,"la tola","Nariño",2022,"6",1430.592502
+41801,"teruel","Huila",2022,"6",1429.681562
+25394,"la palma","Cundinamarca",2022,"6",1426.617657
+68533,"paramo","Santander",2022,"6",1424.668916
+18479,"morelia","Caquetá",2022,"6",1420.959554
+52685,"san bernardo","Nariño",2022,"6",1419.174968
+54670,"san calixto","Norte de Santander",2022,"6",1416.572785
+13654,"san jacinto","Bolívar",2022,"6",1416.243698
+5543,"peque","Antioquia",2022,"6",1405.513638
+25596,"quipile","Cundinamarca",2022,"6",1405.245755
+68322,"guapota","Santander",2022,"6",1397.856466
+5467,"montebello","Antioquia",2022,"6",1392.043249
+15842,"umbita","Boyacá",2022,"6",1385.195375
+25885,"yacopi","Cundinamarca",2022,"6",1378.856382
+76845,"ulloa","Valle del Cauca",2022,"6",1372.9412
+41676,"santa maria","Huila",2022,"6",1357.875705
+63302,"genova","Quindio",2022,"6",1356.910108
+54553,"puerto santander","Norte de Santander",2022,"6",1354.04622
+15244,"el cocuy","Boyacá",2022,"6",1350.706007
+15822,"tota","Boyacá",2022,"6",1344.371183
+15183,"chita","Boyacá",2022,"6",1341.410541
+44855,"urumita","La Guajira",2022,"6",1339.937209
+47660,"sabanas de san angel","Magdalena",2022,"6",1339.793064
+44098,"distraccion","La Guajira",2022,"6",1334.879084
+47161,"cerro san antonio","Magdalena",2022,"6",1332.537139
+8849,"usiacuri","Atlántico",2022,"6",1330.907614
+68209,"confines","Santander",2022,"6",1329.46273
+68147,"capitanejo","Santander",2022,"6",1324.787198
+25372,"junin","Cundinamarca",2022,"6",1323.532271
+52885,"yacuanquer","Nariño",2022,"6",1319.876586
+52573,"puerres","Nariño",2022,"6",1318.26943
+52258,"el tablon de gomez","Nariño",2022,"6",1317.032257
+5134,"campamento","Antioquia",2022,"6",1308.933693
+25524,"pandi","Cundinamarca",2022,"6",1300.404683
+5658,"san jose de la montana","Antioquia",2022,"6",1297.998831
+25398,"la pena","Cundinamarca",2022,"6",1284.368013
+86219,"colon","Putumayo",2022,"6",1282.780921
+41503,"oporapa","Huila",2022,"6",1279.548382
+25328,"guayabal de siquima","Cundinamarca",2022,"6",1268.455649
+70523,"palmito","Sucre",2022,"6",1267.357875
+68855,"valle de san jose","Santander",2022,"6",1260.286134
+15808,"tinjaca","Boyacá",2022,"6",1258.260118
+25339,"gutierrez","Cundinamarca",2022,"6",1257.012799
+70771,"sucre","Sucre",2022,"6",1242.309878
+73870,"villahermosa","Tolima",2022,"6",1235.476803
+8675,"santa lucia","Atlántico",2022,"6",1228.832951
+63548,"pijao","Quindio",2022,"6",1227.394146
+73024,"alpujarra","Tolima",2022,"6",1220.022661
+52480,"narino","Nariño",2022,"6",1217.303027
+54051,"arboledas","Norte de Santander",2022,"6",1208.161213
+73520,"palocabildo","Tolima",2022,"6",1206.13149
+47605,"remolino","Magdalena",2022,"6",1202.543974
+25483,"narino","Cundinamarca",2022,"6",1199.972551
+13667,"san martin de loba","Bolívar",2022,"6",1197.229816
+73236,"dolores","Tolima",2022,"6",1196.305071
+13268,"el penon","Bolívar",2022,"6",1193.039263
+19585,"purace","Cauca",2022,"6",1188.519133
+52560,"potosi","Nariño",2022,"6",1182.154034
+85400,"tamara","Casanare",2022,"6",1177.629031
+52687,"san lorenzo","Nariño",2022,"6",1176.860839
+66383,"la celia","Risaralda",2022,"6",1176.797201
+52320,"guaitarilla","Nariño",2022,"6",1174.947636
+68298,"gambita","Santander",2022,"6",1169.755512
+54223,"cucutilla","Norte de Santander",2022,"6",1168.135054
+5652,"san francisco","Antioquia",2022,"6",1168.127206
+13600,"rio viejo","Bolívar",2022,"6",1166.472393
+68217,"coromoro","Santander",2022,"6",1164.777341
+68773,"sucre","Santander",2022,"6",1163.607367
+15377,"labranzagrande","Boyacá",2022,"6",1157.320286
+99624,"santa rosalia","Vichada",2022,"6",1151.87087
+5059,"armenia","Antioquia",2022,"6",1150.023851
+52207,"consaca","Nariño",2022,"6",1140.529265
+52323,"gualmatan","Nariño",2022,"6",1139.740845
+15276,"floresta","Boyacá",2022,"6",1139.165455
+52203,"colon","Nariño",2022,"6",1137.888053
+19622,"rosas","Cauca",2022,"6",1134.696554
+13549,"pinillos","Bolívar",2022,"6",1130.048807
+15790,"tasco","Boyacá",2022,"6",1124.211992
+25368,"jerusalen","Cundinamarca",2022,"6",1121.671359
+15835,"turmeque","Boyacá",2022,"6",1117.203801
+15778,"sutatenza","Boyacá",2022,"6",1111.381666
+15820,"topaga","Boyacá",2022,"6",1111.263243
+68320,"guadalupe","Santander",2022,"6",1106.935443
+50270,"el dorado","Meta",2022,"6",1104.430807
+15533,"paya","Boyacá",2022,"6",1103.193378
+13650,"san fernando","Bolívar",2022,"6",1091.370779
+25168,"chaguani","Cundinamarca",2022,"6",1087.279401
+5501,"olaya","Antioquia",2022,"6",1085.311607
+52256,"el rosario","Nariño",2022,"6",1082.837677
+25281,"fosca","Cundinamarca",2022,"6",1072.396877
+52019,"alban","Nariño",2022,"6",1065.037231
+68502,"onzaga","Santander",2022,"6",1063.272805
+25862,"vergara","Cundinamarca",2022,"6",1063.256353
+5145,"caramanta","Antioquia",2022,"6",1050.616904
+73622,"roncesvalles","Tolima",2022,"6",1050.468788
+15185,"chitaraque","Boyacá",2022,"6",1043.060289
+73226,"cunday","Tolima",2022,"6",1042.355096
+15466,"mongui","Boyacá",2022,"6",1040.616609
+25086,"beltran","Cundinamarca",2022,"6",1040.438984
+54398,"la playa","Norte de Santander",2022,"6",1039.27259
+52473,"mosquera","Nariño",2022,"6",1032.738746
+76054,"argelia","Valle del Cauca",2022,"6",1028.732903
+25867,"viani","Cundinamarca",2022,"6",1022.339343
+19392,"la sierra","Cauca",2022,"6",1021.609835
+5628,"sabanalarga","Antioquia",2022,"6",1018.634779
+68152,"carcasi","Santander",2022,"6",1013.613049
+15232,"chiquiza","Boyacá",2022,"6",1013.152485
+15442,"maripi","Boyacá",2022,"6",1012.899032
+15187,"chivata","Boyacá",2022,"6",1009.524633
+54128,"cachira","Norte de Santander",2022,"6",1008.249954
+13580,"regidor","Bolívar",2022,"6",1007.339022
+54680,"santiago","Norte de Santander",2022,"6",1001.561437
+76243,"el aguila","Valle del Cauca",2022,"6",993.714453
+15293,"gachantiva","Boyacá",2022,"6",992.536897
+15189,"cienega","Boyacá",2022,"6",991.240719
+25594,"quetame","Cundinamarca",2022,"6",989.716712
+25805,"tibacuy","Cundinamarca",2022,"6",988.68943
+15109,"buenavista","Boyacá",2022,"6",987.259394
+41357,"iquira","Huila",2022,"6",984.900669
+52381,"la florida","Nariño",2022,"6",984.296655
+68468,"molagavita","Santander",2022,"6",975.444915
+68397,"la paz","Santander",2022,"6",969.786972
+68318,"guaca","Santander",2022,"6",968.264723
+25807,"tibirita","Cundinamarca",2022,"6",963.873667
+41530,"palestina","Huila",2022,"6",957.114869
+68324,"guavata","Santander",2022,"6",956.184687
+19397,"la vega","Cauca",2022,"6",951.955993
+94343,"barranco minas","Guainía",2022,"6",950.307225
+25777,"supata","Cundinamarca",2022,"6",949.93078
+47798,"tenerife","Magdalena",2022,"6",946.094939
+54344,"hacari","Norte de Santander",2022,"6",930.235241
+17388,"la merced","Caldas",2022,"6",926.4351
+68498,"ocamonte","Santander",2022,"6",923.228037
+68179,"chipata","Santander",2022,"6",922.522261
+19450,"mercaderes","Cauca",2022,"6",922.097172
+19760,"sotara","Cauca",2022,"6",913.726403
+52083,"belen","Nariño",2022,"6",913.671565
+54239,"durania","Norte de Santander",2022,"6",913.020235
+41206,"colombia","Huila",2022,"6",911.737607
+73686,"santa isabel","Tolima",2022,"6",902.20701
+63212,"cordoba","Quindio",2022,"6",901.261166
+68444,"matanza","Santander",2022,"6",897.183797
+52720,"sapuyes","Nariño",2022,"6",888.579005
+95200,"miraflores","Guaviare",2022,"6",886.698627
+15226,"cuitiva","Boyacá",2022,"6",884.021095
+15131,"caldas","Boyacá",2022,"6",882.169985
+15403,"la uvita","Boyacá",2022,"6",881.295674
+68344,"hato","Santander",2022,"6",877.147097
+15332,"guican","Boyacá",2022,"6",875.664638
+73873,"villarrica","Tolima",2022,"6",872.285988
+68524,"palmas del socorro","Santander",2022,"6",871.439803
+68250,"el penon","Santander",2022,"6",870.166933
+19290,"florencia","Cauca",2022,"6",869.200844
+68522,"palmar","Santander",2022,"6",868.358027
+54313,"gramalote","Norte de Santander",2022,"6",867.586972
+52254,"el penol","Nariño",2022,"6",867.222243
+15097,"boavita","Boyacá",2022,"6",866.954534
+76246,"el cairo","Valle del Cauca",2022,"6",865.627695
+13248,"el guamo","Bolívar",2022,"6",862.929667
+68176,"chima","Santander",2022,"6",862.855424
+68207,"concepcion","Santander",2022,"6",856.440416
+19785,"sucre","Cauca",2022,"6",849.265494
+73043,"anzoategui","Tolima",2022,"6",848.835498
+68264,"encino","Santander",2022,"6",845.904619
+8770,"suan","Atlántico",2022,"6",840.391974
+68720,"santa helena del opon","Santander",2022,"6",837.07483
+81220,"cravo norte","Arauca",2022,"6",827.528839
+15816,"togui","Boyacá",2022,"6",824.738206
+25299,"gama","Cundinamarca",2022,"6",819.948749
+25258,"el penon","Cundinamarca",2022,"6",817.746897
+52435,"mallama","Nariño",2022,"6",808.303351
+25580,"puli","Cundinamarca",2022,"6",807.418527
+25506,"venecia","Cundinamarca",2022,"6",804.107201
+15798,"tenza","Boyacá",2022,"6",802.490734
+13620,"san cristobal","Bolívar",2022,"6",800.537514
+15550,"pisba","Boyacá",2022,"6",799.692885
+54109,"bucarasica","Norte de Santander",2022,"6",788.46157
+41483,"nataga","Huila",2022,"6",787.661287
+63111,"buenavista","Quindio",2022,"6",786.748194
+85315,"sacama","Casanare",2022,"6",781.835699
+54347,"herran","Norte de Santander",2022,"6",781.420352
+25120,"cabrera","Cundinamarca",2022,"6",776.819105
+54125,"cacota","Norte de Santander",2022,"6",775.139262
+41244,"elias","Huila",2022,"6",771.397571
+73461,"murillo","Tolima",2022,"6",770.383975
+15464,"mongua","Boyacá",2022,"6",761.322906
+25324,"guataqui","Cundinamarca",2022,"6",759.03237
+15180,"chiscas","Boyacá",2022,"6",757.775318
+68121,"cabrera","Santander",2022,"6",756.610838
+25653,"san cayetano","Cundinamarca",2022,"6",753.087201
+52051,"arboleda","Nariño",2022,"6",750.687672
+15212,"coper","Boyacá",2022,"6",747.435676
+15248,"el espino","Boyacá",2022,"6",746.12306
+15172,"chinavita","Boyacá",2022,"6",745.755054
+97161,"caruru","Vaupés",2022,"6",745.021388
+68705,"santa barbara","Santander",2022,"6",741.056742
+54871,"villa caro","Norte de Santander",2022,"6",739.760016
+17446,"marulanda","Caldas",2022,"6",738.068878
+68169,"charta","Santander",2022,"6",736.997584
+52694,"san pedro de cartago","Nariño",2022,"6",734.189015
+54660,"salazar","Norte de Santander",2022,"6",733.164273
+15368,"jerico","Boyacá",2022,"6",724.342288
+15720,"sativanorte","Boyacá",2022,"6",720.034082
+15518,"pajarito","Boyacá",2022,"6",715.86784
+15621,"rondon","Boyacá",2022,"6",714.912639
+68132,"california","Santander",2022,"6",713.816494
+73152,"casabianca","Tolima",2022,"6",709.533635
+70230,"chalan","Sucre",2022,"6",707.521961
+15218,"covarachia","Boyacá",2022,"6",704.238132
+25436,"manta","Cundinamarca",2022,"6",702.330887
+25095,"bituima","Cundinamarca",2022,"6",701.215791
+15362,"iza","Boyacá",2022,"6",699.218927
+68425,"macaravita","Santander",2022,"6",697.176465
+68266,"enciso","Santander",2022,"6",694.889625
+15317,"guacamayas","Boyacá",2022,"6",690.85366
+15380,"la capilla","Boyacá",2022,"6",687.266612
+52565,"providencia","Nariño",2022,"6",680.469035
+15022,"almeida","Boyacá",2022,"6",677.891266
+54599,"ragonvalia","Norte de Santander",2022,"6",673.438827
+68211,"contratacion","Santander",2022,"6",672.808988
+15236,"chivor","Boyacá",2022,"6",664.840104
+47703,"san zenon","Magdalena",2022,"6",662.739998
+25518,"paime","Cundinamarca",2022,"6",660.828372
+68780,"surata","Santander",2022,"6",646.614909
+73270,"falan","Tolima",2022,"6",644.858417
+47205,"concordia","Magdalena",2022,"6",636.566386
+15762,"sora","Boyacá",2022,"6",630.966015
+15761,"somondoco","Boyacá",2022,"6",623.699123
+54480,"mutiscua","Norte de Santander",2022,"6",622.018083
+5004,"abriaqui","Antioquia",2022,"6",614.512842
+15810,"tipacoque","Boyacá",2022,"6",613.319562
+15511,"pachavita","Boyacá",2022,"6",608.970427
+20310,"gonzalez","Cesar",2022,"6",600.262718
+13655,"san jacinto del cauca","Bolívar",2022,"6",591.317328
+15774,"susacon","Boyacá",2022,"6",582.745079
+50686,"san juanito","Meta",2022,"6",575.242963
+15296,"gameza","Boyacá",2022,"6",572.434094
+52385,"la llanada","Nariño",2022,"6",559.915398
+25871,"villagomez","Cundinamarca",2022,"6",559.764969
+85136,"la salina","Casanare",2022,"6",554.396006
+19701,"santa rosa","Cauca",2022,"6",544.507557
+13810,"tiquisio","Bolívar",2022,"6",542.423879
+47720,"santa barbara de pinto","Magdalena",2022,"6",537.550518
+52036,"ancuya","Nariño",2022,"6",531.545359
+13030,"altos del rosario","Bolívar",2022,"6",523.303064
+15832,"tunungua","Boyacá",2022,"6",519.274411
+15401,"la victoria","Boyacá",2022,"6",513.919339
+86755,"san francisco","Putumayo",2022,"6",509.665537
+68013,"aguada","Santander",2022,"6",508.399441
+15723,"sativasur","Boyacá",2022,"6",507.958488
+52022,"aldana","Nariño",2022,"6",507.082514
+15162,"cerinza","Boyacá",2022,"6",497.626727
+15673,"san mateo","Boyacá",2022,"6",489.216639
+68686,"san miguel","Santander",2022,"6",486.606843
+50245,"el calvario","Meta",2022,"6",477.93317
+15839,"tutaza","Boyacá",2022,"6",475.000309
+15106,"briceno","Boyacá",2022,"6",474.874776
+47960,"zapayan","Magdalena",2022,"6",466.162516
+15522,"panqueba","Boyacá",2022,"6",465.760077
+54418,"lourdes","Norte de Santander",2022,"6",446.869347
+68673,"san benito","Santander",2022,"6",430.664898
+68245,"el guacamayo","Santander",2022,"6",419.944718
+15660,"san eduardo","Boyacá",2022,"6",419.711937
+15879,"viracacha","Boyacá",2022,"6",418.783764
+13490,"norosi","Bolívar",2022,"6",415.26037
+15090,"berbeo","Boyacá",2022,"6",411.402852
+47541,"pedraza","Magdalena",2022,"6",409.113641
+15092,"beteitiva","Boyacá",2022,"6",406.209646
+68867,"vetas","Santander",2022,"6",373.096872
+68682,"san joaquin","Santander",2022,"6",355.404776
+15114,"busbanza","Boyacá",2022,"6",335.447474
+68160,"cepita","Santander",2022,"6",333.594835
+25823,"topaipi","Cundinamarca",2022,"6",307.744307
+68370,"jordan","Santander",2022,"6",298.570095
+13760,"soplaviento","Bolívar",2022,"6",296.20323
+11001,"bogota d c","Bogotá, D.C.",2022,"E",11592366.918888
+5001,"medellin","Antioquia",2022,"E",2293460.406598
+76001,"cali","Valle del Cauca",2022,"E",1928810.306668
+8001,"barranquilla","Atlántico",2022,"E",1524541.556384
+13001,"cartagena","Bolívar",2022,"E",1093591.629706
+68001,"bucaramanga","Santander",2022,"E",559274.028768

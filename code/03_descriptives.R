@@ -407,3 +407,378 @@ crear_tabla_aer(
   titulo = "Tabla 2. Municipios con menor crédito neto promedio",
   archivo = "tabla_2_menor_credito.png"
 )
+
+########## TERCERA PARTE: MAGNITUD DE LA DEUDA 2000-2023
+
+# ============================================================
+# TERCERA PARTE: MAGNITUD DE LA DEUDA MUNICIPAL
+# ESTADÍSTICAS DESCRIPTIVAS Y EVOLUCIÓN 2000-2022
+# ============================================================
+
+
+# ============================================================
+# 1. ESTADÍSTICAS DESCRIPTIVAS
+# ============================================================
+
+estadisticas_deuda <- base %>%
+  summarise(
+    observaciones = sum(!is.na(df_deuda)),
+    municipios = n_distinct(codmpio[!is.na(df_deuda)]),
+    cobertura = 100 * mean(!is.na(df_deuda)),
+    promedio = mean(df_deuda, na.rm = TRUE),
+    desviacion = sd(df_deuda, na.rm = TRUE),
+    minimo = min(df_deuda, na.rm = TRUE),
+    p25 = quantile(df_deuda, 0.25, na.rm = TRUE),
+    mediana = median(df_deuda, na.rm = TRUE),
+    p75 = quantile(df_deuda, 0.75, na.rm = TRUE),
+    maximo = max(df_deuda, na.rm = TRUE),
+    porcentaje_ceros = 100 * mean(
+      df_deuda[!is.na(df_deuda)] == 0
+    ),
+    porcentaje_negativos = 100 * mean(
+      df_deuda[!is.na(df_deuda)] < 0
+    )
+  )
+
+print(estadisticas_deuda, width = Inf)
+
+
+# ============================================================
+# 2. TABLA DE ESTADÍSTICAS - FORMATO AER
+# ============================================================
+
+tabla_deuda <- estadisticas_deuda %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "estadistica",
+    values_to = "valor"
+  ) %>%
+  mutate(
+    estadistica = recode(
+      estadistica,
+      observaciones = "Observaciones disponibles",
+      municipios = "Municipios con información",
+      cobertura = "Cobertura del panel (%)",
+      promedio = "Promedio",
+      desviacion = "Desviación estándar",
+      minimo = "Mínimo",
+      p25 = "Percentil 25",
+      mediana = "Mediana",
+      p75 = "Percentil 75",
+      maximo = "Máximo",
+      porcentaje_ceros = "Observaciones iguales a cero (%)",
+      porcentaje_negativos = "Observaciones negativas (%)"
+    ),
+    valor = format(
+      round(valor, 2),
+      big.mark = ".",
+      decimal.mark = ",",
+      nsmall = 2,
+      trim = TRUE
+    )
+  )
+
+names(tabla_deuda) <- c("Estadística", "Valor")
+
+estilo_aer <- gridExtra::ttheme_minimal(
+  base_size = 12,
+  base_family = "serif",
+  core = list(
+    bg_params = list(fill = "white", col = NA),
+    fg_params = list(hjust = 0, x = 0.05)
+  ),
+  colhead = list(
+    fg_params = list(fontface = "bold"),
+    bg_params = list(fill = "white", col = NA)
+  )
+)
+
+tabla_grob <- gridExtra::tableGrob(
+  tabla_deuda,
+  rows = NULL,
+  theme = estilo_aer
+)
+
+# Líneas horizontales estilo AER
+tabla_grob <- gtable::gtable_add_grob(
+  tabla_grob,
+  grobs = grid::segmentsGrob(
+    x0 = 0, x1 = 1, y0 = 1, y1 = 1,
+    gp = grid::gpar(lwd = 1.5)
+  ),
+  t = 1, l = 1, r = ncol(tabla_grob)
+)
+
+tabla_grob <- gtable::gtable_add_grob(
+  tabla_grob,
+  grobs = grid::segmentsGrob(
+    x0 = 0, x1 = 1, y0 = 0, y1 = 0,
+    gp = grid::gpar(lwd = 1)
+  ),
+  t = 1, l = 1, r = ncol(tabla_grob)
+)
+
+tabla_grob <- gtable::gtable_add_grob(
+  tabla_grob,
+  grobs = grid::segmentsGrob(
+    x0 = 0, x1 = 1, y0 = 0, y1 = 0,
+    gp = grid::gpar(lwd = 1.5)
+  ),
+  t = nrow(tabla_grob),
+  l = 1, r = ncol(tabla_grob)
+)
+
+# Guardar tabla como PNG
+png(
+  filename = file.path(tables, "estadisticas_df_deuda.png"),
+  width = 1200,
+  height = 1100,
+  res = 150
+)
+
+grid::grid.newpage()
+
+grid::grid.text(
+  "Tabla 3. Estadísticas descriptivas de la magnitud de la deuda",
+  x = 0.5, y = 0.95,
+  gp = grid::gpar(
+    fontsize = 15,
+    fontface = "bold",
+    fontfamily = "serif"
+  )
+)
+
+grid::grid.text(
+  "Municipios de Colombia, 2000-2022",
+  x = 0.5, y = 0.91,
+  gp = grid::gpar(fontsize = 12, fontfamily = "serif")
+)
+
+grid::pushViewport(
+  grid::viewport(
+    x = 0.5, y = 0.53,
+    width = 0.85, height = 0.68
+  )
+)
+
+grid::grid.draw(tabla_grob)
+grid::popViewport()
+
+grid::grid.text(
+  "Nota: Cobertura calculada sobre el panel 2000-2023.",
+  x = 0.06, y = 0.12, just = "left",
+  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
+)
+
+grid::grid.text(
+  "La variable no presenta información en 2023.",
+  x = 0.06, y = 0.09, just = "left",
+  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
+)
+
+grid::grid.text(
+  "Fuente: DNP - CEDE. Cálculos propios.",
+  x = 0.06, y = 0.06, just = "left",
+  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
+)
+
+dev.off()
+
+
+# ============================================================
+# 3. EVOLUCIÓN ANUAL DE LA MAGNITUD DE LA DEUDA
+# ============================================================
+
+evolucion_deuda <- base %>%
+  filter(!is.na(df_deuda)) %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    promedio = mean(df_deuda),
+    mediana = median(df_deuda),
+    .groups = "drop"
+  ) %>%
+  arrange(ano)
+
+print(evolucion_deuda, n = Inf)
+
+
+# ============================================================
+# 4. GRÁFICO DE EVOLUCIÓN - FORMATO ACADÉMICO
+# ============================================================
+
+evolucion_grafico <- evolucion_deuda %>%
+  pivot_longer(
+    cols = c(promedio, mediana),
+    names_to = "estadistico",
+    values_to = "valor"
+  ) %>%
+  mutate(
+    estadistico = recode(
+      estadistico,
+      promedio = "Promedio",
+      mediana = "Mediana"
+    )
+  )
+
+grafico_deuda <- ggplot(
+  evolucion_grafico,
+  aes(
+    x = ano,
+    y = valor,
+    color = estadistico,
+    linetype = estadistico
+  )
+) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(
+      "Promedio" = "#21618C",
+      "Mediana" = "#C0392B"
+    )
+  ) +
+  scale_linetype_manual(
+    values = c(
+      "Promedio" = "solid",
+      "Mediana" = "dashed"
+    )
+  ) +
+  scale_x_continuous(
+    breaks = seq(2000, 2022, 2)
+  ) +
+  labs(
+    title = "Evolución de la magnitud de la deuda municipal",
+    subtitle = "Colombia, 2000-2022",
+    x = "Año",
+    y = "Magnitud de la deuda",
+    color = NULL,
+    linetype = NULL,
+    caption = "Fuente: DNP - CEDE. Cálculos propios."
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+print(grafico_deuda)
+
+# Guardar gráfico
+ggsave(
+  filename = file.path(figures, "evolucion_df_deuda.png"),
+  plot = grafico_deuda,
+  width = 10,
+  height = 6,
+  dpi = 300,
+  bg = "white"
+)
+
+
+
+# ============================================================
+# CUARTA PARTE: INGRESOS TRIBUTARIOS SEGÚN LEY 617
+# ============================================================
+
+library(dplyr)
+library(ggplot2)
+
+# 1. Verificar cómo están registradas las categorías
+base %>%
+  filter(ano %in% 2021:2023) %>%
+  count(ano, df2_categoria) %>%
+  print(n = Inf)
+
+
+# 2. Información municipal por categoría
+ingresos_municipales <- base %>%
+  filter(
+    ano %in% 2021:2022,
+    !is.na(df2_categoria),
+    !is.na(y_corr_tribut)
+  ) %>%
+  select(
+    codmpio,
+    municipio,
+    depto,
+    ano,
+    df2_categoria,
+    y_corr_tribut
+  ) %>%
+  arrange(ano, df2_categoria, desc(y_corr_tribut))
+
+View(ingresos_municipales)
+
+
+# 3. Estadísticas descriptivas por categoría y año
+ingresos_categoria <- ingresos_municipales %>%
+  group_by(ano, df2_categoria) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    ingreso_promedio = mean(y_corr_tribut),
+    ingreso_mediano = median(y_corr_tribut),
+    ingreso_total = sum(y_corr_tribut),
+    .groups = "drop"
+  ) %>%
+  arrange(ano, df2_categoria)
+
+print(ingresos_categoria, n = Inf)
+
+
+# 4. Gráfico comparativo por categoría
+grafico_ingresos <- ggplot(
+  ingresos_categoria,
+  aes(
+    x = df2_categoria,
+    y = ingreso_mediano
+  )
+) +
+  geom_col(fill = "#21618C", width = 0.7) +
+  facet_wrap(~ ano, scales = "free_y") +
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ".",
+      decimal.mark = ","
+    )
+  ) +
+  labs(
+    title = "Ingresos tributarios municipales según categoría",
+    subtitle = "Colombia, 2021–2022",
+    x = "Categoría municipal",
+    y = "Ingreso tributario mediano (millones de pesos corrientes)",
+    caption = "Fuente: DNP - CEDE. Cálculos propios."
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(face = "bold")
+  )
+
+print(grafico_ingresos)
+
+
+# 5. Guardar tabla de datos y gráfico
+write.csv(
+  ingresos_municipales,
+  file.path(tables, "ingresos_tributarios_municipios.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+write.csv(
+  ingresos_categoria,
+  file.path(tables, "ingresos_tributarios_categoria.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+ggsave(
+  filename = file.path(figures, "ingresos_tributarios_categoria.png"),
+  plot = grafico_ingresos,
+  width = 10,
+  height = 6,
+  dpi = 300,
+  bg = "white"
+)

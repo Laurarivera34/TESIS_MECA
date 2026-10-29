@@ -173,6 +173,13 @@ base_completa_final <- base_completa_final %>%
     )
   )
 
+
+############## TERCERA PARTE: CATEGORIAS LEY 617 DE 2000
+base <- read_dta(
+  "C:/1. MECA/Trabajo de grado/TESIS_MECA/data/raw/Ejecuciones_Municipios_PANEL_1984_2023.dta"
+)
+
+
 # Se guarda base procesada 
 saveRDS(
   base_completa_final,

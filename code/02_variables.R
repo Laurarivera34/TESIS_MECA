@@ -162,27 +162,130 @@ base_completa_final %>%
 geoespacial %>%
   filter(codmpio %in% c(23685, 94663)) 
 
-############## TERCERA PARTE: SE CREAN VARIABLES DE LOS INDICADORES DE SOSTENIBILIDAD
+############## TERCERA PARTE: INDICADOR DE SOSTENIBILIDAD
+
+############## APROXIMACIÓN AL ENDEUDAMIENTO MUNICIPAL
+
 base_completa_final <- base_completa_final %>%
+  arrange(codmpio, ano) %>%
+  group_by(codmpio) %>%
   mutate(
-    servicio_deuda = g_int_deudap + finan_credito_amort,
-    carga_servicio_deuda = if_else(
-      y_corr > 0,
-      100 * servicio_deuda / y_corr,
+    # Flujo neto anual de crédito
+    flujo_neto = finan_credito_desemb -
+      finan_credito_amort,
+    
+    # Acumulación desde 2000
+    flujo_acumulado = if (all(!is.na(flujo_neto))) {
+      cumsum(flujo_neto)
+    } else {
+      rep(NA_real_, n())
+    },
+    
+    # Indicador exploratorio
+    proxy_endeudamiento = if_else(
+      !is.na(y_corr) & y_corr > 0,
+      100 * flujo_acumulado / y_corr,
       NA_real_
     )
-  )
+  ) %>%
+  ungroup()
+
+############## PROXY DE ENDEUDAMIENTO DE BOGOTÁ
+
+proxy_bogota <- base_completa_final %>%
+  filter(codmpio == 11001) %>%
+  select(
+    ano,
+    municipio,
+    finan_credito_desemb,
+    finan_credito_amort,
+    flujo_neto,
+    flujo_acumulado,
+    y_corr,
+    proxy_endeudamiento
+  ) %>%
+  arrange(ano)
+
+# Mostrar todos los años
+print(proxy_bogota, n = Inf)
 
 
-############## TERCERA PARTE: CATEGORIAS LEY 617 DE 2000
-base <- read_dta(
-  "C:/1. MECA/Trabajo de grado/TESIS_MECA/data/raw/Ejecuciones_Municipios_PANEL_1984_2023.dta"
+
+############## MAGNITUD DE LA DEUDA DE BOGOTÁ
+
+deuda_bogota <- base_completa_final %>%
+  filter(codmpio == 11001) %>%
+  select(
+    ano,
+    municipio,
+    df_deuda,
+    proxy_endeudamiento
+  ) %>%
+  arrange(ano)
+
+print(deuda_bogota, n = Inf)
+
+
+
+
+
+
+############## CUARTA PARTE: CATEGORÍAS LEY 617 DE 2000
+
+# 1. Importar base del Banco de la República
+banrep <- read_dta(
+  file.path(data, "Ejecuciones_Municipios_PANEL_1984_2023.dta")
 )
 
+# 2. Seleccionar y consolidar categoría municipal
+banrep_categoria <- banrep %>%
+  rename(
+    codmpio = cod_mpios,
+    ano = year
+  ) %>%
+  select(codmpio, ano, categ_cgn) %>%
+  mutate(
+    codmpio = as.integer(codmpio),
+    ano = as.integer(ano)
+  ) %>%
+  filter(between(ano, 2000, 2023)) %>%
+  group_by(codmpio, ano) %>%
+  summarise(
+    categ_cgn = first(
+      categ_cgn[!is.na(categ_cgn)],
+      default = NA_real_
+    ),
+    .groups = "drop"
+  )
 
-# Se guarda base procesada 
+# 3. Unir con la base principal
+base_completa_final <- base_completa_final %>%
+  mutate(
+    codmpio = as.integer(codmpio),
+    ano = as.integer(ano)
+  ) %>%
+  left_join(
+    banrep_categoria,
+    by = c("codmpio", "ano"),
+    relationship = "many-to-one"
+  )
+
+# 4. Verificar cobertura histórica
+base_completa_final %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    con_categoria = sum(!is.na(categ_cgn)),
+    sin_categoria = sum(is.na(categ_cgn)),
+    cobertura = round(
+      100 * con_categoria / n(), 2
+    ),
+    .groups = "drop"
+  ) %>%
+  print(n = Inf)
+
+# 5. Guardar base final
 saveRDS(
   base_completa_final,
   file.path(processed, "base.rds")
 )
-

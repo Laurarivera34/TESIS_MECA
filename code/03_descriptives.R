@@ -395,7 +395,7 @@ crear_tabla_aer <- function(datos, titulo, archivo) {
 
 crear_tabla_aer(
   datos = top10_mayores,
-  titulo = "Tabla 1. Municipios con mayor crédito neto promedio",
+  titulo = "Tabla 2. Municipios con mayor crédito neto promedio",
   archivo = "tabla_1_mayor_credito.png"
 )
 
@@ -404,17 +404,11 @@ crear_tabla_aer(
 
 crear_tabla_aer(
   datos = top10_menores,
-  titulo = "Tabla 2. Municipios con menor crédito neto promedio",
+  titulo = "Tabla 3. Municipios con menor crédito neto promedio",
   archivo = "tabla_2_menor_credito.png"
 )
 
 ########## TERCERA PARTE: MAGNITUD DE LA DEUDA 2000-2023
-
-# ============================================================
-# TERCERA PARTE: MAGNITUD DE LA DEUDA MUNICIPAL
-# ESTADÍSTICAS DESCRIPTIVAS Y EVOLUCIÓN 2000-2022
-# ============================================================
-
 
 # ============================================================
 # 1. ESTADÍSTICAS DESCRIPTIVAS
@@ -539,7 +533,7 @@ png(
 grid::grid.newpage()
 
 grid::grid.text(
-  "Tabla 3. Estadísticas descriptivas de la magnitud de la deuda",
+  "Tabla 4. Estadísticas descriptivas de la magnitud de la deuda",
   x = 0.5, y = 0.95,
   gp = grid::gpar(
     fontsize = 15,
@@ -677,111 +671,58 @@ ggsave(
 )
 
 
-
-# ============================================================
-# CUARTA PARTE: INGRESOS TRIBUTARIOS SEGÚN LEY 617
-# ============================================================
-
-library(dplyr)
-library(ggplot2)
-
-# 1. Verificar cómo están registradas las categorías
-base %>%
-  filter(ano %in% 2021:2023) %>%
-  count(ano, df2_categoria) %>%
-  print(n = Inf)
+############## EVOLUCIÓN DEL CRÉDITO NETO / PIB
 
 
-# 2. Información municipal por categoría
-ingresos_municipales <- base %>%
-  filter(
-    ano %in% 2021:2022,
-    !is.na(df2_categoria),
-    !is.na(y_corr_tribut)
-  ) %>%
-  select(
-    codmpio,
-    municipio,
-    depto,
-    ano,
-    df2_categoria,
-    y_corr_tribut
-  ) %>%
-  arrange(ano, df2_categoria, desc(y_corr_tribut))
-
-View(ingresos_municipales)
-
-
-# 3. Estadísticas descriptivas por categoría y año
-ingresos_categoria <- ingresos_municipales %>%
-  group_by(ano, df2_categoria) %>%
-  summarise(
-    municipios = n_distinct(codmpio),
-    ingreso_promedio = mean(y_corr_tribut),
-    ingreso_mediano = median(y_corr_tribut),
-    ingreso_total = sum(y_corr_tribut),
-    .groups = "drop"
-  ) %>%
-  arrange(ano, df2_categoria)
-
-print(ingresos_categoria, n = Inf)
-
-
-# 4. Gráfico comparativo por categoría
-grafico_ingresos <- ggplot(
-  ingresos_categoria,
-  aes(
-    x = df2_categoria,
-    y = ingreso_mediano
+# 1. Crear indicador
+base <- base %>%
+  mutate(
+    credito_pib = if_else(
+      !is.na(pib_total) & pib_total > 0,
+      100 * finan_credito / pib_total,
+      NA_real_
+    )
   )
+
+# 2. Calcular evolución anual
+evolucion_credito_pib <- base %>%
+  filter(
+    !is.na(finan_credito),
+    !is.na(pib_total),
+    pib_total > 0
+  ) %>%
+  group_by(ano) %>%
+  summarise(
+    credito_total = sum(finan_credito),
+    pib_agregado = sum(pib_total),
+    municipios = n_distinct(codmpio),
+    credito_pib = 100 * credito_total / pib_agregado,
+    .groups = "drop"
+  )
+
+# 3. Gráfico
+ggplot(
+  evolucion_credito_pib,
+  aes(x = ano, y = credito_pib)
 ) +
-  geom_col(fill = "#21618C", width = 0.7) +
-  facet_wrap(~ ano, scales = "free_y") +
+  geom_line(color = "#21618C", linewidth = 1.2) +
+  geom_point(color = "#21618C", size = 2.5) +
+  scale_x_continuous(
+    breaks = sort(unique(evolucion_credito_pib$ano))
+  ) +
   scale_y_continuous(
     labels = scales::label_number(
-      big.mark = ".",
+      suffix = "%",
       decimal.mark = ","
     )
   ) +
   labs(
-    title = "Ingresos tributarios municipales según categoría",
-    subtitle = "Colombia, 2021–2022",
-    x = "Categoría municipal",
-    y = "Ingreso tributario mediano (millones de pesos corrientes)",
-    caption = "Fuente: DNP - CEDE. Cálculos propios."
+    title = "Evolución del crédito neto municipal como porcentaje del PIB",
+    subtitle = "Colombia, municipios con información disponible",
+    x = "Año",
+    y = "Crédito neto / PIB (%)",
+    caption = "Fuente: CEDE. Elaboración propia."
   ) +
-  theme_classic(base_size = 12) +
-  theme(
-    text = element_text(family = "serif"),
-    plot.title = element_text(face = "bold")
-  )
-
-print(grafico_ingresos)
-
-
-# 5. Guardar tabla de datos y gráfico
-write.csv(
-  ingresos_municipales,
-  file.path(tables, "ingresos_tributarios_municipios.csv"),
-  row.names = FALSE,
-  fileEncoding = "UTF-8"
-)
-
-write.csv(
-  ingresos_categoria,
-  file.path(tables, "ingresos_tributarios_categoria.csv"),
-  row.names = FALSE,
-  fileEncoding = "UTF-8"
-)
-
-ggsave(
-  filename = file.path(figures, "ingresos_tributarios_categoria.png"),
-  plot = grafico_ingresos,
-  width = 10,
-  height = 6,
-  dpi = 300,
-  bg = "white"
-)
-
+  theme_minimal(base_size = 12)
 
 

@@ -71,7 +71,7 @@ variables_conservar <- c(
   
   # Ingresos
   "y_total", "y_corr", "y_transf", "y_corr_tribut",
-  "y_no_tribut", "y_transf_nal", "y_transf_otra",
+  "y_no_tribut", "y_transf_nal", "y_transf_otra","y_corr_tribut_predial", "y_corr_tribut_iyc",
   
   # Gastos
   "g_total", "g_corr", "g_func", "g_func_general",
@@ -90,14 +90,14 @@ variables_conservar <- c(
   "df2_balanceprimario", "df2_balanceprimario_c",
   "df2_resultados", "df2_resultados_c",
   "df2_califi_ceingreso", "df2_califi_ceinversion",
-  "df2_calificaciongestio", "df2_rango",
+  "df2_calificaciongestio", "df2_rango","df_ing_trans", "df_ing_propios", "df_ahorro",
   
   # Sistema General de Participaciones
   "sgp_total", "sgp_educaciontot", "sgp_saludtot",
-  "sgp_propgeneraltot",
+  "sgp_propgeneraltot","sgp_propgeneral_ld", "sgp_propgeneral_li",
   
   # Inversión
-  "inv_total",
+  "inv_total","g_cap", "g_cap_fbkf", "df_gast_inv",
   
   # Región
   "gandina", "gcaribe", "gpacifica", "gorinoquia", "gamazonia",
@@ -130,6 +130,22 @@ base_completa_final <- base_completa_final %>%
   select(all_of(variables_conservar)) %>%
   arrange(codmpio, ano)
 
+# Convertir las transferencias del SGP de pesos corrientes a millones de pesos corrientes
+
+base_completa_final <- base_completa_final %>%
+  mutate(
+    across(
+      c(
+        sgp_total,
+        sgp_educaciontot,
+        sgp_saludtot,
+        sgp_propgeneraltot,
+        sgp_propgeneral_ld,
+        sgp_propgeneral_li
+      ),
+      ~ .x / 1000000
+    )
+  )
 
 ############## SEGUNDA PARTE BASE GEOESPACIAL
 geoespacial <- geoespacial %>%
@@ -162,9 +178,166 @@ base_completa_final %>%
 geoespacial %>%
   filter(codmpio %in% c(23685, 94663)) 
 
+# Identificar coordenadas que requieren revisión
+coordenadas_revisar <- base_completa_final %>%
+  filter(
+    !is.na(longitud),
+    !between(longitud, -82, -66)
+  ) %>%
+  distinct(codmpio, municipio, longitud, latitud)
+
+print(coordenadas_revisar, n = Inf)
+
+# Conservar coordenadas antes de corregir
+base_completa_final <- base_completa_final %>%
+  mutate(
+    longitud_original = longitud,
+    
+    longitud = case_when(
+      between(longitud, -82, -66) ~ longitud,
+      between(longitud * 10, -82, -66) ~ longitud * 10,
+      between(longitud * 100, -82, -66) ~ longitud * 100,
+      between(longitud * 1000, -82, -66) ~ longitud * 1000,
+      between(longitud * 10000, -82, -66) ~ longitud * 10000,
+      TRUE ~ longitud
+    )
+  )
+
+# Comprobar cuáles siguen fuera del rango
+coordenadas_revisar <- base_completa_final %>%
+  filter(
+    !is.na(longitud),
+    !between(longitud, -82, -66)
+  ) %>%
+  distinct(codmpio, municipio, longitud_original, longitud)
+
+print(coordenadas_revisar, n = Inf)
+
+# Comprobar municipios sin coordenadas
+base_completa_final %>%
+  filter(is.na(longitud) | is.na(latitud)) %>%
+  distinct(codmpio, municipio)
+
+
+
+
 ############## TERCERA PARTE: INDICADOR DE SOSTENIBILIDAD
 
-############## APROXIMACIÓN AL ENDEUDAMIENTO MUNICIPAL
+############## TERCERA PARTE: PROXY DE SOSTENIBILIDAD
+
+base_completa_final <- base_completa_final %>%
+  arrange(codmpio, ano) %>%
+  group_by(codmpio) %>%
+  mutate(
+    # Flujo neto anual de crédito
+    flujo_neto = finan_credito_desemb -
+      finan_credito_amort,
+    
+    # Verificar que la serie esté completa
+    serie_completa = all(!is.na(flujo_neto)) &
+      n() == max(ano) - min(ano) + 1 &
+      n_distinct(ano) == n() &
+      min(ano) == 2000,
+    
+    # Acumulación de flujos desde 2000
+    flujo_acumulado = if (all(serie_completa)) {
+      cumsum(flujo_neto)
+    } else {
+      rep(NA_real_, n())
+    },
+    
+    # Saldo inicial mínimo compatible con los flujos
+    deuda_inicial_minima = if (all(serie_completa)) {
+      max(0, -min(c(0, flujo_acumulado)))
+    } else {
+      NA_real_
+    },
+    
+    # Reconstrucción contable mínima del saldo
+    deuda_proxy = deuda_inicial_minima +
+      flujo_acumulado,
+    
+    # Ingresos corrientes de la vigencia anterior
+    ingresos_corrientes_previos = if_else(
+      ano - lag(ano) == 1,
+      lag(y_corr),
+      NA_real_
+    ),
+    
+    # Proxy de sostenibilidad
+    sostenibilidad_proxy = if_else(
+      !is.na(deuda_proxy) &
+        !is.na(ingresos_corrientes_previos) &
+        ingresos_corrientes_previos > 0,
+      100 * deuda_proxy / ingresos_corrientes_previos,
+      NA_real_
+    )
+  ) %>%
+  ungroup()
+
+############## VALIDACIÓN PARA BOGOTÁ
+
+sostenibilidad_bogota <- tibble(
+  ano = 2011:2023,
+  sostenibilidad_oficial = c(
+    24.0, 19.9, 17.3, 18.4, 14.7,
+    12.6, 12.6, 11.1, 22.9, 24.1,
+    42.7, 58.9, 56.2
+  )
+)
+
+comparacion_bogota <- base_completa_final %>%
+  filter(codmpio == 11001) %>%
+  inner_join(sostenibilidad_bogota, by = "ano") %>%
+  mutate(
+    diferencia_pp = sostenibilidad_proxy -
+      sostenibilidad_oficial
+  ) %>%
+  select(
+    ano,
+    deuda_proxy,
+    ingresos_corrientes_previos,
+    sostenibilidad_proxy,
+    sostenibilidad_oficial,
+    diferencia_pp
+  )
+
+print(comparacion_bogota, n = Inf)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Verificar la variable de deuda del CEDE
+base_completa_final %>%
+  filter(codmpio == 11001) %>%
+  select(
+    ano,
+    df_deuda,
+    y_corr,
+    finan_credito_desemb,
+    finan_credito_amort
+  ) %>%
+  arrange(ano) %>%
+  print(n = Inf)
+
+
+
+
+# APROXIMACIÓN AL ENDEUDAMIENTO MUNICIPAL
 
 base_completa_final <- base_completa_final %>%
   arrange(codmpio, ano) %>%
@@ -224,10 +397,6 @@ deuda_bogota <- base_completa_final %>%
   arrange(ano)
 
 print(deuda_bogota, n = Inf)
-
-
-
-
 
 
 ############## CUARTA PARTE: CATEGORÍAS LEY 617 DE 2000

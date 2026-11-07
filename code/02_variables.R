@@ -131,7 +131,6 @@ base_completa_final <- base_completa_final %>%
   arrange(codmpio, ano)
 
 # Convertir las transferencias del SGP de pesos corrientes a millones de pesos corrientes
-
 base_completa_final <- base_completa_final %>%
   mutate(
     across(
@@ -218,132 +217,13 @@ base_completa_final %>%
   filter(is.na(longitud) | is.na(latitud)) %>%
   distinct(codmpio, municipio)
 
-
-
-
-############## TERCERA PARTE: INDICADOR DE SOSTENIBILIDAD
-
 ############## TERCERA PARTE: PROXY DE SOSTENIBILIDAD
 
 base_completa_final <- base_completa_final %>%
   arrange(codmpio, ano) %>%
   group_by(codmpio) %>%
   mutate(
-    # Flujo neto anual de crédito
-    flujo_neto = finan_credito_desemb -
-      finan_credito_amort,
-    
-    # Verificar que la serie esté completa
-    serie_completa = all(!is.na(flujo_neto)) &
-      n() == max(ano) - min(ano) + 1 &
-      n_distinct(ano) == n() &
-      min(ano) == 2000,
-    
-    # Acumulación de flujos desde 2000
-    flujo_acumulado = if (all(serie_completa)) {
-      cumsum(flujo_neto)
-    } else {
-      rep(NA_real_, n())
-    },
-    
-    # Saldo inicial mínimo compatible con los flujos
-    deuda_inicial_minima = if (all(serie_completa)) {
-      max(0, -min(c(0, flujo_acumulado)))
-    } else {
-      NA_real_
-    },
-    
-    # Reconstrucción contable mínima del saldo
-    deuda_proxy = deuda_inicial_minima +
-      flujo_acumulado,
-    
-    # Ingresos corrientes de la vigencia anterior
-    ingresos_corrientes_previos = if_else(
-      ano - lag(ano) == 1,
-      lag(y_corr),
-      NA_real_
-    ),
-    
-    # Proxy de sostenibilidad
-    sostenibilidad_proxy = if_else(
-      !is.na(deuda_proxy) &
-        !is.na(ingresos_corrientes_previos) &
-        ingresos_corrientes_previos > 0,
-      100 * deuda_proxy / ingresos_corrientes_previos,
-      NA_real_
-    )
-  ) %>%
-  ungroup()
-
-############## VALIDACIÓN PARA BOGOTÁ
-
-sostenibilidad_bogota <- tibble(
-  ano = 2011:2023,
-  sostenibilidad_oficial = c(
-    24.0, 19.9, 17.3, 18.4, 14.7,
-    12.6, 12.6, 11.1, 22.9, 24.1,
-    42.7, 58.9, 56.2
-  )
-)
-
-comparacion_bogota <- base_completa_final %>%
-  filter(codmpio == 11001) %>%
-  inner_join(sostenibilidad_bogota, by = "ano") %>%
-  mutate(
-    diferencia_pp = sostenibilidad_proxy -
-      sostenibilidad_oficial
-  ) %>%
-  select(
-    ano,
-    deuda_proxy,
-    ingresos_corrientes_previos,
-    sostenibilidad_proxy,
-    sostenibilidad_oficial,
-    diferencia_pp
-  )
-
-print(comparacion_bogota, n = Inf)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Verificar la variable de deuda del CEDE
-base_completa_final %>%
-  filter(codmpio == 11001) %>%
-  select(
-    ano,
-    df_deuda,
-    y_corr,
-    finan_credito_desemb,
-    finan_credito_amort
-  ) %>%
-  arrange(ano) %>%
-  print(n = Inf)
-
-
-
-
-# APROXIMACIÓN AL ENDEUDAMIENTO MUNICIPAL
-
-base_completa_final <- base_completa_final %>%
-  arrange(codmpio, ano) %>%
-  group_by(codmpio) %>%
-  mutate(
-    # Flujo neto anual de crédito
+    # Flujo neto anual
     flujo_neto = finan_credito_desemb -
       finan_credito_amort,
     
@@ -354,49 +234,54 @@ base_completa_final <- base_completa_final %>%
       rep(NA_real_, n())
     },
     
-    # Indicador exploratorio
-    proxy_endeudamiento = if_else(
-      !is.na(y_corr) & y_corr > 0,
-      100 * flujo_acumulado / y_corr,
+    # Saldo inicial mínimo compatible con los flujos
+    deuda_inicial_minima = if (all(!is.na(flujo_acumulado))) {
+      max(0, -min(c(0, flujo_acumulado)))
+    } else {
+      NA_real_
+    },
+    
+    # Deuda reconstruida
+    deuda_proxy = deuda_inicial_minima +
+      flujo_acumulado,
+    
+    # Ingresos corrientes del año anterior
+    ingresos_corrientes_previos = if_else(
+      ano - lag(ano) == 1,
+      lag(y_corr),
+      NA_real_
+    ),
+    
+    # Aproximación a la sostenibilidad
+    sostenibilidad_proxy = if_else(
+      !is.na(deuda_proxy) &
+        !is.na(ingresos_corrientes_previos) &
+        ingresos_corrientes_previos > 0,
+      100 * deuda_proxy /
+        ingresos_corrientes_previos,
       NA_real_
     )
   ) %>%
   ungroup()
 
-############## PROXY DE ENDEUDAMIENTO DE BOGOTÁ
+
+# Validación para Bogotá
 
 proxy_bogota <- base_completa_final %>%
   filter(codmpio == 11001) %>%
   select(
     ano,
     municipio,
-    finan_credito_desemb,
-    finan_credito_amort,
     flujo_neto,
     flujo_acumulado,
-    y_corr,
-    proxy_endeudamiento
+    deuda_inicial_minima,
+    deuda_proxy,
+    ingresos_corrientes_previos,
+    sostenibilidad_proxy
   ) %>%
   arrange(ano)
 
-# Mostrar todos los años
 print(proxy_bogota, n = Inf)
-
-
-
-############## MAGNITUD DE LA DEUDA DE BOGOTÁ
-
-deuda_bogota <- base_completa_final %>%
-  filter(codmpio == 11001) %>%
-  select(
-    ano,
-    municipio,
-    df_deuda,
-    proxy_endeudamiento
-  ) %>%
-  arrange(ano)
-
-print(deuda_bogota, n = Inf)
 
 
 ############## CUARTA PARTE: CATEGORÍAS LEY 617 DE 2000
@@ -406,7 +291,7 @@ banrep <- read_dta(
   file.path(data, "Ejecuciones_Municipios_PANEL_1984_2023.dta")
 )
 
-# 2. Seleccionar y consolidar categoría municipal
+# 2. Seleccionar categorías municipales
 banrep_categoria <- banrep %>%
   rename(
     codmpio = cod_mpios,
@@ -417,7 +302,28 @@ banrep_categoria <- banrep %>%
     codmpio = as.integer(codmpio),
     ano = as.integer(ano)
   ) %>%
-  filter(between(ano, 2000, 2023)) %>%
+  filter(between(ano, 2000, 2023))
+
+# 3. Verificar inconsistencias por municipio-año
+conflictos_categoria <- banrep_categoria %>%
+  group_by(codmpio, ano) %>%
+  summarise(
+    categorias_distintas = n_distinct(
+      categ_cgn, na.rm = TRUE
+    ),
+    .groups = "drop"
+  ) %>%
+  filter(categorias_distintas > 1)
+
+print(conflictos_categoria, n = Inf)
+
+# 4. Consolidar una categoría por municipio-año
+# Detener el proceso si existen categorías contradictorias
+if (nrow(conflictos_categoria) > 0) {
+  stop("Existen categorías contradictorias por municipio-año.")
+}
+
+banrep_categoria <- banrep_categoria %>%
   group_by(codmpio, ano) %>%
   summarise(
     categ_cgn = first(
@@ -427,8 +333,10 @@ banrep_categoria <- banrep %>%
     .groups = "drop"
   )
 
-# 3. Unir con la base principal
+# 5. Unir categorías con la base principal
+# Evitar columnas duplicadas si se ejecuta nuevamente
 base_completa_final <- base_completa_final %>%
+  select(-any_of("categ_cgn")) %>%
   mutate(
     codmpio = as.integer(codmpio),
     ano = as.integer(ano)
@@ -439,8 +347,8 @@ base_completa_final <- base_completa_final %>%
     relationship = "many-to-one"
   )
 
-# 4. Verificar cobertura histórica
-base_completa_final %>%
+# 6. Verificar cobertura histórica
+cobertura_categoria <- base_completa_final %>%
   group_by(ano) %>%
   summarise(
     municipios = n_distinct(codmpio),
@@ -450,10 +358,160 @@ base_completa_final %>%
       100 * con_categoria / n(), 2
     ),
     .groups = "drop"
-  ) %>%
+  )
+
+print(cobertura_categoria, n = Inf)
+
+# 7. Verificar valores de las categorías
+base_completa_final %>%
+  filter(between(ano, 2002, 2023)) %>%
+  count(categ_cgn, sort = TRUE) %>%
   print(n = Inf)
 
-# 5. Guardar base final
+# 8. Verificar duplicados municipio-año
+duplicados_categoria <- base_completa_final %>%
+  count(codmpio, ano) %>%
+  filter(n > 1)
+
+print(duplicados_categoria, n = Inf)
+
+# 9. Identificar municipios sin categoría
+municipios_sin_categoria <- base_completa_final %>%
+  filter(
+    between(ano, 2003, 2023),
+    is.na(categ_cgn)
+  ) %>%
+  distinct(codmpio, municipio) %>%
+  arrange(codmpio)
+
+print(municipios_sin_categoria, n = Inf)
+
+
+
+############## QUINTA PARTE: UTILIZACIÓN DEL CRÉDITO MUNICIPAL
+
+base_completa_final <- base_completa_final %>%
+  mutate(
+    # 1. Utilización efectiva del crédito (dummy)
+    dummy_credito = case_when(
+      is.na(finan_credito_desemb) ~ NA_integer_,
+      finan_credito_desemb > 0 ~ 1L,
+      TRUE ~ 0L
+    ),
+    
+    # 2. Crédito neto anual (millones de pesos)
+    credito_neto = finan_credito_desemb -
+      finan_credito_amort,
+    
+    # 3. Desembolsos como porcentaje de ingresos corrientes
+    desembolsos_ingresos = if_else(
+      !is.na(y_corr) & y_corr > 0,
+      100 * finan_credito_desemb / y_corr,
+      NA_real_
+    ),
+    
+    # 4. Crédito neto como porcentaje de ingresos corrientes
+    credito_neto_ingresos = if_else(
+      !is.na(y_corr) & y_corr > 0,
+      100 * credito_neto / y_corr,
+      NA_real_
+    ),
+    
+    # 5. Desembolsos per cápita (pesos corrientes)
+    desembolsos_pc = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      finan_credito_desemb * 1000000 / pobl_tot,
+      NA_real_
+    )
+  )
+
+
+############## VALIDACIÓN DE VARIABLES DE CRÉDITO
+
+resumen_credito <- base_completa_final %>%
+  filter(between(ano, 2002, 2023)) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    observaciones = n(),
+    
+    con_credito = sum(dummy_credito == 1, na.rm = TRUE),
+    sin_credito = sum(dummy_credito == 0, na.rm = TRUE),
+    sin_informacion = sum(is.na(dummy_credito)),
+    
+    desembolsos_pc_disponibles =
+      sum(!is.na(desembolsos_pc)),
+    
+    desembolsos_ingresos_disponibles =
+      sum(!is.na(desembolsos_ingresos)),
+    
+    credito_neto_ingresos_disponibles =
+      sum(!is.na(credito_neto_ingresos))
+  )
+
+print(resumen_credito)
+
+
+############## SEXTA PARTE: ESFUERZO FISCAL Y DEPENDENCIA DEL SGP
+
+base_completa_final <- base_completa_final %>%
+  mutate(
+    # 1. Transferencias del SGP per cápita
+    sgp_pc = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      sgp_total * 1000000 / pobl_tot,
+      NA_real_
+    ),
+    
+    # 2. Recaudo tributario propio per cápita
+    recaudo_tributario_pc = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      y_corr_tribut * 1000000 / pobl_tot,
+      NA_real_
+    ),
+    
+    # 3. Dependencia del SGP respecto a ingresos totales
+    dependencia_sgp = if_else(
+      !is.na(y_total) & y_total > 0,
+      100 * sgp_total / y_total,
+      NA_real_
+    ),
+    
+    # 4. Dependencia de transferencias totales
+    dependencia_transferencias = if_else(
+      !is.na(y_total) & y_total > 0,
+      100 * y_transf / y_total,
+      NA_real_
+    ),
+    
+    # 5. Participación del recaudo tributario
+    participacion_tributaria = if_else(
+      !is.na(y_corr) & y_corr > 0,
+      100 * y_corr_tribut / y_corr,
+      NA_real_
+    )
+  )
+
+
+# Validación variables
+resumen_fiscal <- base_completa_final %>%
+  filter(between(ano, 2002, 2023)) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    observaciones = n(),
+    sgp_pc_disponibles = sum(!is.na(sgp_pc)),
+    recaudo_pc_disponibles =
+      sum(!is.na(recaudo_tributario_pc)),
+    dependencia_sgp_disponibles =
+      sum(!is.na(dependencia_sgp)),
+    dependencia_transferencias_disponibles =
+      sum(!is.na(dependencia_transferencias)),
+    participacion_tributaria_disponibles =
+      sum(!is.na(participacion_tributaria))
+  )
+
+print(resumen_fiscal, width = Inf)
+
+# Guardar base final
 saveRDS(
   base_completa_final,
   file.path(processed, "base.rds")

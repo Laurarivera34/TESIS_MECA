@@ -51,17 +51,35 @@ base <- readRDS(
   file.path(processed, "base.rds")
 )
 
-# Convertir a millones de pesos
-base <- base %>%
-  mutate(sgp_total = sgp_total / 1000000)
+names(base)
 
 ################ PRIMER PARTE: ESTADÍSTICAS DESCRIPTIVAS DE LAS VARIABLES PRINCIPALES
 
 # Variables de interés
 variables_tesis <- c(
-  "finan_credito_desemb", "finan_credito_amort", "g_int_deudap",
-  "sgp_total", "y_corr", "y_corr_tribut",
-  "pib_total", "discapital", "dismdo", "oficinas"
+  # Transferencias del SGP
+  "sgp_pc",
+  "dependencia_sgp",
+  
+  # Esfuerzo fiscal propio
+  "recaudo_tributario_pc",
+  "participacion_tributaria",
+  
+  # Sostenibilidad de la deuda
+  "sostenibilidad_proxy",
+  
+  # Utilización del crédito
+  "dummy_credito",
+  "desembolsos_pc",
+  "desembolsos_ingresos",
+  
+  # Características municipales
+  "pobl_tot",
+  "pib_percapita",
+  "indrural",
+  "discapital",
+  "dismdo",
+  "oficinas"
 )
 
 # Estadísticas descriptivas
@@ -88,13 +106,17 @@ estadisticas <- base %>%
   mutate(
     variable = recode(
       as.character(variable),
-      finan_credito_desemb = "Desembolsos de crédito",
-      finan_credito_amort = "Amortizaciones de crédito",
-      g_int_deudap = "Intereses de deuda pública",
-      sgp_total = "Transferencias SGP",
-      y_corr = "Ingresos corrientes",
-      y_corr_tribut = "Ingresos tributarios",
-      pib_total = "PIB municipal",
+      sgp_pc = "SGP por habitante",
+      dependencia_sgp = "Dependencia del SGP (%)",
+      recaudo_tributario_pc = "Recaudo tributario por habitante",
+      participacion_tributaria = "Participación tributaria (%)",
+      sostenibilidad_proxy = "Sostenibilidad aproximada (%)",
+      dummy_credito = "Desembolsos positivos (0/1)",
+      desembolsos_pc = "Desembolsos por habitante",
+      desembolsos_ingresos = "Desembolsos / ingresos (%)",
+      pobl_tot = "Población",
+      pib_percapita = "PIB por habitante",
+      indrural = "Índice de ruralidad",
       discapital = "Distancia a la capital",
       dismdo = "Distancia al mercado",
       oficinas = "Oficinas bancarias"
@@ -142,16 +164,24 @@ tabla_aer <- estadisticas %>%
     align = "right",
     columns = c(N, Media, DE, Min, Max)
   ) %>%
+  
   gt::tab_source_note(
     source_note = gt::html(
       paste0(
         "<div style='max-width:900px;",
         "white-space:normal;line-height:1.4;'>",
-        "<i>Nota:</i> N: observaciones municipio-año; ",
+        "<i>Nota:</i> N corresponde a observaciones municipio-año; ",
         "DE: desviación estándar. ",
-        "Variables fiscales y de crédito en millones ",
-        "de pesos corrientes. ",
-        "Las demás variables conservan sus unidades originales.",
+        "Las variables monetarias por habitante se expresan ",
+        "en pesos corrientes. ",
+        "Los indicadores de dependencia, participación, ",
+        "sostenibilidad y desembolsos sobre ingresos ",
+        "se expresan en porcentajes. ",
+        "La sostenibilidad es una aproximación construida ",
+        "a partir de flujos de crédito y no corresponde ",
+        "al indicador oficial de la Ley 358 de 1997. ",
+        "La variable de desembolsos positivos toma valores ",
+        "de 1 cuando se registran desembolsos y 0 en caso contrario.",
         "</div>"
       )
     )
@@ -206,6 +236,117 @@ gt::gtsave(
 
 # Visualizar
 tabla_aer
+
+################ SEGUNDA PARTE: DISTRIBUCIÓN DE MUNICIPIOS SEGÚN CATEGORÍA LEY 617
+
+# Municipios únicos por categoría en 2023
+categorias_617 <- base %>%
+  filter(ano == 2023, !is.na(categ_cgn)) %>%
+  group_by(categ_cgn) %>%
+  summarise(
+    Municipios = n_distinct(codmpio),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    Participacion = 100 * Municipios / sum(Municipios)
+  ) %>%
+  arrange(categ_cgn)
+
+# Visualizar resultados
+print(categorias_617, n = Inf)
+
+# Tabla estilo AER
+tabla_617 <- categorias_617 %>%
+  gt::gt() %>%
+  gt::tab_header(
+    title = "Tabla 2. Distribución de municipios por categoría Ley 617, 2023"
+  ) %>%
+  gt::cols_label(
+    categ_cgn = "Categoría",
+    Municipios = "Municipios",
+    Participacion = "Participación (%)"
+  ) %>%
+  gt::fmt_number(
+    columns = Municipios,
+    decimals = 0,
+    sep_mark = ","
+  ) %>%
+  gt::fmt_number(
+    columns = Participacion,
+    decimals = 2,
+    dec_mark = "."
+  ) %>%
+  gt::cols_align(
+    align = "center",
+    columns = everything()
+  ) %>%
+  gt::tab_source_note(
+    source_note = gt::html(
+      paste0(
+        "<i>Nota:</i> La participación corresponde al ",
+        "porcentaje de municipios de cada categoría ",
+        "respecto al total de municipios con información ",
+        "disponible en 2023. Cada municipio se cuenta ",
+        "una sola vez."
+      )
+    )
+  ) %>%
+  gt::tab_options(
+    table.width = gt::px(650),
+    table.background.color = "white",
+    table.font.names = "Times New Roman",
+    table.font.size = gt::px(12),
+    
+    heading.align = "left",
+    heading.title.font.size = gt::px(14),
+    heading.title.font.weight = "normal",
+    
+    table.border.top.color = "black",
+    table.border.top.width = gt::px(1.5),
+    table.border.bottom.style = "none",
+    
+    column_labels.border.bottom.color = "black",
+    column_labels.border.bottom.width = gt::px(1),
+    
+    table_body.border.bottom.color = "black",
+    table_body.border.bottom.width = gt::px(1.5),
+    
+    table_body.hlines.style = "none",
+    table_body.vlines.style = "none",
+    column_labels.vlines.style = "none",
+    heading.border.bottom.style = "none",
+    
+    data_row.padding = gt::px(5),
+    column_labels.padding = gt::px(6),
+    
+    source_notes.font.size = gt::px(10),
+    source_notes.padding = gt::px(8)
+  )
+
+# Exportar imagen PNG
+gt::gtsave(
+  data = tabla_617,
+  filename = file.path(tables, "categorias_617_2023.png"),
+  zoom = 2,
+  expand = 25
+)
+
+# Visualizar
+tabla_617
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ########## SEGUNDA PARTE: TOP 10 MUNICIPIOS - CRÉDITO 2000-2023

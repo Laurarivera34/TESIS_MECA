@@ -53,19 +53,19 @@ base <- readRDS(
 
 names(base)
 
-################ PRIMER PARTE: ESTADÍSTICAS DESCRIPTIVAS DE LAS VARIABLES PRINCIPALES
+################ PRIMERA PARTE: ESTADÍSTICAS DESCRIPTIVAS
 
-# Variables de interés
+# Variables principales de la investigación
 variables_tesis <- c(
   # Transferencias del SGP
   "sgp_pc",
   "dependencia_sgp",
   
-  # Esfuerzo fiscal propio
+  # Esfuerzo fiscal
   "recaudo_tributario_pc",
   "participacion_tributaria",
   
-  # Sostenibilidad de la deuda
+  # Sostenibilidad
   "sostenibilidad_proxy",
   
   # Utilización del crédito
@@ -82,6 +82,18 @@ variables_tesis <- c(
   "oficinas"
 )
 
+# Cobertura general del panel
+cobertura_panel <- base %>%
+  summarise(
+    municipios = n_distinct(codmpio, na.rm = TRUE),
+    anos = n_distinct(ano, na.rm = TRUE),
+    ano_inicio = min(ano, na.rm = TRUE),
+    ano_fin = max(ano, na.rm = TRUE),
+    observaciones = n()
+  )
+
+print(cobertura_panel)
+
 # Estadísticas descriptivas
 estadisticas <- base %>%
   select(all_of(variables_tesis)) %>%
@@ -93,10 +105,16 @@ estadisticas <- base %>%
   group_by(variable) %>%
   summarise(
     N = sum(!is.na(valor)),
-    Media = if (all(is.na(valor))) NA_real_ else mean(valor, na.rm = TRUE),
-    DE = sd(valor, na.rm = TRUE),
-    Min = if (all(is.na(valor))) NA_real_ else min(valor, na.rm = TRUE),
-    Max = if (all(is.na(valor))) NA_real_ else max(valor, na.rm = TRUE),
+    Media = if (all(is.na(valor))) NA_real_
+    else mean(valor, na.rm = TRUE),
+    Mediana = if (all(is.na(valor))) NA_real_
+    else median(valor, na.rm = TRUE),
+    DE = if (sum(!is.na(valor)) < 2) NA_real_
+    else sd(valor, na.rm = TRUE),
+    Min = if (all(is.na(valor))) NA_real_
+    else min(valor, na.rm = TRUE),
+    Max = if (all(is.na(valor))) NA_real_
+    else max(valor, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   mutate(
@@ -123,22 +141,51 @@ estadisticas <- base %>%
     )
   )
 
+# Nota metodológica con cobertura automática
+nota_tabla <- paste0(
+  "<div style='max-width:1050px;",
+  "white-space:normal;line-height:1.5;'>",
+  "<i>Nota:</i> El panel comprende ",
+  format(cobertura_panel$municipios, big.mark = ","),
+  " municipios y ",
+  cobertura_panel$anos,
+  " años (",
+  cobertura_panel$ano_inicio,
+  "–",
+  cobertura_panel$ano_fin,
+  "), con ",
+  format(cobertura_panel$observaciones, big.mark = ","),
+  " observaciones municipio-año. ",
+  "N corresponde al número de observaciones disponibles ",
+  "para cada variable; DE: desviación estándar. ",
+  "Las variables monetarias por habitante están expresadas ",
+  "en pesos corrientes. ",
+  "Los indicadores fiscales se expresan en porcentajes, ",
+  "salvo la variable de desembolsos positivos, ",
+  "que toma valores de 0 y 1. ",
+  "La sostenibilidad aproximada se construye a partir ",
+  "de flujos de crédito y no corresponde al indicador ",
+  "oficial de la Ley 358 de 1997.",
+  "</div>"
+)
+
 # Tabla estilo AER
 tabla_aer <- estadisticas %>%
   gt::gt() %>%
   gt::tab_header(
-    title = "Tabla 1. Estadísticas descriptivas"
+    title = "Tabla 1. Estadísticas descriptivas de las principales variables"
   ) %>%
   gt::cols_label(
     variable = "Variable",
     N = "N",
     Media = "Media",
+    Mediana = "Mediana",
     DE = "DE",
     Min = "Mín.",
     Max = "Máx."
   ) %>%
   gt::fmt_number(
-    columns = c(Media, DE, Min, Max),
+    columns = c(Media, Mediana, DE, Min, Max),
     decimals = 2,
     sep_mark = ",",
     dec_mark = "."
@@ -149,12 +196,13 @@ tabla_aer <- estadisticas %>%
     sep_mark = ","
   ) %>%
   gt::cols_width(
-    variable ~ gt::px(260),
-    N ~ gt::px(90),
-    Media ~ gt::px(140),
-    DE ~ gt::px(140),
-    Min ~ gt::px(120),
-    Max ~ gt::px(170)
+    variable ~ gt::px(265),
+    N ~ gt::px(85),
+    Media ~ gt::px(125),
+    Mediana ~ gt::px(125),
+    DE ~ gt::px(125),
+    Min ~ gt::px(115),
+    Max ~ gt::px(145)
   ) %>%
   gt::cols_align(
     align = "left",
@@ -162,45 +210,21 @@ tabla_aer <- estadisticas %>%
   ) %>%
   gt::cols_align(
     align = "right",
-    columns = c(N, Media, DE, Min, Max)
+    columns = c(N, Media, Mediana, DE, Min, Max)
   ) %>%
-  
   gt::tab_source_note(
-    source_note = gt::html(
-      paste0(
-        "<div style='max-width:900px;",
-        "white-space:normal;line-height:1.4;'>",
-        "<i>Nota:</i> N corresponde a observaciones municipio-año; ",
-        "DE: desviación estándar. ",
-        "Las variables monetarias por habitante se expresan ",
-        "en pesos corrientes. ",
-        "Los indicadores de dependencia, participación, ",
-        "sostenibilidad y desembolsos sobre ingresos ",
-        "se expresan en porcentajes. ",
-        "La sostenibilidad es una aproximación construida ",
-        "a partir de flujos de crédito y no corresponde ",
-        "al indicador oficial de la Ley 358 de 1997. ",
-        "La variable de desembolsos positivos toma valores ",
-        "de 1 cuando se registran desembolsos y 0 en caso contrario.",
-        "</div>"
-      )
-    )
+    source_note = gt::html(nota_tabla)
   ) %>%
   gt::tab_options(
-    # Ancho y fondo
-    table.width = gt::px(920),
+    table.width = gt::px(985),
     table.background.color = "white",
-    
-    # Tipografía
     table.font.names = "Times New Roman",
     table.font.size = gt::px(12),
     
-    # Título
     heading.align = "left",
     heading.title.font.size = gt::px(14),
     heading.title.font.weight = "normal",
     
-    # Líneas estilo AER
     table.border.top.color = "black",
     table.border.top.width = gt::px(1.5),
     table.border.bottom.style = "none",
@@ -211,22 +235,22 @@ tabla_aer <- estadisticas %>%
     table_body.border.bottom.color = "black",
     table_body.border.bottom.width = gt::px(1.5),
     
-    # Sin líneas verticales ni internas
     table_body.hlines.style = "none",
     table_body.vlines.style = "none",
     column_labels.vlines.style = "none",
     heading.border.bottom.style = "none",
     
-    # Espaciado
     data_row.padding = gt::px(5),
     column_labels.padding = gt::px(6),
     
-    # Nota
     source_notes.font.size = gt::px(10),
     source_notes.padding = gt::px(8)
   )
 
-# Exportar imagen PNG
+# Crear carpeta si no existe
+dir.create(tables, recursive = TRUE, showWarnings = FALSE)
+
+# Exportar PNG
 gt::gtsave(
   data = tabla_aer,
   filename = file.path(tables, "estadisticas.png"),
@@ -237,111 +261,244 @@ gt::gtsave(
 # Visualizar
 tabla_aer
 
-################ SEGUNDA PARTE: DISTRIBUCIÓN DE MUNICIPIOS SEGÚN CATEGORÍA LEY 617
 
-# Municipios únicos por categoría en 2023
-categorias_617 <- base %>%
-  filter(ano == 2023, !is.na(categ_cgn)) %>%
-  group_by(categ_cgn) %>%
-  summarise(
-    Municipios = n_distinct(codmpio),
-    .groups = "drop"
-  ) %>%
+################ PARTE 2  DEPENDENCIA DEL SGP Y CRÉDITO
+
+# 1. Clasificar municipios en cuartiles según su
+# dependencia mediana del SGP, 2002–2023
+
+grupos_sgp <- dependencia_municipal %>%
+  filter(!is.na(dependencia_mediana)) %>%
   mutate(
-    Participacion = 100 * Municipios / sum(Municipios)
-  ) %>%
-  arrange(categ_cgn)
-
-# Visualizar resultados
-print(categorias_617, n = Inf)
-
-# Tabla estilo AER
-tabla_617 <- categorias_617 %>%
-  gt::gt() %>%
-  gt::tab_header(
-    title = "Tabla 2. Distribución de municipios por categoría Ley 617, 2023"
-  ) %>%
-  gt::cols_label(
-    categ_cgn = "Categoría",
-    Municipios = "Municipios",
-    Participacion = "Participación (%)"
-  ) %>%
-  gt::fmt_number(
-    columns = Municipios,
-    decimals = 0,
-    sep_mark = ","
-  ) %>%
-  gt::fmt_number(
-    columns = Participacion,
-    decimals = 2,
-    dec_mark = "."
-  ) %>%
-  gt::cols_align(
-    align = "center",
-    columns = everything()
-  ) %>%
-  gt::tab_source_note(
-    source_note = gt::html(
-      paste0(
-        "<i>Nota:</i> La participación corresponde al ",
-        "porcentaje de municipios de cada categoría ",
-        "respecto al total de municipios con información ",
-        "disponible en 2023. Cada municipio se cuenta ",
-        "una sola vez."
+    cuartil_sgp = ntile(dependencia_mediana, 4),
+    grupo_sgp = factor(
+      cuartil_sgp,
+      levels = 1:4,
+      labels = c(
+        "Baja",
+        "Media-baja",
+        "Media-alta",
+        "Alta"
       )
     )
   ) %>%
-  gt::tab_options(
-    table.width = gt::px(650),
-    table.background.color = "white",
-    table.font.names = "Times New Roman",
-    table.font.size = gt::px(12),
-    
-    heading.align = "left",
-    heading.title.font.size = gt::px(14),
-    heading.title.font.weight = "normal",
-    
-    table.border.top.color = "black",
-    table.border.top.width = gt::px(1.5),
-    table.border.bottom.style = "none",
-    
-    column_labels.border.bottom.color = "black",
-    column_labels.border.bottom.width = gt::px(1),
-    
-    table_body.border.bottom.color = "black",
-    table_body.border.bottom.width = gt::px(1.5),
-    
-    table_body.hlines.style = "none",
-    table_body.vlines.style = "none",
-    column_labels.vlines.style = "none",
-    heading.border.bottom.style = "none",
-    
-    data_row.padding = gt::px(5),
-    column_labels.padding = gt::px(6),
-    
-    source_notes.font.size = gt::px(10),
-    source_notes.padding = gt::px(8)
+  select(codmpio, grupo_sgp)
+
+# 2. Unir clasificación con el panel original
+credito_sgp <- base %>%
+  filter(between(ano, 2002, 2023)) %>%
+  left_join(grupos_sgp, by = "codmpio") %>%
+  filter(
+    !is.na(grupo_sgp),
+    !is.na(dummy_credito),
+    dummy_credito %in% c(0, 1)
   )
 
-# Exportar imagen PNG
-gt::gtsave(
-  data = tabla_617,
-  filename = file.path(tables, "categorias_617_2023.png"),
-  zoom = 2,
-  expand = 25
+# 3. Calcular utilización del crédito por grupo
+resumen_credito_sgp <- credito_sgp %>%
+  group_by(grupo_sgp) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    observaciones = n(),
+    observaciones_con_credito = sum(dummy_credito == 1),
+    porcentaje_credito = 100 * mean(dummy_credito),
+    .groups = "drop"
+  )
+
+print(resumen_credito_sgp)
+
+# 4. Elaborar gráfico
+figura_3 <- ggplot(
+  resumen_credito_sgp,
+  aes(
+    x = grupo_sgp,
+    y = porcentaje_credito
+  )
+) +
+  geom_col(
+    fill = "#8B1E2D",
+    width = 0.65
+  ) +
+  geom_text(
+    aes(
+      label = paste0(
+        round(porcentaje_credito, 1), "%"
+      )
+    ),
+    vjust = -0.5,
+    size = 4,
+    family = "serif"
+  ) +
+  scale_y_continuous(
+    limits = c(
+      0,
+      max(resumen_credito_sgp$porcentaje_credito) * 1.15
+    ),
+    labels = function(x) paste0(x, "%")
+  ) +
+  labs(
+    title = paste(
+      "Figura 3. Utilización del crédito municipal",
+      "según dependencia del SGP"
+    ),
+    subtitle = "Municipios de Colombia, 2002–2023",
+    x = "Nivel de dependencia del SGP",
+    y = "Municipios-año con desembolsos (%)",
+    caption = paste0(
+      "Nota: Los municipios se clasifican en cuartiles ",
+      "según su dependencia mediana del SGP durante ",
+      "2002–2023. La utilización corresponde al porcentaje ",
+      "de observaciones municipio-año con desembolsos ",
+      "positivos. Se excluyen registros sin información ",
+      "de crédito.\n",
+      "Fuente: CEDE y TerriData. Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(
+      size = 13,
+      face = "bold"
+    ),
+    plot.subtitle = element_text(size = 11),
+    plot.caption = element_text(
+      size = 9,
+      hjust = 0
+    ),
+    axis.title.x = element_blank(),
+    plot.margin = margin(15, 15, 15, 15)
+  )
+
+print(figura_3)
+
+ggsave(
+  filename = file.path(
+    figures,
+    "figura_3_credito_dependencia_sgp.png"
+  ),
+  plot = figura_3,
+  width = 9,
+  height = 6,
+  dpi = 300,
+  bg = "white"
 )
 
-# Visualizar
-tabla_617
 
 
+################ TERCERA PARTE: SGP Y ESFUERZO FISCAL
 
+# FIGURA 3A. SGP Y RECAUDO TRIBUTARIO POR HABITANTE
+# Colombia, 2002–2023
 
+# 1. Construir resumen por municipio
+sgp_recaudo <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio),
+    is.finite(sgp_pc),
+    is.finite(recaudo_tributario_pc),
+    sgp_pc >= 0,
+    recaudo_tributario_pc >= 0
+  ) %>%
+  group_by(codmpio) %>%
+  summarise(
+    municipio = first(municipio),
+    depto = first(depto),
+    
+    anos_disponibles = n_distinct(ano),
+    
+    sgp_pc_mediana = median(sgp_pc),
+    recaudo_pc_mediana = median(recaudo_tributario_pc),
+    
+    .groups = "drop"
+  )
 
+# 2. Revisar cobertura y distribución
+sgp_recaudo %>%
+  summarise(
+    municipios = n(),
+    mediana_sgp_pc = median(sgp_pc_mediana),
+    mediana_recaudo_pc = median(recaudo_pc_mediana),
+    minimo_sgp = min(sgp_pc_mediana),
+    maximo_sgp = max(sgp_pc_mediana),
+    minimo_recaudo = min(recaudo_pc_mediana),
+    maximo_recaudo = max(recaudo_pc_mediana)
+  ) %>%
+  print()
 
+# 3. Gráfico de dispersión
+figura_3a <- ggplot(
+  sgp_recaudo,
+  aes(
+    x = sgp_pc_mediana / 1e6,
+    y = recaudo_pc_mediana / 1e6
+  )
+) +
+  geom_point(
+    color = "#8B1E2D",
+    size = 1.5,
+    alpha = 0.45
+  ) +
+  geom_smooth(
+    method = "loess",
+    se = TRUE,
+    color = "#333333",
+    fill = "#D9D9D9",
+    linewidth = 0.9
+  ) +
+  scale_x_continuous(
+    labels = scales::label_number(
+      decimal.mark = ","
+    )
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(
+      decimal.mark = ","
+    )
+  ) +
+  labs(
+    title = paste(
+      "Figura 3A. Transferencias del SGP y",
+      "recaudo tributario municipal"
+    ),
+    subtitle = "Medianas municipales, Colombia, 2002–2023",
+    x = "SGP por habitante (millones de pesos corrientes)",
+    y = "Recaudo tributario por habitante (millones de pesos corrientes)",
+    caption = paste0(
+      "Nota: Cada punto representa un municipio. ",
+      "Se utilizan medianas municipales del período. ",
+      "La línea muestra una asociación descriptiva no causal. ",
+      "Las variables monetarias aún no están deflactadas.\n",
+      "Fuente: CEDE y TerriData. Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(
+      size = 13,
+      face = "bold"
+    ),
+    plot.subtitle = element_text(size = 11),
+    plot.caption = element_text(
+      size = 9,
+      hjust = 0
+    ),
+    plot.margin = margin(15, 15, 15, 15)
+  )
 
+print(figura_3a)
 
-
+# 4. Exportar
+ggsave(
+  filename = file.path(figures, "figura_3a_sgp_recaudo.png"),
+  plot = figura_3a,
+  width = 9,
+  height = 6,
+  dpi = 300,
+  bg = "white"
+)
 
 
 

@@ -388,88 +388,342 @@ ggsave(
 
 ################ TERCERA PARTE: SGP Y ESFUERZO FISCAL
 
-# FIGURA 3A. SGP Y RECAUDO TRIBUTARIO POR HABITANTE
-# Colombia, 2002–2023
 
-# 1. Construir resumen por municipio
-sgp_recaudo <- base %>%
+figura_3 <- ggplot(
+  resumen_esfuerzo,
+  aes(
+    x = grupo_sgp,
+    y = recaudo_mediano / 1000
+  )
+) +
+  geom_col(
+    fill = "#8B1E2D",
+    width = 0.62
+  ) +
+  geom_text(
+    aes(
+      label = scales::number(
+        recaudo_mediano / 1000,
+        accuracy = 1,
+        decimal.mark = ",",
+        big.mark = "."
+      )
+    ),
+    vjust = -0.5,
+    size = 4.2,
+    family = "serif"
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(
+      accuracy = 1,
+      decimal.mark = ",",
+      big.mark = "."
+    ),
+    expand = expansion(mult = c(0, 0.13))
+  ) +
+  labs(
+    title = "Figura 3. Dependencia del SGP y recaudo tributario municipal",
+    subtitle = "Colombia, 2002–2023. Medianas municipales",
+    x = "Dependencia de las transferencias del SGP",
+    y = "Recaudo tributario por habitante (miles de pesos)",
+    caption = paste(
+      "Nota: Los municipios se clasifican en cuartiles",
+      "según su dependencia mediana del SGP.",
+      "Las barras representan la mediana del recaudo",
+      "tributario por habitante de cada grupo.",
+      "Valores corrientes.\n",
+      "Fuente: CEDE y TerriData. Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(
+      size = 14,
+      face = "bold"
+    ),
+    plot.subtitle = element_text(size = 11),
+    axis.title = element_text(size = 11),
+    axis.text = element_text(size = 10),
+    plot.caption = element_text(
+      size = 9,
+      hjust = 0
+    ),
+    plot.caption.position = "plot",
+    plot.margin = margin(15, 20, 15, 20)
+  )
+
+print(figura_3)
+
+ggsave(
+  file.path(figures, "figura_3_esfuerzo_fiscal.png"),
+  figura_3,
+  width = 10,
+  height = 6.5,
+  dpi = 300,
+  bg = "white"
+)
+
+
+################ CUARTA PARTE: SGP Y UTILIZACIÓN DEL CRÉDITO
+
+# 1. Calcular dependencia histórica por municipio
+dependencia_credito <- base %>%
   filter(
     between(ano, 2002, 2023),
-    !is.na(codmpio),
-    is.finite(sgp_pc),
-    is.finite(recaudo_tributario_pc),
-    sgp_pc >= 0,
-    recaudo_tributario_pc >= 0
+    !is.na(codmpio)
   ) %>%
   group_by(codmpio) %>%
   summarise(
-    municipio = first(municipio),
-    depto = first(depto),
+    dependencia_mediana = if (
+      any(is.finite(dependencia_sgp))
+    ) {
+      median(dependencia_sgp[is.finite(dependencia_sgp)])
+    } else NA_real_,
+    .groups = "drop"
+  ) %>%
+  filter(is.finite(dependencia_mediana)) %>%
+  mutate(
+    grupo_sgp = factor(
+      ntile(dependencia_mediana, 4),
+      levels = 1:4,
+      labels = c("Baja", "Media-baja", "Media-alta", "Alta")
+    )
+  )
+
+# 2. Identificar observaciones con desembolsos
+credito_panel <- base %>%
+  filter(between(ano, 2002, 2023)) %>%
+  inner_join(
+    dependencia_credito %>%
+      select(codmpio, grupo_sgp),
+    by = "codmpio"
+  ) %>%
+  filter(
+    !is.na(dummy_credito),
+    dummy_credito %in% c(0, 1)
+  )
+
+# 3. Frecuencia de utilización del crédito
+# Primero por municipio, luego por grupo
+credito_municipal <- credito_panel %>%
+  group_by(codmpio, grupo_sgp) %>%
+  summarise(
+    anos_observados = n_distinct(ano),
+    anos_con_credito = sum(dummy_credito == 1),
+    frecuencia_credito = 100 * mean(dummy_credito),
+    .groups = "drop"
+  )
+
+resumen_credito <- credito_municipal %>%
+  group_by(grupo_sgp) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    frecuencia_mediana = median(frecuencia_credito),
+    frecuencia_media = mean(frecuencia_credito),
+    .groups = "drop"
+  )
+
+print(resumen_credito, n = Inf)
+
+# 4. Figura 3
+figura_3 <- ggplot(
+  resumen_credito,
+  aes(x = grupo_sgp, y = frecuencia_media)
+) +
+  geom_col(
+    fill = "#8B1E2D",
+    width = 0.62
+  ) +
+  geom_text(
+    aes(
+      label = paste0(
+        scales::number(
+          frecuencia_media,
+          accuracy = 0.1,
+          decimal.mark = ","
+        ),
+        "%"
+      )
+    ),
+    vjust = -0.5,
+    size = 4.2,
+    family = "serif"
+  ) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    breaks = seq(0, 100, 20),
+    labels = function(x) paste0(x, "%")
+  ) +
+  labs(
+    title = "Figura 3. Dependencia del SGP y utilización del crédito municipal",
+    subtitle = "Colombia, 2002–2023",
+    x = "Dependencia de las transferencias del SGP",
+    y = "Años con desembolsos de crédito (%)",
+    caption = paste0(
+      "Nota: Los municipios se agrupan en cuartiles según ",
+      "su dependencia mediana del SGP. Las barras representan ",
+      "el promedio municipal del porcentaje de años con ",
+      "desembolsos positivos, entre los años con información.\n",
+      "Fuente: CEDE y TerriData. Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(size = 13, face = "bold"),
+    plot.subtitle = element_text(size = 11),
+    plot.caption = element_text(size = 9, hjust = 0),
+    plot.caption.position = "plot"
+  )
+
+print(figura_3)
+
+ggsave(
+  file.path(figures, "figura_3_sgp_utilizacion_credito.png"),
+  figura_3,
+  width = 10,
+  height = 6.5,
+  dpi = 300,
+  bg = "white"
+)
+
+
+################ PARTE 5: SOSTENIBILIDAD DE LA DEUDA
+
+# 1. Construir indicadores por municipio
+datos_sostenibilidad <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio)
+  ) %>%
+  group_by(codmpio) %>%
+  summarise(
+    dependencia_mediana = if (
+      any(is.finite(dependencia_sgp))
+    ) {
+      median(dependencia_sgp[is.finite(dependencia_sgp)])
+    } else NA_real_,
     
-    anos_disponibles = n_distinct(ano),
+    sostenibilidad_mediana = if (
+      any(is.finite(sostenibilidad_proxy))
+    ) {
+      median(sostenibilidad_proxy[
+        is.finite(sostenibilidad_proxy)
+      ])
+    } else NA_real_,
     
-    sgp_pc_mediana = median(sgp_pc),
-    recaudo_pc_mediana = median(recaudo_tributario_pc),
+    anos_sostenibilidad = sum(
+      is.finite(sostenibilidad_proxy)
+    ),
     
     .groups = "drop"
   )
 
-# 2. Revisar cobertura y distribución
-sgp_recaudo %>%
-  summarise(
-    municipios = n(),
-    mediana_sgp_pc = median(sgp_pc_mediana),
-    mediana_recaudo_pc = median(recaudo_pc_mediana),
-    minimo_sgp = min(sgp_pc_mediana),
-    maximo_sgp = max(sgp_pc_mediana),
-    minimo_recaudo = min(recaudo_pc_mediana),
-    maximo_recaudo = max(recaudo_pc_mediana)
-  ) %>%
-  print()
+# 2. Clasificar según dependencia del SGP
+# Los cuartiles se calculan antes de excluir
+# municipios sin información de sostenibilidad.
+datos_sostenibilidad <- datos_sostenibilidad %>%
+  filter(is.finite(dependencia_mediana)) %>%
+  mutate(
+    grupo_sgp = factor(
+      ntile(dependencia_mediana, 4),
+      levels = 1:4,
+      labels = c(
+        "Baja",
+        "Media-baja",
+        "Media-alta",
+        "Alta"
+      )
+    )
+  )
 
-# 3. Gráfico de dispersión
-figura_3a <- ggplot(
-  sgp_recaudo,
+# 3. Resumir por grupo
+resumen_sostenibilidad <- datos_sostenibilidad %>%
+  group_by(grupo_sgp) %>%
+  summarise(
+    municipios_total = n(),
+    municipios_con_datos = sum(
+      is.finite(sostenibilidad_mediana)
+    ),
+    mediana = if (
+      any(is.finite(sostenibilidad_mediana))
+    ) {
+      median(sostenibilidad_mediana[
+        is.finite(sostenibilidad_mediana)
+      ])
+    } else NA_real_,
+    p25 = if (
+      any(is.finite(sostenibilidad_mediana))
+    ) {
+      quantile(sostenibilidad_mediana[
+        is.finite(sostenibilidad_mediana)
+      ], 0.25)
+    } else NA_real_,
+    p75 = if (
+      any(is.finite(sostenibilidad_mediana))
+    ) {
+      quantile(sostenibilidad_mediana[
+        is.finite(sostenibilidad_mediana)
+      ], 0.75)
+    } else NA_real_,
+    .groups = "drop"
+  )
+
+print(resumen_sostenibilidad, n = Inf)
+
+# 4. Figura 5
+figura_5 <- ggplot(
+  resumen_sostenibilidad %>%
+    filter(is.finite(mediana)),
   aes(
-    x = sgp_pc_mediana / 1e6,
-    y = recaudo_pc_mediana / 1e6
+    x = grupo_sgp,
+    y = mediana
   )
 ) +
-  geom_point(
-    color = "#8B1E2D",
-    size = 1.5,
-    alpha = 0.45
+  geom_col(
+    fill = "#8B1E2D",
+    width = 0.62
   ) +
-  geom_smooth(
-    method = "loess",
-    se = TRUE,
-    color = "#333333",
-    fill = "#D9D9D9",
-    linewidth = 0.9
-  ) +
-  scale_x_continuous(
-    labels = scales::label_number(
-      decimal.mark = ","
-    )
+  geom_text(
+    aes(
+      label = paste0(
+        scales::number(
+          mediana,
+          accuracy = 0.1,
+          decimal.mark = ","
+        ),
+        "%"
+      )
+    ),
+    vjust = -0.5,
+    size = 4.2,
+    family = "serif"
   ) +
   scale_y_continuous(
-    labels = scales::label_number(
-      decimal.mark = ","
-    )
+    labels = function(x) paste0(
+      scales::number(
+        x,
+        accuracy = 1,
+        decimal.mark = ","
+      ),
+      "%"
+    ),
+    expand = expansion(mult = c(0, 0.15))
   ) +
   labs(
     title = paste(
-      "Figura 3A. Transferencias del SGP y",
-      "recaudo tributario municipal"
+      "Figura 5. Aproximación a la sostenibilidad",
+      "de la deuda según dependencia del SGP"
     ),
-    subtitle = "Medianas municipales, Colombia, 2002–2023",
-    x = "SGP por habitante (millones de pesos corrientes)",
-    y = "Recaudo tributario por habitante (millones de pesos corrientes)",
+    subtitle = "Colombia, 2002–2023. Medianas municipales",
+    x = "Dependencia de las transferencias del SGP",
+    y = "Indicador aproximado de deuda (%)",
     caption = paste0(
-      "Nota: Cada punto representa un municipio. ",
-      "Se utilizan medianas municipales del período. ",
-      "La línea muestra una asociación descriptiva no causal. ",
-      "Las variables monetarias aún no están deflactadas.\n",
+      "Nota: Las barras representan la mediana municipal ",
+      "de sostenibilidad_proxy en cada cuartil de dependencia ",
+      "del SGP. Este indicador es una aproximación exploratoria ",
+      "y no corresponde al indicador oficial de la Ley 358.\n",
       "Fuente: CEDE y TerriData. Cálculos propios."
     )
   ) +
@@ -485,28 +739,165 @@ figura_3a <- ggplot(
       size = 9,
       hjust = 0
     ),
-    plot.margin = margin(15, 15, 15, 15)
+    plot.caption.position = "plot",
+    plot.margin = margin(15, 20, 15, 20)
   )
 
-print(figura_3a)
+print(figura_5)
 
-# 4. Exportar
+# 5. Exportar
 ggsave(
-  filename = file.path(figures, "figura_3a_sgp_recaudo.png"),
-  plot = figura_3a,
-  width = 9,
-  height = 6,
+  filename = file.path(
+    figures,
+    "figura_5_sostenibilidad_sgp.png"
+  ),
+  plot = figura_5,
+  width = 10,
+  height = 6.5,
   dpi = 300,
   bg = "white"
 )
 
 
 
+################ PARTE 6: HETEROGENEIDAD MUNICIPAL
+
+# 1. Preparar categoría fiscal
+# Verificar primero cómo está codificada
+table(base$categ_cgn, useNA = "ifany")
+
+# 2. Construir dependencia histórica del SGP
+grupos_sgp_6 <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio)
+  ) %>%
+  group_by(codmpio) %>%
+  summarise(
+    dependencia_mediana = if (
+      any(is.finite(dependencia_sgp))
+    ) median(dependencia_sgp[is.finite(dependencia_sgp)])
+    else NA_real_,
+    .groups = "drop"
+  ) %>%
+  filter(is.finite(dependencia_mediana)) %>%
+  mutate(
+    grupo_sgp = factor(
+      ntile(dependencia_mediana, 4),
+      levels = 1:4,
+      labels = c("Baja", "Media-baja", "Media-alta", "Alta")
+    )
+  ) %>%
+  select(codmpio, grupo_sgp)
+
+# 3. Construir panel de crédito y categoría
+credito_categoria <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio),
+    !is.na(dummy_credito),
+    dummy_credito %in% c(0, 1)
+  ) %>%
+  inner_join(grupos_sgp_6, by = "codmpio") %>%
+  mutate(
+    categoria_texto = toupper(trimws(as.character(categ_cgn))),
+    grupo_categoria = case_when(
+      categoria_texto %in% c(
+        "E", "ESPECIAL", "0", "1", "2", "3"
+      ) ~ "Especial–3",
+      categoria_texto %in% c(
+        "4", "5", "6"
+      ) ~ "4–6",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(grupo_categoria))
+
+# 4. Calcular frecuencia por municipio y grupo fiscal
+credito_categoria_municipal <- credito_categoria %>%
+  group_by(codmpio, grupo_sgp, grupo_categoria) %>%
+  summarise(
+    anos_observados = n_distinct(ano),
+    frecuencia_credito = 100 * mean(dummy_credito),
+    .groups = "drop"
+  )
+
+# 5. Resumir por dependencia y categoría
+resumen_categoria <- credito_categoria_municipal %>%
+  group_by(grupo_sgp, grupo_categoria) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    frecuencia_media = mean(frecuencia_credito),
+    frecuencia_mediana = median(frecuencia_credito),
+    .groups = "drop"
+  )
+
+print(resumen_categoria, n = Inf)
+
+# 6. Figura 6
+figura_6 <- ggplot(
+  resumen_categoria,
+  aes(
+    x = grupo_sgp,
+    y = frecuencia_media,
+    group = grupo_categoria,
+    color = grupo_categoria
+  )
+) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 3) +
+  scale_color_manual(
+    values = c(
+      "Especial–3" = "#8B1E2D",
+      "4–6" = "#555555"
+    )
+  ) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    breaks = seq(0, 100, 20),
+    labels = function(x) paste0(x, "%")
+  ) +
+  labs(
+    title = paste(
+      "Figura 6. Utilización del crédito según",
+      "dependencia del SGP y categoría fiscal"
+    ),
+    subtitle = "Colombia, 2002–2023",
+    x = "Dependencia de las transferencias del SGP",
+    y = "Años con desembolsos de crédito (%)",
+    color = "Categoría municipal",
+    caption = paste0(
+      "Nota: Las líneas representan el promedio de la frecuencia ",
+      "municipal de desembolsos positivos por grupo de categoría ",
+      "fiscal y cuartil de dependencia del SGP. Las categorías ",
+      "se consideran según su clasificación anual.\n",
+      "Fuente: CEDE y TerriData. Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(size = 13, face = "bold"),
+    plot.subtitle = element_text(size = 11),
+    legend.position = "bottom",
+    plot.caption = element_text(size = 9, hjust = 0),
+    plot.caption.position = "plot"
+  )
+
+print(figura_6)
+
+# 7. Exportar
+ggsave(
+  file.path(figures, "figura_6_credito_categoria_617.png"),
+  figura_6,
+  width = 10,
+  height = 6.5,
+  dpi = 300,
+  bg = "white"
+)
 
 
-
-
-########## SEGUNDA PARTE: TOP 10 MUNICIPIOS - CRÉDITO 2000-2023
+########## PARTE 7. TOP 10 MUNICIPIOS - CRÉDITO 2000-2023
 credito_municipal <- base %>%
   group_by(codmpio) %>%
   summarise(
@@ -706,267 +1097,6 @@ crear_tabla_aer(
   archivo = "tabla_2_menor_credito.png"
 )
 
-########## TERCERA PARTE: MAGNITUD DE LA DEUDA 2000-2023
-
-# ============================================================
-# 1. ESTADÍSTICAS DESCRIPTIVAS
-# ============================================================
-
-estadisticas_deuda <- base %>%
-  summarise(
-    observaciones = sum(!is.na(df_deuda)),
-    municipios = n_distinct(codmpio[!is.na(df_deuda)]),
-    cobertura = 100 * mean(!is.na(df_deuda)),
-    promedio = mean(df_deuda, na.rm = TRUE),
-    desviacion = sd(df_deuda, na.rm = TRUE),
-    minimo = min(df_deuda, na.rm = TRUE),
-    p25 = quantile(df_deuda, 0.25, na.rm = TRUE),
-    mediana = median(df_deuda, na.rm = TRUE),
-    p75 = quantile(df_deuda, 0.75, na.rm = TRUE),
-    maximo = max(df_deuda, na.rm = TRUE),
-    porcentaje_ceros = 100 * mean(
-      df_deuda[!is.na(df_deuda)] == 0
-    ),
-    porcentaje_negativos = 100 * mean(
-      df_deuda[!is.na(df_deuda)] < 0
-    )
-  )
-
-print(estadisticas_deuda, width = Inf)
-
-
-# ============================================================
-# 2. TABLA DE ESTADÍSTICAS - FORMATO AER
-# ============================================================
-
-tabla_deuda <- estadisticas_deuda %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "estadistica",
-    values_to = "valor"
-  ) %>%
-  mutate(
-    estadistica = recode(
-      estadistica,
-      observaciones = "Observaciones disponibles",
-      municipios = "Municipios con información",
-      cobertura = "Cobertura del panel (%)",
-      promedio = "Promedio",
-      desviacion = "Desviación estándar",
-      minimo = "Mínimo",
-      p25 = "Percentil 25",
-      mediana = "Mediana",
-      p75 = "Percentil 75",
-      maximo = "Máximo",
-      porcentaje_ceros = "Observaciones iguales a cero (%)",
-      porcentaje_negativos = "Observaciones negativas (%)"
-    ),
-    valor = format(
-      round(valor, 2),
-      big.mark = ".",
-      decimal.mark = ",",
-      nsmall = 2,
-      trim = TRUE
-    )
-  )
-
-names(tabla_deuda) <- c("Estadística", "Valor")
-
-estilo_aer <- gridExtra::ttheme_minimal(
-  base_size = 12,
-  base_family = "serif",
-  core = list(
-    bg_params = list(fill = "white", col = NA),
-    fg_params = list(hjust = 0, x = 0.05)
-  ),
-  colhead = list(
-    fg_params = list(fontface = "bold"),
-    bg_params = list(fill = "white", col = NA)
-  )
-)
-
-tabla_grob <- gridExtra::tableGrob(
-  tabla_deuda,
-  rows = NULL,
-  theme = estilo_aer
-)
-
-# Líneas horizontales estilo AER
-tabla_grob <- gtable::gtable_add_grob(
-  tabla_grob,
-  grobs = grid::segmentsGrob(
-    x0 = 0, x1 = 1, y0 = 1, y1 = 1,
-    gp = grid::gpar(lwd = 1.5)
-  ),
-  t = 1, l = 1, r = ncol(tabla_grob)
-)
-
-tabla_grob <- gtable::gtable_add_grob(
-  tabla_grob,
-  grobs = grid::segmentsGrob(
-    x0 = 0, x1 = 1, y0 = 0, y1 = 0,
-    gp = grid::gpar(lwd = 1)
-  ),
-  t = 1, l = 1, r = ncol(tabla_grob)
-)
-
-tabla_grob <- gtable::gtable_add_grob(
-  tabla_grob,
-  grobs = grid::segmentsGrob(
-    x0 = 0, x1 = 1, y0 = 0, y1 = 0,
-    gp = grid::gpar(lwd = 1.5)
-  ),
-  t = nrow(tabla_grob),
-  l = 1, r = ncol(tabla_grob)
-)
-
-# Guardar tabla como PNG
-png(
-  filename = file.path(tables, "estadisticas_df_deuda.png"),
-  width = 1200,
-  height = 1100,
-  res = 150
-)
-
-grid::grid.newpage()
-
-grid::grid.text(
-  "Tabla 4. Estadísticas descriptivas de la magnitud de la deuda",
-  x = 0.5, y = 0.95,
-  gp = grid::gpar(
-    fontsize = 15,
-    fontface = "bold",
-    fontfamily = "serif"
-  )
-)
-
-grid::grid.text(
-  "Municipios de Colombia, 2000-2022",
-  x = 0.5, y = 0.91,
-  gp = grid::gpar(fontsize = 12, fontfamily = "serif")
-)
-
-grid::pushViewport(
-  grid::viewport(
-    x = 0.5, y = 0.53,
-    width = 0.85, height = 0.68
-  )
-)
-
-grid::grid.draw(tabla_grob)
-grid::popViewport()
-
-grid::grid.text(
-  "Nota: Cobertura calculada sobre el panel 2000-2023.",
-  x = 0.06, y = 0.12, just = "left",
-  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
-)
-
-grid::grid.text(
-  "La variable no presenta información en 2023.",
-  x = 0.06, y = 0.09, just = "left",
-  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
-)
-
-grid::grid.text(
-  "Fuente: DNP - CEDE. Cálculos propios.",
-  x = 0.06, y = 0.06, just = "left",
-  gp = grid::gpar(fontsize = 9, fontfamily = "serif")
-)
-
-dev.off()
-
-
-# ============================================================
-# 3. EVOLUCIÓN ANUAL DE LA MAGNITUD DE LA DEUDA
-# ============================================================
-
-evolucion_deuda <- base %>%
-  filter(!is.na(df_deuda)) %>%
-  group_by(ano) %>%
-  summarise(
-    municipios = n_distinct(codmpio),
-    promedio = mean(df_deuda),
-    mediana = median(df_deuda),
-    .groups = "drop"
-  ) %>%
-  arrange(ano)
-
-print(evolucion_deuda, n = Inf)
-
-
-# ============================================================
-# 4. GRÁFICO DE EVOLUCIÓN - FORMATO ACADÉMICO
-# ============================================================
-
-evolucion_grafico <- evolucion_deuda %>%
-  pivot_longer(
-    cols = c(promedio, mediana),
-    names_to = "estadistico",
-    values_to = "valor"
-  ) %>%
-  mutate(
-    estadistico = recode(
-      estadistico,
-      promedio = "Promedio",
-      mediana = "Mediana"
-    )
-  )
-
-grafico_deuda <- ggplot(
-  evolucion_grafico,
-  aes(
-    x = ano,
-    y = valor,
-    color = estadistico,
-    linetype = estadistico
-  )
-) +
-  geom_line(linewidth = 0.9) +
-  geom_point(size = 1.5) +
-  scale_color_manual(
-    values = c(
-      "Promedio" = "#21618C",
-      "Mediana" = "#C0392B"
-    )
-  ) +
-  scale_linetype_manual(
-    values = c(
-      "Promedio" = "solid",
-      "Mediana" = "dashed"
-    )
-  ) +
-  scale_x_continuous(
-    breaks = seq(2000, 2022, 2)
-  ) +
-  labs(
-    title = "Evolución de la magnitud de la deuda municipal",
-    subtitle = "Colombia, 2000-2022",
-    x = "Año",
-    y = "Magnitud de la deuda",
-    color = NULL,
-    linetype = NULL,
-    caption = "Fuente: DNP - CEDE. Cálculos propios."
-  ) +
-  theme_classic(base_size = 12) +
-  theme(
-    text = element_text(family = "serif"),
-    plot.title = element_text(face = "bold"),
-    legend.position = "bottom",
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-
-print(grafico_deuda)
-
-# Guardar gráfico
-ggsave(
-  filename = file.path(figures, "evolucion_df_deuda.png"),
-  plot = grafico_deuda,
-  width = 10,
-  height = 6,
-  dpi = 300,
-  bg = "white"
-)
 
 
 ############## EVOLUCIÓN DEL CRÉDITO NETO / PIB
@@ -1024,3 +1154,150 @@ ggplot(
   theme_minimal(base_size = 12)
 
 
+################ PARTE 8: MUNICIPIOS QUE UTILIZAN CRÉDITO
+
+library(dplyr)
+library(ggplot2)
+
+# 1. Preparar información 2002–2023
+datos_credito_8 <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio)
+  ) %>%
+  group_by(codmpio) %>%
+  summarise(
+    municipio = first(na.omit(municipio),
+                      default = NA_character_),
+    depto = first(na.omit(depto),
+                  default = NA_character_),
+    
+    anos_con_datos = sum(
+      !is.na(finan_credito_desemb)
+    ),
+    
+    anos_con_credito = sum(
+      finan_credito_desemb > 0,
+      na.rm = TRUE
+    ),
+    
+    desembolsos_totales = if (
+      all(is.na(finan_credito_desemb))
+    ) NA_real_
+    else sum(
+      finan_credito_desemb,
+      na.rm = TRUE
+    ),
+    
+    dependencia_sgp_mediana = if (
+      any(is.finite(dependencia_sgp))
+    ) median(
+      dependencia_sgp[is.finite(dependencia_sgp)]
+    )
+    else NA_real_,
+    
+    .groups = "drop"
+  ) %>%
+  mutate(
+    estado_credito = case_when(
+      anos_con_credito > 0 ~ "Con desembolsos",
+      anos_con_datos > 0 ~ "Sin desembolsos observados",
+      TRUE ~ "Sin información"
+    )
+  )
+
+# 2. ¿Cuántos municipios hay en cada grupo?
+resumen_credito_8 <- datos_credito_8 %>%
+  count(estado_credito, name = "municipios") %>%
+  mutate(
+    porcentaje = round(
+      100 * municipios / sum(municipios), 1
+    )
+  )
+
+print(resumen_credito_8, n = Inf)
+
+# 3. ¿Cuáles municipios registraron desembolsos?
+municipios_con_credito <- datos_credito_8 %>%
+  filter(estado_credito == "Con desembolsos") %>%
+  arrange(desc(desembolsos_totales))
+
+View(municipios_con_credito)
+
+# 4. Los 20 municipios con mayores desembolsos
+top20_credito <- municipios_con_credito %>%
+  slice_head(n = 20)
+
+print(top20_credito, n = 20)
+
+# 5. Gráfico: 20 municipios con mayores desembolsos
+figura_8 <- top20_credito %>%
+  mutate(
+    etiqueta = paste0(municipio, " (", depto, ")")
+  ) %>%
+  ggplot(
+    aes(
+      x = reorder(etiqueta, desembolsos_totales),
+      y = desembolsos_totales
+    )
+  ) +
+  geom_col(
+    fill = "#8B1E2D",
+    width = 0.7
+  ) +
+  coord_flip() +
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ".",
+      decimal.mark = ","
+    )
+  ) +
+  labs(
+    title = paste(
+      "Figura 8. Municipios con mayores",
+      "desembolsos de crédito"
+    ),
+    subtitle = "Colombia, acumulado 2002–2023",
+    x = NULL,
+    y = "Desembolsos acumulados (millones de pesos corrientes)",
+    caption = paste0(
+      "Nota: Suma de desembolsos registrados en el período. ",
+      "Incluye crédito interno y externo sin desagregar. ",
+      "Los montos son nominales y no están ajustados por inflación.\n",
+      "Fuente: CEDE (DNP). Cálculos propios."
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(
+      size = 13,
+      face = "bold"
+    ),
+    plot.caption = element_text(
+      size = 9,
+      hjust = 0
+    )
+  )
+
+print(figura_8)
+
+# 6. Guardar resultados
+dir.create(figures, recursive = TRUE, showWarnings = FALSE)
+dir.create(tables, recursive = TRUE, showWarnings = FALSE)
+
+ggsave(
+  file.path(figures, "figura_8_top20_credito.png"),
+  figura_8,
+  width = 11,
+  height = 8,
+  dpi = 300,
+  bg = "white"
+)
+
+write.csv(
+  datos_credito_8,
+  file.path(tables, "municipios_credito_2002_2023.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)

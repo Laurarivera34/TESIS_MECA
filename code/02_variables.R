@@ -291,6 +291,37 @@ banrep <- read_dta(
   file.path(data, "Ejecuciones_Municipios_PANEL_1984_2023.dta")
 )
 
+# IPC anual del Banco de la República: precios constantes de 2023
+ipc_anual <- banrep %>%
+  transmute(ano = as.integer(year), ipc = as.numeric(ipc_2018dic)) %>%
+  filter(between(ano, 2000, 2023), !is.na(ipc)) %>%
+  distinct(ano, ipc)
+
+if (anyDuplicated(ipc_anual$ano) ||
+    !all(2000:2023 %in% ipc_anual$ano) ||
+    any(ipc_anual$ipc <= 0)) {
+  stop("Revisar IPC Banrep: faltan años o existen valores distintos por año.")
+}
+
+ipc_anual <- ipc_anual %>%
+  mutate(factor_2023 = ipc[ano == 2023] / ipc)
+
+variables_monetarias <- c(
+  "y_total", "y_corr", "y_transf", "y_corr_tribut", "y_no_tribut",
+  "y_transf_nal", "y_transf_otra", "y_corr_tribut_predial", "y_corr_tribut_iyc",
+  "g_total", "g_corr", "g_func", "g_func_general", "g_func_personal",
+  "g_func_trans", "g_int_deudap", "y_cap", "y_cap_regalias", "y_cap_transf",
+  "finan_credito", "finan_credito_desemb", "finan_credito_amort",
+  "sgp_total", "sgp_educaciontot", "sgp_saludtot", "sgp_propgeneraltot",
+  "sgp_propgeneral_ld", "sgp_propgeneral_li", "inv_total", "g_cap", "g_cap_fbkf",
+  "pib_total", "finan_credito_desemb"
+)
+
+base_completa_final <- base_completa_final %>%
+  left_join(ipc_anual, by = "ano", relationship = "many-to-one") %>%
+  mutate(across(all_of(variables_monetarias),
+                ~ .x * factor_2023, .names = "{.col}_real2023"))
+
 # 2. Seleccionar categorías municipales
 banrep_categoria <- banrep %>%
   rename(
@@ -422,7 +453,14 @@ base_completa_final <- base_completa_final %>%
       !is.na(pobl_tot) & pobl_tot > 0,
       finan_credito_desemb * 1000000 / pobl_tot,
       NA_real_
-    )
+    ),
+    desembolsos_pc_real2023 = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      finan_credito_desemb_real2023 * 1000000 / pobl_tot,
+      NA_real_
+    ),
+    credito_neto_real2023 = finan_credito_desemb_real2023 -
+      finan_credito_amort_real2023
   )
 
 
@@ -461,11 +499,21 @@ base_completa_final <- base_completa_final %>%
       sgp_total * 1000000 / pobl_tot,
       NA_real_
     ),
+    sgp_pc_real2023 = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      sgp_total_real2023 * 1000000 / pobl_tot,
+      NA_real_
+    ),
     
     # 2. Recaudo tributario propio per cápita
     recaudo_tributario_pc = if_else(
       !is.na(pobl_tot) & pobl_tot > 0,
       y_corr_tribut * 1000000 / pobl_tot,
+      NA_real_
+    ),
+    recaudo_tributario_pc_real2023 = if_else(
+      !is.na(pobl_tot) & pobl_tot > 0,
+      y_corr_tribut_real2023 * 1000000 / pobl_tot,
       NA_real_
     ),
     

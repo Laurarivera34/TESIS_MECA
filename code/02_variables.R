@@ -90,7 +90,7 @@ variables_conservar <- c(
   "df2_balanceprimario", "df2_balanceprimario_c",
   "df2_resultados", "df2_resultados_c",
   "df2_califi_ceingreso", "df2_califi_ceinversion",
-  "df2_calificaciongestio", "df2_rango","df_ing_trans", "df_ing_propios", "df_ahorro",
+  "df2_calificaciongestio", "df2_rango","df_ing_trans", "df_ing_propios", "df_ahorro","df2_nuevoidf",
   
   # Sistema General de Participaciones
   "sgp_total", "sgp_educaciontot", "sgp_saludtot",

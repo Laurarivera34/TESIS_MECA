@@ -9,34 +9,37 @@ paquetes <- c(
   "haven",
   "here",
   "skimr",
-  "plotly",       # Gráficos interactivos
-  "osmdata",      # Información de OpenStreetMap
-  "sf",           # Manipulación de datos espaciales
-  "leaflet",      # Mapas interactivos
-  "gridExtra",    # Graficar en grid
-  "tmaptools",    # Geocodificación
-  "geosphere",    # Distancias geográficas (Haversine)
-  "tidymodels",   # Modelado estadístico
-  "spatialsample",# Muestreo espacial
-  "knitr",        # Generación de tablas académicas
+  "plotly",
+  "osmdata",
+  "sf",
+  "leaflet",
+  "gridExtra",
+  "tmaptools",
+  "geosphere",
+  "tidymodels",
+  "spatialsample",
+  "knitr",
   "xfun",
-  "sf",           # Manipulación de datos espaciales
-  "maps",         # Contorno de Colombia para ggplot2::map_data()
-  "leaflet",      # Mapas interactivos
-  "kableExtra"  # Formato AER y exportación a LaTeX
-
+  "kableExtra",
+  "maps",       # Contorno de Colombia
+  "scales",     # Etiquetas de porcentajes
+  "gt",         # Tablas descriptivas
+  "webshot2",   # Exportación de tablas a PNG
+  "withr"       # Exportación de figuras
 )
-paquetes_faltantes <- paquetes[
-  !paquetes %in% rownames(installed.packages())
-]
+
+paquetes_faltantes <- setdiff(paquetes, rownames(installed.packages()))
 
 if (length(paquetes_faltantes) > 0) {
-  install.packages(paquetes_faltantes)
+  install.packages(
+    paquetes_faltantes,
+    repos = "https://cloud.r-project.org"
+  )
 }
 
-
+# La Parte 5 usa maps a través de ggplot2::map_data().
 invisible(
-  lapply(paquetes, library, character.only = TRUE)
+  lapply(setdiff(paquetes, "maps"), library, character.only = TRUE)
 )
 
 # 3. RUTAS
@@ -596,20 +599,11 @@ gt::gtsave(
 )
 
 
-############## PARTE 5
-################ MAPA Y DISTRIBUCIÓN DE LOS RANGOS DEL IDF
+############## PARTE 5. MAPA Y DISTRIBUCIÓN DE LOS RANGOS DEL IDF
 
-library(dplyr)
-library(ggplot2)
-library(scales)
+# 1. Seleccionar el año y clasificar el IDF
+anio_idf <- 2023
 
-# Si aún no tienes el paquete del contorno de Colombia:
-# install.packages("maps")
-
-figures <- here::here("output", "figures")
-dir.create(figures, recursive = TRUE, showWarnings = FALSE)
-
-# 1. Seleccionar el año y clasificar los puntajes del IDF
 rangos_idf <- c(
   "Deterioro (<40)",
   "Riesgo (40 a <60)",
@@ -623,24 +617,15 @@ colores_idf <- setNames(
   rangos_idf
 )
 
-idf_panel <- base %>%
+idf_municipal <- base %>%
+  filter(ano == anio_idf, !is.na(codmpio)) %>%
   transmute(
-    codmpio,
-    ano,
-    idf = as.numeric(as.character(df2_nuevoidf)),
-    latitud = as.numeric(sub(",", ".", as.character(latitud), fixed = TRUE)),
-    longitud = as.numeric(sub(",", ".", as.character(longitud), fixed = TRUE))
+    codigo_dane = stringr::str_pad(
+      trimws(as.character(codmpio)), width = 5, pad = "0"
+    ),
+    idf = as.numeric(sub(",", ".", as.character(df2_nuevoidf), fixed = TRUE))
   ) %>%
-  filter(!is.na(codmpio), !is.na(ano), is.finite(idf))
-
-if (nrow(idf_panel) == 0) {
-  stop("df2_nuevoidf no tiene puntajes válidos en la base.")
-}
-
-anio_idf <- max(idf_panel$ano)  # Para un corte fijo, usa anio_idf <- 2023
-
-idf_municipal <- idf_panel %>%
-  filter(ano == anio_idf) %>%
+  filter(is.finite(idf)) %>%
   distinct() %>%
   mutate(
     rango_idf = cut(
@@ -652,50 +637,79 @@ idf_municipal <- idf_panel %>%
   )
 
 if (nrow(idf_municipal) == 0) {
-  stop("El año seleccionado no tiene municipios con IDF válido.")
+  stop("No hay puntajes válidos del IDF para ", anio_idf, ".")
 }
 
-if (anyDuplicated(idf_municipal$codmpio) > 0) {
-  stop("Hay registros distintos para un mismo municipio en el año seleccionado.")
+if (anyDuplicated(idf_municipal$codigo_dane) > 0) {
+  stop("Hay municipios con más de un puntaje del IDF para ", anio_idf, ".")
 }
 
-# 2. Mapa de los rangos del IDF
-colombia <- map_data("world", region = "Colombia")
+# 2. Cargar los límites municipales y unirlos con el IDF
+ruta_municipios <- here::here(
+  "data", "raw", "MGN_ADM_MPIO_GRAFICO (Geopackage).gpkg"
+)
 
-idf_mapa <- idf_municipal %>%
-  filter(between(longitud, -83, -66), between(latitud, -5, 14))
+if (!file.exists(ruta_municipios)) {
+  stop("No se encontró el GeoPackage en: ", ruta_municipios)
+}
 
-mapa_idf <- ggplot() +
-  geom_polygon(
-    data = colombia,
-    aes(x = long, y = lat, group = group),
-    fill = "#F1F1F1", colour = "#A6A6A6", linewidth = 0.25
+municipios_col <- sf::st_read(ruta_municipios, quiet = TRUE)
+
+municipios_idf <- municipios_col %>%
+  mutate(
+    codigo_dane = stringr::str_pad(
+      trimws(as.character(mpio_cdpmp)), width = 5, pad = "0"
+    )
+  ) %>%
+  left_join(
+    idf_municipal,
+    by = "codigo_dane",
+    relationship = "many-to-one"
+  )
+
+sin_poligono <- anti_join(
+  idf_municipal,
+  sf::st_drop_geometry(municipios_idf),
+  by = "codigo_dane"
+)
+
+message("Municipios con IDF sin coincidencia en la capa: ", nrow(sin_poligono))
+
+# 3. Dibujar el mapa de rangos del IDF
+mapa_idf <- ggplot(municipios_idf) +
+  geom_sf(
+    aes(fill = rango_idf),
+    colour = "#777777",
+    linewidth = 0.12
   ) +
-  geom_point(
-    data = idf_mapa,
-    aes(x = longitud, y = latitud, colour = rango_idf),
-    size = 1.55, alpha = 0.9
+  scale_fill_manual(
+    values = colores_idf,
+    breaks = rangos_idf,
+    drop = FALSE,
+    na.value = "#E5E5E5"
   ) +
-  scale_colour_manual(values = colores_idf, drop = FALSE) +
-  coord_quickmap() +
   labs(
     title = paste0("Rangos del IDF municipal, ", anio_idf),
-    colour = "Rango",
-    caption = paste0(
-      "Municipios ubicados: ", nrow(idf_mapa),
-      " de ", nrow(idf_municipal), " con IDF válido."
+    fill = "Mapa 1. Rango del IDF",
+    caption = paste(
+      "Fuente: CEDE (IDF) y DANE (cartografía municipal). Cálculos propios.",
+      "Nota: El gris indica polígonos sin puntaje asociado.",
+      sep = "\n"
     )
   ) +
   theme_void(base_size = 12) +
   theme(
     plot.title = element_text(face = "bold", margin = margin(b = 10)),
     legend.position = "right",
-    plot.caption = element_text(colour = "grey35", margin = margin(t = 8)),
+    legend.key.size = grid::unit(4, "mm"),
+    plot.caption = element_text(
+      colour = "grey35", hjust = 0, margin = margin(t = 8)
+    ),
     plot.margin = margin(12, 12, 12, 12)
   )
 
-# 3. Distribución de municipios por rango
-formato_pct <- label_percent(accuracy = 0.1, decimal.mark = ",")
+# 4. Graficar la distribución de municipios por rango
+formato_pct <- scales::label_percent(accuracy = 0.1, decimal.mark = ",")
 
 distribucion_idf <- idf_municipal %>%
   count(rango_idf, name = "municipios", .drop = FALSE) %>%
@@ -714,24 +728,25 @@ grafico_idf <- ggplot(
   geom_text(aes(label = etiqueta), hjust = -0.15, size = 3.5) +
   scale_fill_manual(values = colores_idf) +
   scale_x_continuous(
-    labels = label_percent(accuracy = 1),
+    labels = scales::label_percent(accuracy = 1),
     expand = expansion(mult = c(0, 0.16))
   ) +
   labs(
-    title = paste0("Distribución de municipios por rango del IDF, ", anio_idf),
-    x = "Porcentaje de municipios con IDF válido",
+    title = paste0(
+      "Figura 2. Distribución de municipios por rango del IDF, ", anio_idf
+    ),
+    x = "Porcentaje de municipios con IDF",
     y = NULL,
-    caption = "Fuente: base municipal. Cálculos propios."
+    caption = "Fuente: CEDE. Cálculos propios."
   ) +
   theme_minimal(base_size = 12) +
   theme(
     plot.title = element_text(face = "bold"),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.caption = element_text(colour = "grey35")
+    panel.grid = element_blank(),
+    plot.caption = element_text(colour = "grey35", hjust = 0)
   )
 
-# 4. Mostrar y guardar las figuras
+# 5. Mostrar y guardar las dos figuras
 print(mapa_idf)
 print(grafico_idf)
 
@@ -745,4 +760,189 @@ ggsave(
   filename = file.path(figures, paste0("distribucion_rangos_idf_", anio_idf, ".png")),
   plot = grafico_idf,
   width = 9, height = 4.6, dpi = 300, bg = "white"
+)
+
+############## PARTE 6.IDF MUNICIPAL PROMEDIO POR REGIÓN, 2021–2023
+idf_para_grafico <- idf_promedios %>%
+  mutate(
+    region = factor(as.character(region), levels = orden_regiones),
+    anio_grafico = factor(ano, levels = 2021:2023)
+  )
+
+grafico_idf_regional <- ggplot(
+  idf_para_grafico,
+  aes(x = anio_grafico, y = idf_promedio, fill = anio_grafico)
+) +
+  geom_col(width = 0.82, na.rm = TRUE) +
+  geom_text(
+    aes(label = etiqueta),
+    vjust = -0.5,
+    size = 3.2,
+    colour = "grey20",
+    na.rm = TRUE
+  ) +
+  facet_wrap(
+    vars(region),
+    nrow = 1,
+    strip.position = "bottom",
+    labeller = labeller(region = label_wrap_gen(width = 15))
+  ) +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(
+    labels = scales::label_number(decimal.mark = ","),
+    expand = expansion(mult = c(0, 0.12))
+  ) +
+  scale_fill_manual(
+    values = c(
+      "2021" = "#B9BEC6",
+      "2022" = "#7185A2",
+      "2023" = "#193C8C"
+    )
+  ) +
+  labs(
+    title = "Figura 3. IDF municipal promedio por región, 2021–2023",
+    x = NULL,
+    y = "Puntaje promedio del IDF",
+    caption = paste(
+      "Fuente: CEDE. Cálculos propios.",
+      "Nota: Promedio de los municipios con puntaje disponible en cada año.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid = element_blank(),
+    panel.spacing.x = grid::unit(0.8, "lines"),
+    axis.text.x = element_text(size = 8, colour = "grey30"),
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    strip.text.x = element_text(
+      size = 9,
+      face = "bold",
+      margin = margin(t = 7, b = 4)
+    ),
+    legend.position = "none",
+    plot.caption = element_text(colour = "grey35", hjust = 0)
+  )
+
+print(grafico_idf_regional)
+
+ggsave(
+  filename = file.path(figures, "idf_promedio_por_region_2021_2023.png"),
+  plot = grafico_idf_regional,
+  width = 12,
+  height = 4.8,
+  dpi = 300,
+  bg = "white"
+)
+
+############ PARTE 7. IDF POR CATEGORIA LEY 617 DE 2000
+
+# 1. Preparar un puntaje y una categoría por municipio y año
+idf_panel_categoria <- base %>%
+  filter(ano %in% anios_idf, !is.na(codmpio)) %>%
+  transmute(
+    codmpio,
+    ano,
+    idf = as.numeric(sub(",", ".", as.character(df2_nuevoidf), fixed = TRUE)),
+    codigo_categoria = as.integer(categ_cgn)
+  ) %>%
+  filter(is.finite(idf), codigo_categoria %in% 0:6) %>%
+  transmute(
+    codmpio,
+    ano,
+    idf,
+    categoria = factor(
+      codigo_categoria,
+      levels = 0:6,
+      labels = c("Especial", paste("Categoría", 1:6))
+    )
+  ) %>%
+  distinct()
+
+if (anyDuplicated(idf_panel_categoria[c("codmpio", "ano")]) > 0) {
+  stop("Hay registros distintos de IDF o categoría para un mismo municipio y año.")
+}
+
+# 2. Revisar la cobertura por año
+cobertura_idf_categoria <- idf_panel_categoria %>%
+  count(ano, name = "municipios") %>%
+  complete(ano = anios_idf, fill = list(municipios = 0L)) %>%
+  arrange(ano)
+
+print(cobertura_idf_categoria)
+
+# 3. Calcular el promedio por categoría y año
+idf_promedio_categoria <- idf_panel_categoria %>%
+  group_by(categoria, ano) %>%
+  summarise(idf_promedio = mean(idf), .groups = "drop") %>%
+  complete(categoria, ano = anios_idf) %>%
+  mutate(
+    anio_grafico = factor(ano, levels = anios_idf),
+    etiqueta = if_else(
+      is.na(idf_promedio),
+      NA_character_,
+      formatC(idf_promedio, format = "f", digits = 1, decimal.mark = ",")
+    )
+  )
+
+# 4. Graficar barras verticales agrupadas por categoría
+grafico_idf_categoria <- ggplot(
+  idf_promedio_categoria,
+  aes(x = anio_grafico, y = idf_promedio, fill = anio_grafico)
+) +
+  geom_col(width = 0.82, na.rm = TRUE) +
+  geom_text(
+    aes(label = etiqueta),
+    vjust = -0.5,
+    size = 3.2,
+    colour = "grey20",
+    na.rm = TRUE
+  ) +
+  facet_wrap(vars(categoria), nrow = 1, strip.position = "bottom") +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(
+    labels = scales::label_number(decimal.mark = ","),
+    expand = expansion(mult = c(0, 0.12))
+  ) +
+  expand_limits(y = 0) +
+  scale_fill_manual(
+    values = c("2021" = "#B9BEC6", "2022" = "#7185A2", "2023" = "#193C8C")
+  ) +
+  labs(
+    title = "Figura 4. IDF municipal promedio por categoría de la Ley 617, 2021–2023",
+    x = NULL,
+    y = "Puntaje promedio del IDF",
+    caption = paste(
+      "Fuente: CEDE y Banco de la República. Cálculos propios.",
+      "Nota: Promedio de los municipios con IDF y categoría disponibles en cada año.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid = element_blank(),
+    panel.spacing.x = grid::unit(0.8, "lines"),
+    axis.text.x = element_text(size = 8, colour = "grey30"),
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    strip.text.x = element_text(
+      size = 10, face = "bold", margin = margin(t = 7, b = 4)
+    ),
+    legend.position = "none",
+    plot.caption = element_text(colour = "grey35", hjust = 0)
+  )
+
+print(grafico_idf_categoria)
+
+# 5. Guardar el gráfico
+ggsave(
+  filename = file.path(figures, "idf_promedio_por_categoria_617_2021_2023.png"),
+  plot = grafico_idf_categoria,
+  width = 12,
+  height = 4.8,
+  dpi = 300,
+  bg = "white"
 )

@@ -763,33 +763,94 @@ ggsave(
 )
 
 ############## PARTE 6.IDF MUNICIPAL PROMEDIO POR REGIÓN, 2021–2023
-idf_para_grafico <- idf_promedios %>%
+anios_idf <- 2021:2023
+
+regiones_idf <- c(
+  gorinoquia = "Orinoquía",
+  gandina = "Andina",
+  gpacifica = "Pacífica",
+  gcaribe = "Caribe",
+  gamazonia = "Amazonía"
+)
+
+orden_regiones <- c("Nacional", unname(regiones_idf))
+
+figures <- here::here("output", "figures")
+dir.create(figures, recursive = TRUE, showWarnings = FALSE)
+
+# 1. Preparar un puntaje de IDF por municipio y año
+idf_panel_regional <- base %>%
+  filter(ano %in% anios_idf, !is.na(codmpio)) %>%
+  transmute(
+    codmpio,
+    ano,
+    idf = as.numeric(sub(",", ".", as.character(df2_nuevoidf), fixed = TRUE)),
+    across(
+      all_of(names(regiones_idf)),
+      ~ as.character(.x) %in% c("1", "TRUE")
+    )
+  ) %>%
+  filter(is.finite(idf)) %>%
+  distinct()
+
+if (anyDuplicated(idf_panel_regional[c("codmpio", "ano")]) > 0) {
+  stop("Hay registros distintos de IDF o región para un mismo municipio y año.")
+}
+
+# 2. Identificar la región de cada municipio
+idf_regiones <- idf_panel_regional %>%
+  pivot_longer(
+    cols = all_of(names(regiones_idf)),
+    names_to = "variable_region",
+    values_to = "pertenece"
+  ) %>%
+  filter(pertenece) %>%
+  mutate(region = unname(regiones_idf[variable_region]))
+
+if (anyDuplicated(idf_regiones[c("codmpio", "ano")]) > 0) {
+  stop("Hay municipios asignados a más de una región en el mismo año.")
+}
+
+# 3. Calcular los promedios regionales y el nacional
+promedio_regional <- idf_regiones %>%
+  group_by(region, ano) %>%
+  summarise(idf_promedio = mean(idf), .groups = "drop")
+
+promedio_nacional <- idf_panel_regional %>%
+  group_by(ano) %>%
+  summarise(idf_promedio = mean(idf), .groups = "drop") %>%
+  mutate(region = "Nacional")
+
+idf_promedios <- bind_rows(promedio_nacional, promedio_regional) %>%
   mutate(
-    region = factor(as.character(region), levels = orden_regiones),
-    anio_grafico = factor(ano, levels = 2021:2023)
+    region = factor(region, levels = orden_regiones),
+    anio_grafico = factor(ano, levels = anios_idf),
+    etiqueta = formatC(
+      idf_promedio, format = "f", digits = 1, decimal.mark = ","
+    )
   )
 
+# 4. Graficar
 grafico_idf_regional <- ggplot(
-  idf_para_grafico,
+  idf_promedios,
   aes(x = anio_grafico, y = idf_promedio, fill = anio_grafico)
 ) +
-  geom_col(width = 0.82, na.rm = TRUE) +
+  geom_col(width = 0.82) +
   geom_text(
     aes(label = etiqueta),
-    vjust = -0.5,
+    vjust = -0.4,
     size = 3.2,
-    colour = "grey20",
-    na.rm = TRUE
+    colour = "grey20"
   ) +
   facet_wrap(
     vars(region),
     nrow = 1,
     strip.position = "bottom",
-    labeller = labeller(region = label_wrap_gen(width = 15))
+    drop = FALSE
   ) +
   scale_x_discrete(drop = FALSE) +
   scale_y_continuous(
-    labels = scales::label_number(decimal.mark = ","),
+    breaks = seq(0, 100, by = 20),
     expand = expansion(mult = c(0, 0.12))
   ) +
   scale_fill_manual(
@@ -811,28 +872,29 @@ grafico_idf_regional <- ggplot(
   ) +
   theme_minimal(base_size = 12) +
   theme(
-    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.title = element_text(
+      face = "bold", hjust = 0.5, margin = margin(b = 12)
+    ),
     panel.grid = element_blank(),
     panel.spacing.x = grid::unit(0.8, "lines"),
     axis.text.x = element_text(size = 8, colour = "grey30"),
     strip.placement = "outside",
     strip.background = element_blank(),
     strip.text.x = element_text(
-      size = 9,
-      face = "bold",
-      margin = margin(t = 7, b = 4)
+      size = 9, face = "bold", margin = margin(t = 7, b = 4)
     ),
     legend.position = "none",
-    plot.caption = element_text(colour = "grey35", hjust = 0)
+    plot.caption = element_text(hjust = 0, colour = "grey35", size = 9)
   )
 
 print(grafico_idf_regional)
 
+# 5. Guardar la figura
 ggsave(
   filename = file.path(figures, "idf_promedio_por_region_2021_2023.png"),
   plot = grafico_idf_regional,
   width = 12,
-  height = 4.8,
+  height = 5,
   dpi = 300,
   bg = "white"
 )
@@ -943,6 +1005,364 @@ ggsave(
   plot = grafico_idf_categoria,
   width = 12,
   height = 4.8,
+  dpi = 300,
+  bg = "white"
+)
+
+################ PARTE 8. Ingresos propios, transferencias y desembolsos de crédito, 2002–2023
+
+anios_ingresos <- 2002:2023
+
+rubros_ingresos <- c(
+  y_corr = "Ingresos corrientes",
+  y_cap_transf = "Transferencias",
+  y_cap_cofinan = "Cofinanciación",
+  finan_credito_desemb = "Desembolsos de crédito"
+)
+
+variables_ingresos <- c("y_total", names(rubros_ingresos))
+faltantes <- setdiff(c("codmpio", "ano", variables_ingresos), names(base))
+
+if (length(faltantes) > 0) {
+  stop("Faltan columnas en base: ", paste(faltantes, collapse = ", "))
+}
+
+figures <- here::here("output", "figures")
+dir.create(figures, recursive = TRUE, showWarnings = FALSE)
+
+# 1. Seleccionar municipios con datos para las cuatro series
+base_ingresos_credito <- base %>%
+  select(codmpio, ano, all_of(variables_ingresos)) %>%
+  filter(
+    ano %in% anios_ingresos,
+    !is.na(codmpio),
+    y_total > 0,
+    if_all(all_of(variables_ingresos), is.finite)
+  ) %>%
+  distinct()
+
+if (anyDuplicated(base_ingresos_credito[c("codmpio", "ano")]) > 0) {
+  stop("Hay registros distintos para un mismo municipio y año.")
+}
+
+# 2. Calcular los agregados anuales y revisar la cobertura
+ingresos_credito_anual <- base_ingresos_credito %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n(),
+    across(all_of(variables_ingresos), sum),
+    .groups = "drop"
+  ) %>%
+  complete(ano = anios_ingresos, fill = list(municipios = 0L)) %>%
+  arrange(ano)
+
+print(select(ingresos_credito_anual, ano, municipios), n = Inf)
+
+# 3. Calcular los porcentajes y preparar las etiquetas
+series_ingresos <- ingresos_credito_anual %>%
+  pivot_longer(
+    cols = all_of(names(rubros_ingresos)),
+    names_to = "rubro",
+    values_to = "monto"
+  ) %>%
+  mutate(
+    participacion = 100 * monto / y_total,
+    serie = factor(
+      rubro,
+      levels = names(rubros_ingresos),
+      labels = unname(rubros_ingresos)
+    )
+  )
+
+etiquetas_ingresos <- series_ingresos %>%
+  filter(ano %in% c(2022, 2023), is.finite(participacion)) %>%
+  mutate(
+    etiqueta = scales::label_number(
+      accuracy = 0.1, decimal.mark = ",", suffix = " %"
+    )(participacion),
+    vjust_etiqueta = if_else(rubro == "y_cap_cofinan", 1.5, -0.8)
+  )
+
+# 4. Graficar las cuatro líneas en un solo panel
+grafico_ingresos_credito <- ggplot(
+  series_ingresos,
+  aes(x = ano, y = participacion, colour = serie)
+) +
+  geom_line(linewidth = 1.1, na.rm = TRUE) +
+  geom_point(data = etiquetas_ingresos, size = 2, show.legend = FALSE) +
+  geom_text(
+    data = etiquetas_ingresos,
+    aes(label = etiqueta, vjust = vjust_etiqueta),
+    size = 3.2,
+    show.legend = FALSE
+  ) +
+  scale_colour_manual(
+    values = c(
+      "Ingresos corrientes" = "#666666",
+      "Transferencias" = "#193C8C",
+      "Cofinanciación" = "#32745E",
+      "Desembolsos de crédito" = "#E5AD00"
+    )
+  ) +
+  scale_x_continuous(
+    breaks = c(seq(2002, 2020, by = 3), 2022, 2023),
+    expand = expansion(add = c(0.5, 0.8))
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(decimal.mark = ",", suffix = " %"),
+    expand = expansion(mult = c(0.06, 0.12))
+  ) +
+  expand_limits(y = 0) +
+  labs(
+    title = "Figura 5. Composición de los ingresos municipales 2002–2023",
+    subtitle = "% de participación en los ingresos totales",
+    x = NULL,
+    y = NULL,
+    colour = NULL,
+    caption = paste(
+      "Fuente: Panel Buen Gobierno del CEDE. Cálculos propios.",
+      "Nota. Los ingresos corrientes incluyen tributarios, no tributarios y transferencias corrientes.",
+      "Las transferencias de capital incluyen SGP, SGR y otras. La cofinanciación proviene de la Nación o de entidades territoriales.",
+      "Los desembolsos son flujos brutos de crédito interno y externo",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    plot.caption = element_text(hjust = 0, colour = "grey35", size = 9)
+  )
+
+print(grafico_ingresos_credito)
+
+# 5. Guardar en output/figures
+ggsave(
+  filename = file.path(figures, "ingresos_municipales_y_credito_2002_2023.png"),
+  plot = grafico_ingresos_credito,
+  width = 11,
+  height = 6.2,
+  dpi = 300,
+  bg = "white"
+)
+
+################ PARTE 9. DESEMBOLSOS DE CRÉDITO MUNICIPAL, 2002–2023
+
+anios_credito <- 2002:2023
+figures <- here::here("output", "figures")
+dir.create(figures, recursive = TRUE, showWarnings = FALSE)
+
+# 1. Seleccionar los desembolsos brutos a precios constantes
+base_desembolsos <- base %>%
+  filter(
+    ano %in% anios_credito,
+    !is.na(codmpio),
+    is.finite(finan_credito_desemb_real2023)
+  ) %>%
+  distinct(codmpio, ano, finan_credito_desemb_real2023)
+
+if (anyDuplicated(base_desembolsos[c("codmpio", "ano")]) > 0) {
+  stop("Hay desembolsos distintos para un mismo municipio y año.")
+}
+
+# 2. Sumar los desembolsos anuales y convertir de millones a billones
+desembolsos_anuales <- base_desembolsos %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n(),
+    desembolsos_billones = sum(finan_credito_desemb_real2023) / 1e6,
+    .groups = "drop"
+  ) %>%
+  complete(ano = anios_credito, fill = list(municipios = 0L)) %>%
+  arrange(ano)
+
+print(desembolsos_anuales, n = Inf)
+
+etiquetas_desembolsos <- desembolsos_anuales %>%
+  filter(is.finite(desembolsos_billones)) %>%
+  mutate(
+    etiqueta = scales::label_number(
+      accuracy = 0.01,
+      decimal.mark = ",",
+      big.mark = "."
+    )(desembolsos_billones)
+  )
+
+# 3. Graficar la serie y separar las etiquetas de los puntos
+grafico_desembolsos <- ggplot(
+  desembolsos_anuales,
+  aes(x = ano, y = desembolsos_billones)
+) +
+  geom_line(colour = "#193C8C", linewidth = 1.1, na.rm = TRUE) +
+  geom_point(
+    shape = 21,
+    fill = "white",
+    colour = "#193C8C",
+    size = 2.6,
+    stroke = 0.9,
+    na.rm = TRUE
+  ) +
+  ggrepel::geom_label_repel(
+    data = etiquetas_desembolsos,
+    aes(label = etiqueta),
+    direction = "y",
+    nudge_y = 0.22,
+    seed = 617,
+    max.overlaps = Inf,
+    box.padding = 0.25,
+    point.padding = 0.35,
+    label.padding = grid::unit(0.12, "lines"),
+    min.segment.length = 0,
+    segment.colour = "#AAB2BE",
+    colour = "#193C8C",
+    fill = "white",
+    size = 3
+  ) +
+  scale_x_continuous(
+    breaks = anios_credito,
+    expand = expansion(add = c(0.8, 0.8))
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(decimal.mark = ",", big.mark = "."),
+    expand = expansion(mult = c(0.08, 0.20))
+  ) +
+  expand_limits(y = 0) +
+  labs(
+    title = "Desembolsos de crédito municipal 2002–2023",
+    subtitle = "Billones de pesos constantes de 2023",
+    x = NULL,
+    y = NULL,
+    caption = paste(
+      "Fuente: Panel Buen Gobierno del CEDE. Cálculos propios.",
+      "Nota. Suma anual de los desembolsos de los municipios.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, colour = "grey35"),
+    axis.text.x = element_text(size = 8, colour = "grey35"),
+    panel.grid.major.y = element_line(colour = "#E2E5EA"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.caption = element_text(hjust = 0, colour = "grey35", size = 9),
+    plot.background = element_rect(fill = "white", colour = NA),
+    plot.margin = margin(12, 16, 12, 16)
+  )
+
+print(grafico_desembolsos)
+
+# 4. Guardar en output/figures
+ggsave(
+  filename = file.path(
+    figures, "desembolsos_credito_municipal_real_2002_2023.png"
+  ),
+  plot = grafico_desembolsos,
+  width = 13,
+  height = 5.8,
+  dpi = 300,
+  bg = "white"
+)
+
+################ PARTE 10. INTERESES DE LA DEUDA MUNICIPAL, 2002–2023
+
+# 1. Clasificar los municipios según sus desembolsos de 2023
+desembolsos_municipales_2023 <- base %>%
+  filter(ano == 2023, !is.na(codmpio)) %>%
+  transmute(
+    codigo_dane = stringr::str_pad(
+      trimws(as.character(codmpio)), width = 5, pad = "0"
+    ),
+    finan_credito_desemb
+  ) %>%
+  distinct() %>%
+  mutate(
+    recibio_desembolsos = case_when(
+      !is.finite(finan_credito_desemb) ~ NA_character_,
+      finan_credito_desemb > 0 ~ "Sí",
+      finan_credito_desemb == 0 ~ "No",
+      TRUE ~ NA_character_
+    )
+  )
+
+if (anyDuplicated(desembolsos_municipales_2023$codigo_dane) > 0L) {
+  stop("Hay municipios con más de un valor de desembolsos en 2023.")
+}
+
+# 2. Leer la misma cartografía municipal de la Parte 5
+ruta_municipios <- here::here(
+  "data", "raw", "MGN_ADM_MPIO_GRAFICO (Geopackage).gpkg"
+)
+
+municipios_col <- sf::st_read(ruta_municipios, quiet = TRUE)
+
+# 3. Unir la clasificación a los polígonos
+mapa_desembolsos_2023 <- municipios_col %>%
+  mutate(
+    codigo_dane = stringr::str_pad(
+      trimws(as.character(mpio_cdpmp)), width = 5, pad = "0"
+    )
+  ) %>%
+  left_join(
+    select(desembolsos_municipales_2023, codigo_dane, recibio_desembolsos),
+    by = "codigo_dane",
+    relationship = "many-to-one"
+  ) %>%
+  mutate(
+    recibio_desembolsos = factor(recibio_desembolsos, levels = c("Sí", "No"))
+  )
+
+# Revisar la cobertura del mapa
+mapa_desembolsos_2023 %>%
+  sf::st_drop_geometry() %>%
+  distinct(codigo_dane, recibio_desembolsos) %>%
+  count(recibio_desembolsos, name = "municipios") %>%
+  print()
+
+# 4. Dibujar el mapa
+grafico_mapa_desembolsos_2023 <- ggplot(mapa_desembolsos_2023) +
+  geom_sf(
+    aes(fill = recibio_desembolsos),
+    colour = "#AAB2BE",
+    linewidth = 0.12
+  ) +
+  scale_fill_manual(
+    values = c("Sí" = "#193C8C", "No" = "#C9CED6"),
+    breaks = c("Sí", "No"),
+    na.value = "transparent",
+    na.translate = FALSE,
+    drop = FALSE
+  ) +
+  labs(
+    title = "Figura 8. Desembolsos de crédito municipal, 2023",
+    fill = "¿Recibió desembolsos?",
+    caption = paste(
+      "Fuente: CEDE y DANE (cartografía municipal). Cálculos propios.",
+      sep = "\n"
+    )
+  ) +
+  theme_void(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", margin = margin(b = 10)),
+    legend.position = "right",
+    legend.key.size = grid::unit(4, "mm"),
+    plot.caption = element_text(
+      colour = "grey35", hjust = 0, margin = margin(t = 8)
+    ),
+    plot.margin = margin(12, 12, 12, 12)
+  )
+
+print(grafico_mapa_desembolsos_2023)
+
+# 5. Guardar en la carpeta existente output/figures
+ggsave(
+  filename = file.path(figures, "mapa_desembolsos_credito_municipal_2023.png"),
+  plot = grafico_mapa_desembolsos_2023,
+  width = 8,
+  height = 7,
   dpi = 300,
   bg = "white"
 )

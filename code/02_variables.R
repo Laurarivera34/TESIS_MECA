@@ -71,7 +71,7 @@ variables_conservar <- c(
   
   # Ingresos
   "y_total", "y_corr", "y_transf", "y_corr_tribut",
-  "y_no_tribut", "y_transf_nal", "y_transf_otra","y_corr_tribut_predial", "y_corr_tribut_iyc",
+  "y_no_tribut", "y_transf_nal", "y_transf_otra","y_corr_tribut_predial", "y_corr_tribut_iyc", "y_cap_cofinan",
   
   # Gastos
   "g_total", "g_corr", "g_func", "g_func_general",
@@ -283,6 +283,27 @@ proxy_bogota <- base_completa_final %>%
 
 print(proxy_bogota, n = Inf)
 
+# dummy si tiene o no credito
+revision_deuda_2023 <- base_completa_final %>%
+  filter(ano == 2023, !is.na(codmpio)) %>%
+  distinct(codmpio, municipio, depto, deuda_proxy) %>%
+  mutate(
+    estado_deuda = case_when(
+      !is.finite(deuda_proxy) ~ "Sin información",
+      deuda_proxy > 0 ~ "Saldo estimado positivo",
+      deuda_proxy == 0 ~ "Saldo estimado cero",
+      TRUE ~ "Saldo negativo: revisar"
+    )
+  )
+
+# 1. Ver el rango y la distribución del saldo estimado
+summary(revision_deuda_2023$deuda_proxy)
+
+# 2. Ver si hay más de un registro por municipio
+revision_deuda_2023 %>%
+  count(codmpio, name = "registros") %>%
+  filter(registros > 1) %>%
+  print(n = 20)
 
 ############## CUARTA PARTE: CATEGORÍAS LEY 617 DE 2000
 

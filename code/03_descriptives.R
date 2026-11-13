@@ -24,6 +24,7 @@ paquetes <- c(
   "maps",       # Contorno de Colombia
   "scales",     # Etiquetas de porcentajes
   "gt",         # Tablas descriptivas
+  "patchwork",
   "webshot2",   # Exportación de tablas a PNG
   "withr"       # Exportación de figuras
 )
@@ -1501,164 +1502,494 @@ ggsave(
   dpi = 300
 )
 
-############## PARTE 13. 
-############## PARTE 12. EVOLUCIÓN DE LA INVERSIÓN POR CATEGORÍA LEY 617
+############## PARTE 13. COMPOSICIÓN PROMEDIO DE LA INVERSIÓN POR CATEGORÍA
 
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-
-# 1. Definir el periodo comparable y los rubros
-anios_inversion <- 2002:2010
 categorias_617 <- c("Especial", as.character(1:6))
 
-sectores_inversion <- c(
-  inv_en_educacion = "Educación",
-  inv_en_salud = "Salud",
-  inv_aguasani = "Agua potable y saneamiento básico",
-  inv_tranporte = "Transporte",
-  inv_en_vivienda = "Vivienda",
-  inv_cult = "Cultura",
-  inv_dyr = "Deporte y recreación"
+# 1. Definir la paleta y el formato de las etiquetas
+colores_prioridades <- c(
+  "Educación"                         = "#193C8C",
+  "Salud"                             = "#2C659F",
+  "Agua potable y saneamiento básico" = "#76A9D2",
+  "Transporte"                        = "#B5D2E9",
+  "Vivienda"                          = "#4D6072",
+  "Cultura"                           = "#7E8E9F",
+  "Deporte y recreación"              = "#AFBCC9",
+  "Otros sectores"                    = "#DFE1E4"
 )
 
-rubros <- c(names(sectores_inversion), "inv_total")
+sectores_oscuros <- c("Educación", "Salud", "Vivienda")
+sectores_etiqueta_vertical <- c("Vivienda", "Cultura", "Deporte y recreación")
+umbral_etiqueta <- 0.05
 
-# 2. Identificar los registros con categoría y montos completos
-inversion_periodo <- base %>%
-  filter(ano %in% anios_inversion) %>%
-  mutate(
-    categoria = trimws(tolower(as.character(categ_cgn))),
-    categoria = recode(categoria, "0" = "especial"),
-    categoria = factor(
-      categoria,
-      levels = c("especial", as.character(1:6)),
-      labels = categorias_617
-    ),
-    datos_completos = if_all(all_of(rubros), is.finite)
-  )
+formato_pct <- scales::label_percent(
+  accuracy = 0.1,
+  decimal.mark = ","
+)
 
-cobertura_inversion <- inversion_periodo %>%
-  count(ano, categoria, datos_completos, name = "registros")
-
-# 3. Sumar la inversión por año y categoría
-inversion_anual <- inversion_periodo %>%
-  filter(!is.na(categoria), datos_completos) %>%
+# 2. Calcular el total y la participación sectorial por año y categoría
+composicion_anual <- inversion_larga %>%
+  filter(ano %in% 2003:2010) %>%
   group_by(ano, categoria) %>%
+  mutate(total_barra = sum(monto)) %>%
+  ungroup()
+
+revision_composicion <- composicion_anual %>%
+  filter(
+    !is.finite(monto) | monto < 0 |
+      !is.finite(total_barra) | total_barra <= 0
+  ) %>%
+  distinct(ano, categoria)
+
+if (nrow(revision_composicion) > 0) {
+  print(revision_composicion, n = Inf)
+  stop("Revisa los montos sectoriales o los totales de estos años y categorías.",
+       call. = FALSE)
+}
+
+# 3. Promediar las participaciones anuales y ubicar las etiquetas
+composicion_promedio <- composicion_anual %>%
+  mutate(participacion = monto / total_barra) %>%
+  group_by(categoria, sector) %>%
   summarise(
-    municipios = n(),
-    across(all_of(rubros), sum),
+    participacion = mean(participacion),
     .groups = "drop"
-  )
-
-if (nrow(inversion_anual) == 0) {
-  stop("No hay registros con categoría válida y montos completos en 2002–2010.")
-}
-
-inversion_anual <- inversion_anual %>%
-  mutate(
-    saldo = inv_total - rowSums(pick(all_of(names(sectores_inversion)))),
-    otros_sectores = pmax(saldo, 0)
-  )
-
-# Identificar casos en que la suma sectorial supera el total reportado
-diferencias_inversion <- inversion_anual %>%
-  filter(saldo < -1e-6) %>%
-  select(ano, categoria, inv_total, saldo)
-
-if (nrow(diferencias_inversion) > 0) {
-  print(diferencias_inversion, n = Inf)
-  warning(
-    "En los casos listados, los sectores superan el total reportado.",
-    call. = FALSE
-  )
-}
-
-# 4. Preparar los datos para las columnas apiladas
-etiquetas_sectores <- c(
-  sectores_inversion,
-  otros_sectores = "Otros sectores"
-)
-
-inversion_larga <- inversion_anual %>%
-  select(ano, categoria, all_of(names(etiquetas_sectores))) %>%
-  pivot_longer(
-    cols = all_of(names(etiquetas_sectores)),
-    names_to = "sector",
-    values_to = "monto"
   ) %>%
   mutate(
-    sector = factor(
-      sector,
-      levels = names(etiquetas_sectores),
-      labels = unname(etiquetas_sectores)
+    categoria = factor(categoria, levels = categorias_617),
+    sector = factor(sector, levels = names(colores_prioridades)),
+    fila = match(as.character(categoria), rev(categorias_617)),
+    etiqueta = formato_pct(participacion),
+    color_etiqueta = if_else(
+      sector %in% sectores_oscuros, "#FFFFFF", "#172B3E"
     )
-  )
+  ) %>%
+  arrange(categoria, sector) %>%
+  group_by(categoria) %>%
+  mutate(
+    fin = cumsum(participacion),
+    inicio = fin - participacion,
+    centro = (inicio + fin) / 2
+  ) %>%
+  ungroup()
 
-colores_inversion <- setNames(
-  c("#193C8C", "#2B807B", "#74A9CF", "#C98938",
-    "#8064A2", "#BC6376", "#778B4E", "#C9CDD2"),
-  unname(etiquetas_sectores)
-)
+# Tabla con los porcentajes de todos los sectores
+tabla_porcentajes_inversion <- composicion_promedio %>%
+  select(categoria, sector, etiqueta) %>%
+  pivot_wider(names_from = sector, values_from = etiqueta)
 
-# 5. Graficar la evolución anual por categoría
-grafico_inversion <- ggplot(
-  inversion_larga,
-  aes(x = ano, y = monto, fill = sector)
-) +
-  geom_col(width = 0.75, position = position_stack(reverse = TRUE)) +
-  geom_point(
-    data = inversion_anual,
-    aes(x = ano, y = inv_total),
-    inherit.aes = FALSE,
-    shape = 21,
-    size = 1.7,
-    fill = "white",
-    colour = "#222222"
+print(tabla_porcentajes_inversion, n = Inf, width = Inf)
+
+# 4. Graficar las barras y los porcentajes
+grafico_prioridades_inversion <- ggplot(composicion_promedio) +
+  geom_rect(
+    data = filter(composicion_promedio, participacion > 0),
+    aes(
+      xmin = inicio, xmax = fin,
+      ymin = fila - 0.36, ymax = fila + 0.36,
+      fill = sector
+    ),
+    colour = "white",
+    linewidth = 0.25
   ) +
-  facet_wrap(vars(categoria), ncol = 3, scales = "free_y", drop = FALSE) +
-  scale_x_continuous(breaks = anios_inversion, limits = c(2001.5, 2010.5)) +
+  # Etiquetas horizontales desde 5 %
+  geom_text(
+    data = filter(composicion_promedio, participacion >= umbral_etiqueta),
+    aes(x = centro, y = fila, label = etiqueta, colour = color_etiqueta),
+    size = 3.1,
+    fontface = "bold",
+    show.legend = FALSE
+  ) +
+  # Etiquetas verticales para los tres sectores con segmentos estrechos
+  geom_text(
+    data = filter(
+      composicion_promedio,
+      sector %in% sectores_etiqueta_vertical,
+      participacion > 0,
+      participacion < umbral_etiqueta
+    ),
+    aes(x = centro, y = fila, label = etiqueta, colour = color_etiqueta),
+    angle = 90,
+    size = 2.5,
+    fontface = "bold",
+    show.legend = FALSE
+  ) +
+  scale_colour_identity() +
+  scale_fill_manual(
+    values = colores_prioridades,
+    breaks = names(colores_prioridades)
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 1, by = 0.25),
+    labels = scales::label_percent(accuracy = 1),
+    expand = expansion(mult = c(0, 0.005))
+  ) +
   scale_y_continuous(
-    labels = scales::label_number(big.mark = ".", decimal.mark = ","),
-    expand = expansion(mult = c(0.02, 0.08))
+    breaks = seq_along(categorias_617),
+    labels = rev(categorias_617),
+    limits = c(0.5, length(categorias_617) + 0.5),
+    expand = expansion(mult = 0)
   ) +
-  scale_fill_manual(values = colores_inversion) +
   guides(fill = guide_legend(ncol = 3, byrow = TRUE)) +
   labs(
-    title = "Evolución del gasto en inversión por categoría de la Ley 617",
-    subtitle = "Composición sectorial, 2002–2010",
+    title = "Participación sectorial promedio en la inversión municipal",
+    subtitle = "Categorías de la Ley 617 de 2000 | 2003–2010",
     x = NULL,
-    y = "Millones de pesos corrientes",
+    y = NULL,
     fill = NULL,
     caption = paste(
-      "El punto indica el total reportado.",
-      "Cada panel tiene su propia escala vertical.",
-      "Una columna ausente indica que no hay registros completos para ese año y categoría.",
+      "Fuente: Panel de Buen Gobierno del CEDE. Cálculos propios.",
+      "Nota: Las participaciones se calculan por año y categoría. Cada año disponible tiene el mismo peso en el promedio.",
       sep = "\n"
     )
   ) +
   theme_minimal(base_size = 11) +
   theme(
-    plot.title = element_text(face = "bold"),
-    strip.text = element_text(face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title.position = "plot",
+    plot.title = element_text(
+      size = 19, face = "bold", colour = "#172B3E",
+      margin = margin(b = 5)
+    ),
+    plot.subtitle = element_text(
+      colour = "#465667", margin = margin(b = 14)
+    ),
+    axis.text.y = element_text(face = "bold", colour = "#172B3E"),
+    axis.text.x = element_text(colour = "#465667"),
+    panel.grid.major.x = element_line(colour = "#E0E5EA", linewidth = 0.3),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    legend.text = element_text(colour = "#273A4B"),
+    plot.caption.position = "plot",
+    plot.caption = element_text(
+      hjust = 0, colour = "#465667", margin = margin(t = 8)
+    ),
+    plot.margin = margin(14, 18, 12, 14)
+  )
+
+print(grafico_prioridades_inversion)
+
+# 5. Guardar la figura
+ggsave(
+  filename = file.path(
+    figures, "composicion_promedio_inversion_categoria_617_2003_2010.png"
+  ),
+  plot = grafico_prioridades_inversion,
+  width = 12,
+  height = 6.5,
+  dpi = 300,
+  bg = "white"
+)
+
+###############PARTE 14. EVOLUCIÓN Y COMPOSICIÓN DEL SGP MUNICIPAL
+
+# 1. Preparar los componentes en millones de pesos de 2023
+colores_sgp <- c(
+  "Educación"                         = "#193C8C",
+  "Salud"                             = "#2C659F",
+  "Agua potable y saneamiento básico" = "#76A9D2",
+  "Propósito general"                 = "#7E8E9F",
+  "Asignaciones especiales"           = "#D4D9DF"
+)
+
+componentes_sgp <- c(
+  "educacion", "salud", "agua", "proposito_general", "asignaciones_especiales"
+)
+
+sgp_municipal <- base %>%
+  filter(between(ano, 2002, 2023), !is.na(codmpio),
+         !is.na(sgp_total_real2023)) %>%
+  transmute(
+    codmpio,
+    ano,
+    total_reportado = sgp_total_real2023,
+    educacion = sgp_educaciontot_real2023,
+    salud = sgp_saludtot_real2023,
+    agua = if_else(
+      ano <= 2007, sgp_propgeneral_ap_real2023, sgp_agua_real2023
+    ),
+    proposito_general = if_else(
+      ano <= 2007,
+      sgp_propgeneraltot_real2023 - sgp_propgeneral_ap_real2023,
+      sgp_propgeneraltot_real2023
+    ),
+    asignaciones_especiales = rowSums(
+      pick(
+        sgp_alimescolar_real2023,
+        sgp_riberenos_real2023,
+        sgp_resgindigena_real2023,
+        sgp_fp_real2023,
+        sgp_pinfancia_real2023
+      )
+    )
+  )
+
+# 2. Sumar los montos anuales y convertir de millones a billones
+sgp_anual <- sgp_municipal %>%
+  drop_na(all_of(componentes_sgp)) %>%
+  group_by(ano) %>%
+  summarise(
+    municipios_grafico = n_distinct(codmpio),
+    across(all_of(c(componentes_sgp, "total_reportado")), ~ sum(.x) / 1e6),
+    .groups = "drop"
+  )
+
+# 3. Revisar cobertura y conciliar los componentes con el total
+conciliacion_sgp <- tibble(ano = 2002:2023) %>%
+  left_join(
+    sgp_municipal %>%
+      group_by(ano) %>%
+      summarise(municipios_con_total = n_distinct(codmpio), .groups = "drop"),
+    by = "ano"
+  ) %>%
+  left_join(sgp_anual, by = "ano") %>%
+  mutate(
+    municipios_con_total = coalesce(municipios_con_total, 0L),
+    municipios_grafico = coalesce(municipios_grafico, 0L),
+    municipios_excluidos = municipios_con_total - municipios_grafico,
+    suma_componentes = rowSums(pick(all_of(componentes_sgp))),
+    diferencia_billones = total_reportado - suma_componentes,
+    diferencia_pct = if_else(
+      total_reportado > 0,
+      100 * diferencia_billones / total_reportado,
+      NA_real_
+    )
+  ) %>%
+  select(
+    ano, municipios_con_total, municipios_grafico, municipios_excluidos,
+    total_reportado, suma_componentes, diferencia_billones, diferencia_pct
+  )
+
+print(conciliacion_sgp, n = Inf, width = Inf)
+
+# 4. Graficar la composición anual del SGP
+sgp_grafico <- sgp_anual %>%
+  pivot_longer(
+    cols = all_of(componentes_sgp),
+    names_to = "componente",
+    values_to = "billones"
+  ) %>%
+  mutate(
+    componente = factor(
+      componente,
+      levels = componentes_sgp,
+      labels = names(colores_sgp)
+    )
+  )
+
+grafico_composicion_sgp <- ggplot(
+  sgp_grafico,
+  aes(x = ano, y = billones, fill = componente)
+) +
+  geom_col(width = 0.78, position = position_stack(reverse = TRUE)) +
+  geom_point(
+    data = sgp_anual,
+    aes(x = ano, y = total_reportado),
+    inherit.aes = FALSE,
+    colour = "#202020",
+    size = 1.7
+  ) +
+  scale_fill_manual(values = colores_sgp) +
+  scale_x_continuous(
+    breaks = seq(2002, 2023, by = 3),
+    limits = c(2001.5, 2023.5),
+    expand = expansion(mult = 0)
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(decimal.mark = ",", big.mark = "."),
+    expand = expansion(mult = c(0, 0.06))
+  ) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
+  labs(
+    title = "Evolución y composición del SGP municipal",
+    x = NULL,
+    y = "Billones de pesos de 2023",
+    fill = NULL,
+    caption = paste(
+      "Fuente: DNP, Panel de Buen Gobierno del CEDE. Cálculos propios.",
+      "Nota: Los puntos muestran el total reportado para los municipios con datos completos en cada año.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(size = 17, face = "bold", colour = "#172B3E"),
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
     legend.position = "bottom",
-    plot.caption = element_text(hjust = 0)
+    legend.text = element_text(size = 9),
+    plot.caption.position = "plot",
+    plot.caption = element_text(hjust = 0, colour = "#465667"),
+    plot.margin = margin(14, 18, 12, 14)
   )
 
-print(grafico_inversion)
+print(grafico_composicion_sgp)
 
-# 6. Guardar el gráfico
+# 5. Guardar la figura
+ggsave(
+  filename = file.path(figures, "composicion_sgp_municipal_2002_2023.png"),
+  plot = grafico_composicion_sgp,
+  width = 11,
+  height = 6,
+  dpi = 300,
+  bg = "white"
+)
+
+
+#####
+############## PARTE 14. EVOLUCIÓN Y COMPOSICIÓN DEL SGP MUNICIPAL
+
+library(tidyverse)
+
 figures <- here::here("output", "figures")
 dir.create(figures, recursive = TRUE, showWarnings = FALSE)
 
+colores_sgp <- c(
+  "Educación"                         = "#193C8C",
+  "Salud"                             = "#2C659F",
+  "Agua potable y saneamiento básico" = "#76A9D2",
+  "Propósito general"                 = "#7E8E9F",
+  "Asignaciones especiales"           = "#D4D9DF"
+)
+
+componentes_sgp <- c(
+  "educacion", "salud", "agua", "proposito_general", "asignaciones_especiales"
+)
+
+# 1. Preparar los componentes en millones de pesos de 2023
+sgp_municipal <- base %>%
+  filter(between(ano, 2002, 2023), !is.na(codmpio),
+         !is.na(sgp_total_real2023)) %>%
+  transmute(
+    codmpio,
+    ano,
+    total_reportado = sgp_total_real2023,
+    educacion = sgp_educaciontot_real2023,
+    salud = sgp_saludtot_real2023,
+    agua = if_else(
+      ano <= 2007, sgp_propgeneral_ap_real2023, sgp_agua_real2023
+    ),
+    proposito_general = if_else(
+      ano <= 2007,
+      sgp_propgeneraltot_real2023 - sgp_propgeneral_ap_real2023,
+      sgp_propgeneraltot_real2023
+    ),
+    asignaciones_especiales = rowSums(
+      pick(
+        sgp_alimescolar_real2023,
+        sgp_riberenos_real2023,
+        sgp_resgindigena_real2023,
+        sgp_fp_real2023,
+        sgp_pinfancia_real2023
+      )
+    )
+  )
+
+# 2. Sumar los montos anuales para los municipios con datos completos
+sgp_anual <- sgp_municipal %>%
+  drop_na(all_of(componentes_sgp)) %>%
+  group_by(ano) %>%
+  summarise(
+    municipios_grafico = n_distinct(codmpio),
+    across(all_of(c(componentes_sgp, "total_reportado")), sum),
+    .groups = "drop"
+  )
+
+# 3. Revisar la cobertura y la diferencia frente al total reportado
+conciliacion_sgp <- sgp_municipal %>%
+  group_by(ano) %>%
+  summarise(municipios_con_total = n_distinct(codmpio), .groups = "drop") %>%
+  complete(ano = 2002:2023, fill = list(municipios_con_total = 0L)) %>%
+  left_join(sgp_anual, by = "ano") %>%
+  mutate(
+    municipios_grafico = coalesce(municipios_grafico, 0L),
+    municipios_excluidos = municipios_con_total - municipios_grafico,
+    suma_componentes = rowSums(pick(all_of(componentes_sgp))),
+    diferencia_millones = total_reportado - suma_componentes,
+    diferencia_pct = if_else(
+      total_reportado > 0,
+      100 * diferencia_millones / total_reportado,
+      NA_real_
+    )
+  ) %>%
+  select(
+    ano, municipios_con_total, municipios_grafico, municipios_excluidos,
+    total_reportado, suma_componentes, diferencia_millones, diferencia_pct
+  )
+
+print(conciliacion_sgp, n = Inf, width = Inf)
+
+# 4. Graficar los componentes y el total reportado
+sgp_grafico <- sgp_anual %>%
+  pivot_longer(
+    all_of(componentes_sgp),
+    names_to = "componente",
+    values_to = "millones"
+  ) %>%
+  mutate(
+    componente = factor(
+      componente,
+      levels = componentes_sgp,
+      labels = names(colores_sgp)
+    )
+  )
+
+grafico_composicion_sgp <- ggplot(
+  sgp_grafico,
+  aes(x = ano, y = millones, fill = componente)
+) +
+  geom_col(width = 0.78, position = position_stack(reverse = TRUE)) +
+  geom_point(
+    data = sgp_anual,
+    aes(x = ano, y = total_reportado),
+    inherit.aes = FALSE,
+    colour = "#202020",
+    size = 1.7
+  ) +
+  scale_fill_manual(values = colores_sgp) +
+  scale_x_continuous(
+    breaks = seq(2002, 2023, by = 3),
+    limits = c(2001.5, 2023.5),
+    expand = expansion(mult = 0)
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(
+      accuracy = 1, decimal.mark = ",", big.mark = "."
+    ),
+    expand = expansion(mult = c(0, 0.06))
+  ) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
+  labs(
+    title = "Evolución y composición del SGP municipal",
+    x = NULL,
+    y = "Millones de pesos de 2023",
+    fill = NULL,
+    caption = paste(
+      "Fuente: DNP, Panel de Buen Gobierno del CEDE. Cálculos propios.",
+      "Nota: Los puntos muestran el total reportado para los municipios con datos completos en cada año.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title.position = "plot",
+    plot.title = element_text(size = 17, face = "bold", colour = "#172B3E"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    legend.text = element_text(size = 9),
+    plot.caption.position = "plot",
+    plot.caption = element_text(hjust = 0, colour = "#465667")
+  )
+
+print(grafico_composicion_sgp)
+
 ggsave(
-  file.path(figures, "inversion_sectorial_categoria_617_2002_2010.png"),
-  plot = grafico_inversion,
-  width = 13,
-  height = 9,
+  filename = file.path(figures, "composicion_sgp_municipal_2002_2023.png"),
+  plot = grafico_composicion_sgp,
+  width = 11,
+  height = 6,
   dpi = 300,
   bg = "white"
 )

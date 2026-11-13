@@ -65,6 +65,26 @@ geoespacial <- readr::read_csv(
 base_completa_final <- cede_superfinanciera %>%
   rename_with(tolower)
 
+# BG180–BG202: variables del SGP en pesos corrientes
+variables_sgp_pesos <- c(
+  "sgp_total",
+  "sgp_educaciontot", "sgp_educacion_ps", "sgp_educacion_c",
+  "sgp_educacion_cg", "sgp_educacion_cm",
+  "sgp_saludtot", "sgp_salud_rs", "sgp_salud_sp", "sgp_salud_of",
+  "sgp_propgeneral_ap", "sgp_agua",
+  "sgp_propgeneraltot", "sgp_propgeneral_ld", "sgp_propgeneral_de",
+  "sgp_propgeneral_ct", "sgp_propgeneral_li", "sgp_propgeneral_fp",
+  "sgp_alimescolar", "sgp_riberenos", "sgp_resgindigena",
+  "sgp_fp", "sgp_pinfancia"
+)
+
+# BG203–BG206: series descontinuadas en miles de pesos corrientes
+variables_sgp_miles <- c(
+  "sgp_alescolar", "sgp_educacion", "sgp_propgeneral", "sgp_salud"
+)
+
+variables_sgp <- c(variables_sgp_pesos, variables_sgp_miles)
+
 variables_conservar <- c(
   # Identificación
   "municipio", "codmpio", "depto", "coddepto", "ano",
@@ -90,14 +110,16 @@ variables_conservar <- c(
   "df2_balanceprimario", "df2_balanceprimario_c",
   "df2_resultados", "df2_resultados_c",
   "df2_califi_ceingreso", "df2_califi_ceinversion",
-  "df2_calificaciongestio", "df2_rango","df_ing_trans", "df_ing_propios", "df_ahorro","df2_nuevoidf",
-  
-  # Sistema General de Participaciones
-  "sgp_total", "sgp_educaciontot", "sgp_saludtot",
-  "sgp_propgeneraltot","sgp_propgeneral_ld", "sgp_propgeneral_li",
+  "df2_calificaciongestio", "df2_rango","df_ing_trans", "df_ing_propios", "df_ahorro","df2_nuevoidf","df2_endeudamientolp",
   
   # Inversión
-  "inv_total","g_cap", "g_cap_fbkf", "df_gast_inv",
+  "inv_total",
+  "inv_en_educacion", "inv_en_salud", "inv_aguasani",
+  "inv_tranporte", "inv_en_vivienda", "inv_cult", "inv_dyr",
+  "g_cap", "g_cap_fbkf", "df_gast_inv",
+  
+  # Sistema General de Participaciones
+  variables_sgp,
   
   # Región
   "gandina", "gcaribe", "gpacifica", "gorinoquia", "gamazonia",
@@ -130,19 +152,28 @@ base_completa_final <- base_completa_final %>%
   select(all_of(variables_conservar)) %>%
   arrange(codmpio, ano)
 
-# Convertir las transferencias del SGP de pesos corrientes a millones de pesos corrientes
+# Convertir SGP e inversión a millones de pesos corrientes
 base_completa_final <- base_completa_final %>%
   mutate(
+    # BG180–BG202: 23 variables del SGP en pesos, incluidas las 7 originales
+    across(all_of(variables_sgp_pesos), ~ .x / 1e6),
+    
+    # BG203–BG206: 4 variables históricas del SGP en miles de pesos
+    across(all_of(variables_sgp_miles), ~ .x / 1000),
+    
+    # Inversión: de miles de pesos a millones de pesos
     across(
       c(
-        sgp_total,
-        sgp_educaciontot,
-        sgp_saludtot,
-        sgp_propgeneraltot,
-        sgp_propgeneral_ld,
-        sgp_propgeneral_li
+        inv_total,
+        inv_en_educacion,
+        inv_en_salud,
+        inv_aguasani,
+        inv_tranporte,
+        inv_en_vivienda,
+        inv_cult,
+        inv_dyr
       ),
-      ~ .x / 1000000
+      ~ .x / 1000
     )
   )
 
@@ -324,6 +355,8 @@ if (anyDuplicated(ipc_anual$ano) ||
   stop("Revisar IPC Banrep: faltan años o existen valores distintos por año.")
 }
 
+# Deflactar las variables monetarias a precios de 2023
+# Deflactar las variables monetarias a precios de 2023
 ipc_anual <- ipc_anual %>%
   mutate(factor_2023 = ipc[ano == 2023] / ipc)
 
@@ -333,15 +366,19 @@ variables_monetarias <- c(
   "g_total", "g_corr", "g_func", "g_func_general", "g_func_personal",
   "g_func_trans", "g_int_deudap", "y_cap", "y_cap_regalias", "y_cap_transf",
   "finan_credito", "finan_credito_desemb", "finan_credito_amort",
-  "sgp_total", "sgp_educaciontot", "sgp_saludtot", "sgp_propgeneraltot",
-  "sgp_propgeneral_ld", "sgp_propgeneral_li", "inv_total", "g_cap", "g_cap_fbkf",
-  "pib_total", "finan_credito_desemb"
+  variables_sgp,
+  "inv_total", "g_cap", "g_cap_fbkf", "pib_total", "df2_endeudamientolp"
 )
 
 base_completa_final <- base_completa_final %>%
   left_join(ipc_anual, by = "ano", relationship = "many-to-one") %>%
-  mutate(across(all_of(variables_monetarias),
-                ~ .x * factor_2023, .names = "{.col}_real2023"))
+  mutate(
+    across(
+      all_of(variables_monetarias),
+      ~ .x * factor_2023,
+      .names = "{.col}_real2023"
+    )
+  )
 
 # 2. Seleccionar categorías municipales
 banrep_categoria <- banrep %>%
@@ -585,3 +622,5 @@ saveRDS(
   base_completa_final,
   file.path(processed, "base.rds")
 )
+
+

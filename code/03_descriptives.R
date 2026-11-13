@@ -1366,3 +1366,299 @@ ggsave(
   dpi = 300,
   bg = "white"
 )
+
+
+############## PARTE 11. AMORTIZACIONES COMO PORCENTAJE DEL PIB MUNICIPAL
+
+amortizaciones_pct_pib <- base %>%
+  filter(
+    between(ano, 2000, 2009),
+    !is.na(codmpio),
+    is.finite(finan_credito_amort_real2023),
+    is.finite(pib_total_real2023),
+    pib_total_real2023 > 0
+  ) %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    amortizaciones_millones_2023 = sum(finan_credito_amort_real2023),
+    pib_millones_2023 = sum(pib_total_real2023),
+    pct_pib = 100 * amortizaciones_millones_2023 / pib_millones_2023,
+    .groups = "drop"
+  )
+
+print(amortizaciones_pct_pib, n = Inf)
+
+formato_pct <- scales::label_number(
+  accuracy = 0.01,
+  decimal.mark = ",",
+  suffix = " %"
+)
+
+figura_amortizaciones_pct_pib <- ggplot(
+  amortizaciones_pct_pib,
+  aes(x = factor(ano, levels = 2000:2009), y = pct_pib)
+) +
+  geom_col(fill = "#193C8C", width = 0.65) +
+  geom_text(
+    aes(label = formato_pct(pct_pib)),
+    vjust = -0.5,
+    color = "#193C8C",
+    size = 3.5
+  ) +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(
+    labels = formato_pct,
+    expand = expansion(mult = c(0, 0.16))
+  ) +
+  labs(
+    title = "Figura X.Amortizaciones de crédito como % del PIB",
+    x = NULL,
+    y = NULL,
+    caption = "Fuente: Panel Municipal del CEDE. Cálculos propios."
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    plot.caption = element_text(hjust = 0)
+  )
+
+print(figura_amortizaciones_pct_pib)
+
+ggsave(
+  file.path(figures, "amortizaciones_pct_pib_municipal_2000_2009.png"),
+  plot = figura_amortizaciones_pct_pib,
+  width = 9,
+  height = 4.8,
+  dpi = 300
+)
+
+############## PARTE 12. SGP COMO PORCENTAJE DEL PIB MUNICIPAL
+
+sgp_pct_pib <- base %>%
+  filter(
+    between(ano, 2002, 2009),
+    !is.na(codmpio),
+    is.finite(sgp_total_real2023),
+    is.finite(pib_total_real2023),
+    pib_total_real2023 > 0
+  ) %>%
+  group_by(ano) %>%
+  summarise(
+    municipios = n_distinct(codmpio),
+    sgp_millones_2023 = sum(sgp_total_real2023),
+    pib_millones_2023 = sum(pib_total_real2023),
+    pct_pib = 100 * sgp_millones_2023 / pib_millones_2023,
+    .groups = "drop"
+  )
+
+print(sgp_pct_pib, n = Inf)
+
+formato_pct <- scales::label_number(
+  accuracy = 0.01,
+  decimal.mark = ",",
+  suffix = " %"
+)
+
+figura_sgp_pct_pib <- ggplot(
+  sgp_pct_pib,
+  aes(x = factor(ano, levels = 2002:2009), y = pct_pib)
+) +
+  geom_col(fill = "#193C8C", width = 0.65) +
+  geom_text(
+    aes(label = formato_pct(pct_pib)),
+    vjust = -0.5,
+    color = "#193C8C",
+    size = 3.5
+  ) +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(
+    labels = formato_pct,
+    expand = expansion(mult = c(0, 0.16))
+  ) +
+  labs(
+    title = "Figura X.Transferencias del SGP como % del PIB",
+    x = NULL,
+    y = NULL,
+    caption = paste(
+      "Fuente: Panel Municipal del CEDE. Cálculos propios.",
+      sep = "\n"
+    )
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    plot.caption = element_text(hjust = 0)
+  )
+
+print(figura_sgp_pct_pib)
+
+ggsave(
+  file.path(figures, "sgp_pct_pib_municipal_2002_2009.png"),
+  plot = figura_sgp_pct_pib,
+  width = 9,
+  height = 4.8,
+  dpi = 300
+)
+
+############## PARTE 13. 
+############## PARTE 12. EVOLUCIÓN DE LA INVERSIÓN POR CATEGORÍA LEY 617
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# 1. Definir el periodo comparable y los rubros
+anios_inversion <- 2002:2010
+categorias_617 <- c("Especial", as.character(1:6))
+
+sectores_inversion <- c(
+  inv_en_educacion = "Educación",
+  inv_en_salud = "Salud",
+  inv_aguasani = "Agua potable y saneamiento básico",
+  inv_tranporte = "Transporte",
+  inv_en_vivienda = "Vivienda",
+  inv_cult = "Cultura",
+  inv_dyr = "Deporte y recreación"
+)
+
+rubros <- c(names(sectores_inversion), "inv_total")
+
+# 2. Identificar los registros con categoría y montos completos
+inversion_periodo <- base %>%
+  filter(ano %in% anios_inversion) %>%
+  mutate(
+    categoria = trimws(tolower(as.character(categ_cgn))),
+    categoria = recode(categoria, "0" = "especial"),
+    categoria = factor(
+      categoria,
+      levels = c("especial", as.character(1:6)),
+      labels = categorias_617
+    ),
+    datos_completos = if_all(all_of(rubros), is.finite)
+  )
+
+cobertura_inversion <- inversion_periodo %>%
+  count(ano, categoria, datos_completos, name = "registros")
+
+# 3. Sumar la inversión por año y categoría
+inversion_anual <- inversion_periodo %>%
+  filter(!is.na(categoria), datos_completos) %>%
+  group_by(ano, categoria) %>%
+  summarise(
+    municipios = n(),
+    across(all_of(rubros), sum),
+    .groups = "drop"
+  )
+
+if (nrow(inversion_anual) == 0) {
+  stop("No hay registros con categoría válida y montos completos en 2002–2010.")
+}
+
+inversion_anual <- inversion_anual %>%
+  mutate(
+    saldo = inv_total - rowSums(pick(all_of(names(sectores_inversion)))),
+    otros_sectores = pmax(saldo, 0)
+  )
+
+# Identificar casos en que la suma sectorial supera el total reportado
+diferencias_inversion <- inversion_anual %>%
+  filter(saldo < -1e-6) %>%
+  select(ano, categoria, inv_total, saldo)
+
+if (nrow(diferencias_inversion) > 0) {
+  print(diferencias_inversion, n = Inf)
+  warning(
+    "En los casos listados, los sectores superan el total reportado.",
+    call. = FALSE
+  )
+}
+
+# 4. Preparar los datos para las columnas apiladas
+etiquetas_sectores <- c(
+  sectores_inversion,
+  otros_sectores = "Otros sectores"
+)
+
+inversion_larga <- inversion_anual %>%
+  select(ano, categoria, all_of(names(etiquetas_sectores))) %>%
+  pivot_longer(
+    cols = all_of(names(etiquetas_sectores)),
+    names_to = "sector",
+    values_to = "monto"
+  ) %>%
+  mutate(
+    sector = factor(
+      sector,
+      levels = names(etiquetas_sectores),
+      labels = unname(etiquetas_sectores)
+    )
+  )
+
+colores_inversion <- setNames(
+  c("#193C8C", "#2B807B", "#74A9CF", "#C98938",
+    "#8064A2", "#BC6376", "#778B4E", "#C9CDD2"),
+  unname(etiquetas_sectores)
+)
+
+# 5. Graficar la evolución anual por categoría
+grafico_inversion <- ggplot(
+  inversion_larga,
+  aes(x = ano, y = monto, fill = sector)
+) +
+  geom_col(width = 0.75, position = position_stack(reverse = TRUE)) +
+  geom_point(
+    data = inversion_anual,
+    aes(x = ano, y = inv_total),
+    inherit.aes = FALSE,
+    shape = 21,
+    size = 1.7,
+    fill = "white",
+    colour = "#222222"
+  ) +
+  facet_wrap(vars(categoria), ncol = 3, scales = "free_y", drop = FALSE) +
+  scale_x_continuous(breaks = anios_inversion, limits = c(2001.5, 2010.5)) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ".", decimal.mark = ","),
+    expand = expansion(mult = c(0.02, 0.08))
+  ) +
+  scale_fill_manual(values = colores_inversion) +
+  guides(fill = guide_legend(ncol = 3, byrow = TRUE)) +
+  labs(
+    title = "Evolución del gasto en inversión por categoría de la Ley 617",
+    subtitle = "Composición sectorial, 2002–2010",
+    x = NULL,
+    y = "Millones de pesos corrientes",
+    fill = NULL,
+    caption = paste(
+      "El punto indica el total reportado.",
+      "Cada panel tiene su propia escala vertical.",
+      "Una columna ausente indica que no hay registros completos para ese año y categoría.",
+      sep = "\n"
+    )
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    strip.text = element_text(face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    plot.caption = element_text(hjust = 0)
+  )
+
+print(grafico_inversion)
+
+# 6. Guardar el gráfico
+figures <- here::here("output", "figures")
+dir.create(figures, recursive = TRUE, showWarnings = FALSE)
+
+ggsave(
+  file.path(figures, "inversion_sectorial_categoria_617_2002_2010.png"),
+  plot = grafico_inversion,
+  width = 13,
+  height = 9,
+  dpi = 300,
+  bg = "white"
+)

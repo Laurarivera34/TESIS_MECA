@@ -693,3 +693,78 @@ saveRDS(
   cede_superfinanciera,
   file.path(processed, "cede_superfinanciera.rds")
 )
+
+
+# AUDITORÍA DEL UNIVERSO MUNICIPAL
+
+# 1. Códigos distintos en cada etapa
+contar_codigos <- function(base, etapa) {
+  tibble(
+    etapa = etapa,
+    observaciones = nrow(base),
+    codigos_distintos = n_distinct(base$codmpio, na.rm = TRUE),
+    filas_sin_codigo = sum(is.na(base$codmpio))
+  )
+}
+
+bind_rows(
+  contar_codigos(caracteristicas_generales, "CEDE: características"),
+  contar_codigos(panel_buen_gobierno, "CEDE: buen gobierno"),
+  contar_codigos(cede, "CEDE después de excluir 23685"),
+  contar_codigos(cede_superfinanciera, "Salida de 01_import_cleaning")
+) %>%
+  print(n = Inf)
+
+# 2. Identificar en cuál fuente CEDE aparece cada código
+origen_codigos <- full_join(
+  caracteristicas_generales %>%
+    filter(!is.na(codmpio)) %>%
+    distinct(codmpio) %>%
+    mutate(en_caracteristicas = TRUE),
+  
+  panel_buen_gobierno %>%
+    filter(!is.na(codmpio)) %>%
+    distinct(codmpio) %>%
+    mutate(en_buen_gobierno = TRUE),
+  
+  by = "codmpio"
+) %>%
+  mutate(
+    across(
+      c(en_caracteristicas, en_buen_gobierno),
+      ~ replace_na(.x, FALSE)
+    )
+  )
+
+origen_codigos %>%
+  filter(!en_caracteristicas | !en_buen_gobierno) %>%
+  arrange(codmpio) %>%
+  print(n = Inf)
+
+# 3. Códigos conservados en CEDE que no aparecen en el listado DANE
+cede %>%
+  distinct(codmpio, municipio) %>%
+  anti_join(
+    dane %>% distinct(codmpio),
+    by = "codmpio"
+  ) %>%
+  arrange(codmpio) %>%
+  print(n = Inf)
+
+# 4. Cobertura por año
+cede_superfinanciera %>%
+  group_by(ano) %>%
+  summarise(
+    codigos_distintos = n_distinct(codmpio, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  print(n = Inf)
+
+# 5. Universo dentro del período de la tesis
+cede_superfinanciera %>%
+  filter(between(ano, 2002, 2023)) %>%
+  summarise(
+    codigos_distintos_2002_2023 =
+      n_distinct(codmpio, na.rm = TRUE)
+  ) %>%
+  print()

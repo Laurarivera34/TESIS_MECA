@@ -61,48 +61,27 @@ base <- readRDS(
 
 names(base)
 
+
 ################ PRIMERA PARTE: ESTADÍSTICAS DESCRIPTIVAS
 
-# Variables principales de la investigación
+# 1. Variables seleccionadas
 variables_tesis <- c(
-  # Transferencias del SGP
-  "sgp_pc",
-  "dependencia_sgp",
-  
-  # Esfuerzo fiscal
-  "recaudo_tributario_pc",
-  "participacion_tributaria",
-  
-  # Sostenibilidad
-  "sostenibilidad_proxy",
-  
-  # Utilización del crédito
-  "dummy_credito",
-  "desembolsos_pc",
-  "desembolsos_ingresos",
-  
-  # Características municipales
-  "pobl_tot",
-  "pib_percapita",
-  "indrural",
-  "discapital",
-  "dismdo",
+  "sgp_total_real2023",
+  "finan_credito_desemb_real2023",
+  "y_corr_real2023",
+  "g_func_real2023",
   "oficinas"
 )
 
-# Cobertura general del panel
-cobertura_panel <- base %>%
-  summarise(
-    municipios = n_distinct(codmpio, na.rm = TRUE),
-    anos = n_distinct(ano, na.rm = TRUE),
-    ano_inicio = min(ano, na.rm = TRUE),
-    ano_fin = max(ano, na.rm = TRUE),
-    observaciones = n()
-  )
+etiquetas_tesis <- c(
+  sgp_total_real2023 = "SGP total",
+  finan_credito_desemb_real2023 = "Desembolsos de crédito",
+  y_corr_real2023 = "Ingresos corrientes",
+  g_func_real2023 = "Funcionamiento",
+  oficinas = "Oficinas bancarias"
+)
 
-print(cobertura_panel)
-
-# Estadísticas descriptivas
+# 2. Calcular las estadísticas
 estadisticas <- base %>%
   select(all_of(variables_tesis)) %>%
   pivot_longer(
@@ -110,161 +89,341 @@ estadisticas <- base %>%
     names_to = "variable",
     values_to = "valor"
   ) %>%
+  mutate(
+    valor = if_else(is.finite(valor), valor, NA_real_)
+  ) %>%
   group_by(variable) %>%
   summarise(
     N = sum(!is.na(valor)),
-    Media = if (all(is.na(valor))) NA_real_
-    else mean(valor, na.rm = TRUE),
-    Mediana = if (all(is.na(valor))) NA_real_
-    else median(valor, na.rm = TRUE),
-    DE = if (sum(!is.na(valor)) < 2) NA_real_
-    else sd(valor, na.rm = TRUE),
-    Min = if (all(is.na(valor))) NA_real_
-    else min(valor, na.rm = TRUE),
-    Max = if (all(is.na(valor))) NA_real_
-    else max(valor, na.rm = TRUE),
+    
+    DE = if (sum(!is.na(valor)) < 2) {
+      NA_real_
+    } else {
+      sd(valor, na.rm = TRUE)
+    },
+    
+    Media = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      mean(valor, na.rm = TRUE)
+    },
+    
+    Mediana = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      median(valor, na.rm = TRUE)
+    },
+    
+    P75 = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      unname(quantile(valor, probs = 0.75, na.rm = TRUE))
+    },
+    
+    Maximo = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      max(valor, na.rm = TRUE)
+    },
+    
     .groups = "drop"
   ) %>%
+  arrange(match(variable, variables_tesis)) %>%
   mutate(
-    variable = factor(variable, levels = variables_tesis)
+    variable = unname(etiquetas_tesis[variable])
   ) %>%
-  arrange(variable) %>%
-  mutate(
-    variable = recode(
-      as.character(variable),
-      sgp_pc = "SGP por habitante",
-      dependencia_sgp = "Dependencia del SGP (%)",
-      recaudo_tributario_pc = "Recaudo tributario por habitante",
-      participacion_tributaria = "Participación tributaria (%)",
-      sostenibilidad_proxy = "Sostenibilidad aproximada (%)",
-      dummy_credito = "Desembolsos positivos (0/1)",
-      desembolsos_pc = "Desembolsos por habitante",
-      desembolsos_ingresos = "Desembolsos / ingresos (%)",
-      pobl_tot = "Población",
-      pib_percapita = "PIB por habitante",
-      indrural = "Índice de ruralidad",
-      discapital = "Distancia a la capital",
-      dismdo = "Distancia al mercado",
-      oficinas = "Oficinas bancarias"
-    )
-  )
+  select(variable, N, DE, Media, Mediana, Maximo, P75)
 
-# Nota metodológica con cobertura automática
-nota_tabla <- paste0(
-  "<div style='max-width:1050px;",
-  "white-space:normal;line-height:1.5;'>",
-  "<i>Nota:</i> El panel comprende ",
-  format(cobertura_panel$municipios, big.mark = ","),
-  " municipios y ",
-  cobertura_panel$anos,
-  " años (",
-  cobertura_panel$ano_inicio,
-  "–",
-  cobertura_panel$ano_fin,
-  "), con ",
-  format(cobertura_panel$observaciones, big.mark = ","),
-  " observaciones municipio-año. ",
-  "N corresponde al número de observaciones disponibles ",
-  "para cada variable; DE: desviación estándar. ",
-  "Las variables monetarias por habitante están expresadas ",
-  "en pesos corrientes. ",
-  "Los indicadores fiscales se expresan en porcentajes, ",
-  "salvo la variable de desembolsos positivos, ",
-  "que toma valores de 0 y 1. ",
-  "La sostenibilidad aproximada se construye a partir ",
-  "de flujos de crédito y no corresponde al indicador ",
-  "oficial de la Ley 358 de 1997.",
-  "</div>"
-)
-
-# Tabla estilo AER
+# 3. Crear la tabla
 tabla_aer <- estadisticas %>%
-  gt::gt() %>%
-  gt::tab_header(
-    title = "Tabla 1. Estadísticas descriptivas de las principales variables"
+  gt() %>%
+  tab_header(
+    title = "Tabla 1. Estadísticas descriptivas"
   ) %>%
-  gt::cols_label(
+  cols_label(
     variable = "Variable",
     N = "N",
+    DE = "DE",
     Media = "Media",
     Mediana = "Mediana",
-    DE = "DE",
-    Min = "Mín.",
-    Max = "Máx."
+    P75 = "P75",
+    Maximo = "Máximo"
   ) %>%
-  gt::fmt_number(
-    columns = c(Media, Mediana, DE, Min, Max),
+  fmt_number(
+    columns = c(DE, Media, Mediana, P75, Maximo),
     decimals = 2,
-    sep_mark = ",",
-    dec_mark = "."
+    sep_mark = ".",
+    dec_mark = ","
   ) %>%
-  gt::fmt_number(
+  fmt_number(
     columns = N,
     decimals = 0,
-    sep_mark = ","
+    sep_mark = ".",
+    dec_mark = ","
   ) %>%
-  gt::cols_width(
-    variable ~ gt::px(265),
-    N ~ gt::px(85),
-    Media ~ gt::px(125),
-    Mediana ~ gt::px(125),
-    DE ~ gt::px(125),
-    Min ~ gt::px(115),
-    Max ~ gt::px(145)
+  sub_missing(
+    columns = everything(),
+    missing_text = "—"
   ) %>%
-  gt::cols_align(
+  cols_width(
+    variable ~ px(230),
+    N ~ px(85),
+    c(DE, Media, Mediana, P75) ~ px(125),
+    Maximo ~ px(150)
+  ) %>%
+  cols_align(
     align = "left",
     columns = variable
   ) %>%
-  gt::cols_align(
+  cols_align(
     align = "right",
-    columns = c(N, Media, Mediana, DE, Min, Max)
+    columns = c(N, DE, Media, Mediana, P75, Maximo)
   ) %>%
-  gt::tab_source_note(
-    source_note = gt::html(nota_tabla)
+  tab_source_note(
+    source_note = paste(
+      "Fuente: CEDE, DNP, DANE y Superintendencia Financiera.",
+      "Cálculos propios."
+    )
   ) %>%
-  gt::tab_options(
-    table.width = gt::px(985),
+  tab_source_note(
+    source_note = paste(
+      "Nota: Montos monetarios en millones de pesos de 2023;",
+      "oficinas bancarias en número de oficinas.",
+      "Se incluyen ceros y observaciones disponibles por variable.",
+      "N: observaciones municipio-año; DE: desviación estándar;",
+      "P75: percentil 75."
+    )
+  ) %>%
+  tab_options(
+    table.width = px(965),
     table.background.color = "white",
     table.font.names = "Times New Roman",
-    table.font.size = gt::px(12),
+    table.font.size = px(14),
     
     heading.align = "left",
-    heading.title.font.size = gt::px(14),
+    heading.title.font.size = px(17),
     heading.title.font.weight = "normal",
     
     table.border.top.color = "black",
-    table.border.top.width = gt::px(1.5),
+    table.border.top.width = px(1.5),
     table.border.bottom.style = "none",
     
     column_labels.border.bottom.color = "black",
-    column_labels.border.bottom.width = gt::px(1),
+    column_labels.border.bottom.width = px(1),
     
     table_body.border.bottom.color = "black",
-    table_body.border.bottom.width = gt::px(1.5),
+    table_body.border.bottom.width = px(1.5),
     
     table_body.hlines.style = "none",
     table_body.vlines.style = "none",
     column_labels.vlines.style = "none",
     heading.border.bottom.style = "none",
     
-    data_row.padding = gt::px(5),
-    column_labels.padding = gt::px(6),
-    
-    source_notes.font.size = gt::px(10),
-    source_notes.padding = gt::px(8)
+    data_row.padding = px(8),
+    source_notes.font.size = px(11),
+    source_notes.padding = px(6)
   )
 
-# Exportar PNG
+# 4. Visualizar
+print(tabla_aer)
+
+# 5. Guardar en output/tables
+tables <- here::here("output", "tables")
+dir.create(tables, recursive = TRUE, showWarnings = FALSE)
+
 gt::gtsave(
   data = tabla_aer,
   filename = file.path(tables, "estadisticas.png"),
+  vwidth = 1200,
   zoom = 2,
   expand = 25
 )
 
-# Visualizar
-tabla_aer
+# Mostrar la ruta del archivo
+normalizePath(
+  file.path(tables, "estadisticas.png"),
+  winslash = "/"
+)
+
+################ ESTADÍSTICAS DESCRIPTIVAS: VARIABLES DEPENDIENTES
+
+# 1. Variables seleccionadas
+variables_dependientes <- c(
+  "sostenibilidad_proxy",
+  "dummy_credito",
+  "desembolsos_pc_real2023",
+  "recaudo_tributario_pc_real2023"
+)
+
+etiquetas_dependientes <- c(
+  sostenibilidad_proxy = "Sostenibilidad aproximada (%)",
+  dummy_credito = "Uso del crédito (0/1)",
+  desembolsos_pc_real2023 = "Desembolsos por habitante",
+  recaudo_tributario_pc_real2023 = "Recaudo tributario por habitante"
+)
+
+# 2. Calcular las estadísticas
+estadisticas_dependientes <- base %>%
+  select(all_of(variables_dependientes)) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  ) %>%
+  mutate(
+    valor = if_else(is.finite(valor), valor, NA_real_)
+  ) %>%
+  group_by(variable) %>%
+  summarise(
+    N = sum(!is.na(valor)),
+    
+    DE = if (sum(!is.na(valor)) < 2) {
+      NA_real_
+    } else {
+      sd(valor, na.rm = TRUE)
+    },
+    
+    Media = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      mean(valor, na.rm = TRUE)
+    },
+    
+    Mediana = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      median(valor, na.rm = TRUE)
+    },
+    
+    Maximo = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      max(valor, na.rm = TRUE)
+    },
+    
+    P75 = if (all(is.na(valor))) {
+      NA_real_
+    } else {
+      unname(quantile(valor, probs = 0.75, na.rm = TRUE))
+    },
+    
+    .groups = "drop"
+  ) %>%
+  arrange(match(variable, variables_dependientes)) %>%
+  mutate(
+    variable = unname(etiquetas_dependientes[variable])
+  ) %>%
+  select(variable, N, DE, Media, Mediana, Maximo, P75)
+
+# 3. Crear la tabla
+tabla_dependientes <- estadisticas_dependientes %>%
+  gt() %>%
+  tab_header(
+    title = "Tabla 2. Estadísticas descriptivas de las variables dependientes"
+  ) %>%
+  cols_label(
+    variable = "Variable",
+    N = "N",
+    DE = "DE",
+    Media = "Media",
+    Mediana = "Mediana",
+    Maximo = "Máximo",
+    P75 = "P75"
+  ) %>%
+  fmt_number(
+    columns = c(DE, Media, Mediana, Maximo, P75),
+    decimals = 2,
+    sep_mark = ".",
+    dec_mark = ","
+  ) %>%
+  fmt_number(
+    columns = N,
+    decimals = 0,
+    sep_mark = ".",
+    dec_mark = ","
+  ) %>%
+  sub_missing(
+    columns = everything(),
+    missing_text = "—"
+  ) %>%
+  cols_width(
+    variable ~ px(280),
+    N ~ px(85),
+    c(DE, Media, Mediana, P75) ~ px(125),
+    Maximo ~ px(150)
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = variable
+  ) %>%
+  cols_align(
+    align = "right",
+    columns = c(N, DE, Media, Mediana, Maximo, P75)
+  ) %>%
+  tab_source_note(
+    source_note = "Fuente: Panel de Buen Gobierno del CEDE y población incorporada en la base. Cálculos propios."
+  ) %>%
+  tab_source_note(
+    source_note = paste(
+      "Nota: Variables monetarias por habitante en pesos de 2023.",
+      "Uso del crédito: 1 si hay desembolsos positivos y 0 si son cero.",
+      "La sostenibilidad es una aproximación, no el indicador oficial de la Ley 358.",
+      "Se incluyen ceros; la cobertura varía por variable.",
+      "N: observaciones municipio-año; DE: desviación estándar;",
+      "P75: percentil 75."
+    )
+  ) %>%
+  tab_options(
+    table.width = px(1015),
+    table.background.color = "white",
+    table.font.names = "Times New Roman",
+    table.font.size = px(14),
+    
+    heading.align = "left",
+    heading.title.font.size = px(17),
+    heading.title.font.weight = "normal",
+    
+    table.border.top.color = "black",
+    table.border.top.width = px(1.5),
+    table.border.bottom.style = "none",
+    
+    column_labels.border.bottom.color = "black",
+    column_labels.border.bottom.width = px(1),
+    
+    table_body.border.bottom.color = "black",
+    table_body.border.bottom.width = px(1.5),
+    
+    table_body.hlines.style = "none",
+    table_body.vlines.style = "none",
+    column_labels.vlines.style = "none",
+    heading.border.bottom.style = "none",
+    
+    data_row.padding = px(8),
+    source_notes.font.size = px(11),
+    source_notes.padding = px(6)
+  )
+
+# 4. Visualizar
+print(tabla_dependientes)
+
+# 5. Guardar en output/tables
+tables <- here::here("output", "tables")
+dir.create(tables, recursive = TRUE, showWarnings = FALSE)
+
+gt::gtsave(
+  data = tabla_dependientes,
+  filename = file.path(tables, "estadisticas_dependientes.png"),
+  vwidth = 1300,
+  zoom = 2,
+  expand = 25
+)
+
+# Mostrar la ruta del archivo
+normalizePath(
+  file.path(tables, "estadisticas_dependientes.png"),
+  winslash = "/"
+)
+
 
 ############## PARTE 2. Figura 1. Desembolsos de crédito municipal
 
@@ -1502,122 +1661,211 @@ ggsave(
   dpi = 300
 )
 
-############## PARTE 13. COMPOSICIÓN PROMEDIO DE LA INVERSIÓN POR CATEGORÍA
+
+############## PARTE 13. COMPOSICIÓN PROMEDIO DEL SGP POR CATEGORÍA LEY 617
 
 categorias_617 <- c("Especial", as.character(1:6))
 
-# 1. Definir la paleta y el formato de las etiquetas
-colores_prioridades <- c(
+# 1. Definir los componentes y los colores
+componentes_sgp <- c(
+  "Educación"                         = "sgp_educaciontot",
+  "Salud"                            = "sgp_saludtot",
+  "Agua potable y saneamiento básico" = "sgp_agua",
+  "Propósito general"                = "sgp_propgeneraltot"
+)
+
+colores_sgp <- c(
   "Educación"                         = "#193C8C",
-  "Salud"                             = "#2C659F",
+  "Salud"                            = "#2C659F",
   "Agua potable y saneamiento básico" = "#76A9D2",
-  "Transporte"                        = "#B5D2E9",
-  "Vivienda"                          = "#4D6072",
-  "Cultura"                           = "#7E8E9F",
-  "Deporte y recreación"              = "#AFBCC9",
-  "Otros sectores"                    = "#DFE1E4"
+  "Propósito general"                = "#B5D2E9"
 )
 
-sectores_oscuros <- c("Educación", "Salud", "Vivienda")
-sectores_etiqueta_vertical <- c("Vivienda", "Cultura", "Deporte y recreación")
-umbral_etiqueta <- 0.05
-
-formato_pct <- scales::label_percent(
-  accuracy = 0.1,
-  decimal.mark = ","
+# Verificar las variables necesarias
+variables_requeridas <- c(
+  "ano", "categ_cgn", unname(componentes_sgp)
 )
 
-# 2. Calcular el total y la participación sectorial por año y categoría
-composicion_anual <- inversion_larga %>%
-  filter(ano %in% 2003:2010) %>%
-  group_by(ano, categoria) %>%
-  mutate(total_barra = sum(monto)) %>%
-  ungroup()
+faltantes <- setdiff(variables_requeridas, names(base))
 
-revision_composicion <- composicion_anual %>%
-  filter(
-    !is.finite(monto) | monto < 0 |
-      !is.finite(total_barra) | total_barra <= 0
-  ) %>%
-  distinct(ano, categoria)
-
-if (nrow(revision_composicion) > 0) {
-  print(revision_composicion, n = Inf)
-  stop("Revisa los montos sectoriales o los totales de estos años y categorías.",
-       call. = FALSE)
+if (length(faltantes) > 0) {
+  stop(
+    paste(
+      "Faltan estas variables en base:",
+      paste(faltantes, collapse = ", "),
+      ". Revisa sus nombres en componentes_sgp."
+    ),
+    call. = FALSE
+  )
 }
 
-# 3. Promediar las participaciones anuales y ubicar las etiquetas
-composicion_promedio <- composicion_anual %>%
-  mutate(participacion = monto / total_barra) %>%
-  group_by(categoria, sector) %>%
+# 2. Seleccionar los registros y estandarizar las categorías
+sgp_base <- base %>%
+  filter(ano %in% 2003:2010) %>%
+  mutate(
+    categoria_original = trimws(as.character(categ_cgn)),
+    categoria = case_when(
+      categoria_original %in% c("0", "Especial", "ESPECIAL") ~ "Especial",
+      categoria_original %in% as.character(1:6) ~ categoria_original,
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(categoria))
+
+# Verificar valores negativos o infinitos
+if (
+  any(
+    vapply(
+      sgp_base[unname(componentes_sgp)],
+      function(x) any(!is.na(x) & (!is.finite(x) | x < 0)),
+      logical(1)
+    )
+  )
+) {
+  stop(
+    "Existen valores negativos o infinitos en los componentes del SGP.",
+    call. = FALSE
+  )
+}
+
+# Incluir únicamente municipios-año con los cuatro componentes
+sgp_base <- sgp_base %>%
+  filter(
+    if_all(
+      all_of(unname(componentes_sgp)),
+      ~ !is.na(.x)
+    )
+  )
+
+if (nrow(sgp_base) == 0) {
+  stop(
+    "No hay registros completos para los cuatro componentes del SGP.",
+    call. = FALSE
+  )
+}
+
+# 3. Transformar a formato largo y sumar por año y categoría
+sgp_larga <- sgp_base %>%
+  select(
+    ano, categoria,
+    all_of(unname(componentes_sgp))
+  ) %>%
+  pivot_longer(
+    cols = all_of(unname(componentes_sgp)),
+    names_to = "variable",
+    values_to = "monto"
+  ) %>%
+  mutate(
+    componente = names(componentes_sgp)[
+      match(variable, unname(componentes_sgp))
+    ]
+  ) %>%
+  group_by(ano, categoria, componente) %>%
+  summarise(
+    monto = sum(monto),
+    .groups = "drop"
+  )
+
+# 4. Calcular las participaciones anuales
+composicion_anual_sgp <- sgp_larga %>%
+  group_by(ano, categoria) %>%
+  mutate(
+    total_componentes = sum(monto)
+  ) %>%
+  filter(total_componentes > 0) %>%
+  mutate(
+    participacion = monto / total_componentes
+  ) %>%
+  ungroup()
+
+# 5. Promediar las participaciones y calcular el centro de cada segmento
+composicion_promedio_sgp <- composicion_anual_sgp %>%
+  group_by(categoria, componente) %>%
   summarise(
     participacion = mean(participacion),
+    anios_disponibles = n_distinct(ano),
     .groups = "drop"
   ) %>%
   mutate(
-    categoria = factor(categoria, levels = categorias_617),
-    sector = factor(sector, levels = names(colores_prioridades)),
-    fila = match(as.character(categoria), rev(categorias_617)),
-    etiqueta = formato_pct(participacion),
+    categoria = factor(
+      categoria,
+      levels = categorias_617
+    ),
+    componente = factor(
+      componente,
+      levels = names(componentes_sgp)
+    ),
+    fila = match(
+      as.character(categoria),
+      rev(categorias_617)
+    ),
+    etiqueta = scales::percent(
+      participacion,
+      accuracy = 0.1,
+      decimal.mark = ","
+    ),
     color_etiqueta = if_else(
-      sector %in% sectores_oscuros, "#FFFFFF", "#172B3E"
+      componente %in% c("Educación", "Salud"),
+      "#FFFFFF",
+      "#172B3E"
     )
   ) %>%
-  arrange(categoria, sector) %>%
+  arrange(categoria, componente) %>%
   group_by(categoria) %>%
   mutate(
     fin = cumsum(participacion),
     inicio = fin - participacion,
-    centro = (inicio + fin) / 2
+    centro = inicio + participacion / 2
   ) %>%
   ungroup()
 
-# Tabla con los porcentajes de todos los sectores
-tabla_porcentajes_inversion <- composicion_promedio %>%
-  select(categoria, sector, etiqueta) %>%
-  pivot_wider(names_from = sector, values_from = etiqueta)
+# Tabla con los porcentajes y los años disponibles
+tabla_porcentajes_sgp <- composicion_promedio_sgp %>%
+  select(
+    categoria,
+    anios_disponibles,
+    componente,
+    etiqueta
+  ) %>%
+  pivot_wider(
+    names_from = componente,
+    values_from = etiqueta
+  ) %>%
+  arrange(categoria)
 
-print(tabla_porcentajes_inversion, n = Inf, width = Inf)
+print(tabla_porcentajes_sgp, n = Inf, width = Inf)
 
-# 4. Graficar las barras y los porcentajes
-grafico_prioridades_inversion <- ggplot(composicion_promedio) +
+# 6. Graficar con los porcentajes centrados en cada segmento
+grafico_composicion_sgp <- ggplot(composicion_promedio_sgp) +
   geom_rect(
-    data = filter(composicion_promedio, participacion > 0),
+    data = filter(composicion_promedio_sgp, participacion > 0),
     aes(
-      xmin = inicio, xmax = fin,
-      ymin = fila - 0.36, ymax = fila + 0.36,
-      fill = sector
+      xmin = inicio,
+      xmax = fin,
+      ymin = fila - 0.36,
+      ymax = fila + 0.36,
+      fill = componente
     ),
     colour = "white",
     linewidth = 0.25
   ) +
-  # Etiquetas horizontales desde 5 %
   geom_text(
-    data = filter(composicion_promedio, participacion >= umbral_etiqueta),
-    aes(x = centro, y = fila, label = etiqueta, colour = color_etiqueta),
-    size = 3.1,
-    fontface = "bold",
-    show.legend = FALSE
-  ) +
-  # Etiquetas verticales para los tres sectores con segmentos estrechos
-  geom_text(
-    data = filter(
-      composicion_promedio,
-      sector %in% sectores_etiqueta_vertical,
-      participacion > 0,
-      participacion < umbral_etiqueta
+    data = filter(composicion_promedio_sgp, participacion > 0),
+    aes(
+      x = centro,
+      y = fila,
+      label = etiqueta,
+      colour = color_etiqueta
     ),
-    aes(x = centro, y = fila, label = etiqueta, colour = color_etiqueta),
-    angle = 90,
-    size = 2.5,
+    size = 3.1,
     fontface = "bold",
     show.legend = FALSE
   ) +
   scale_colour_identity() +
   scale_fill_manual(
-    values = colores_prioridades,
-    breaks = names(colores_prioridades)
+    values = colores_sgp,
+    breaks = names(componentes_sgp),
+    drop = FALSE
   ) +
   scale_x_continuous(
     breaks = seq(0, 1, by = 0.25),
@@ -1630,16 +1878,21 @@ grafico_prioridades_inversion <- ggplot(composicion_promedio) +
     limits = c(0.5, length(categorias_617) + 0.5),
     expand = expansion(mult = 0)
   ) +
-  guides(fill = guide_legend(ncol = 3, byrow = TRUE)) +
+  guides(
+    fill = guide_legend(
+      ncol = 2,
+      byrow = TRUE
+    )
+  ) +
   labs(
-    title = "Participación sectorial promedio en la inversión municipal",
+    title = "Composición promedio del SGP por categoría municipal",
     subtitle = "Categorías de la Ley 617 de 2000 | 2003–2010",
     x = NULL,
     y = NULL,
     fill = NULL,
     caption = paste(
       "Fuente: Panel de Buen Gobierno del CEDE. Cálculos propios.",
-      "Nota: Las participaciones se calculan por año y categoría. Cada año disponible tiene el mismo peso en el promedio.",
+      "Nota: Se suman los recursos del SGP por componente, año y categoría municipal y se promedian sus participaciones anuales",
       sep = "\n"
     )
   ) +
@@ -1647,39 +1900,72 @@ grafico_prioridades_inversion <- ggplot(composicion_promedio) +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(
-      size = 19, face = "bold", colour = "#172B3E",
+      size = 18,
+      face = "bold",
+      colour = "#172B3E",
       margin = margin(b = 5)
     ),
     plot.subtitle = element_text(
-      colour = "#465667", margin = margin(b = 14)
+      colour = "#465667",
+      margin = margin(b = 14)
     ),
-    axis.text.y = element_text(face = "bold", colour = "#172B3E"),
-    axis.text.x = element_text(colour = "#465667"),
-    panel.grid.major.x = element_line(colour = "#E0E5EA", linewidth = 0.3),
+    axis.text.y = element_text(
+      face = "bold",
+      colour = "#172B3E"
+    ),
+    axis.text.x = element_text(
+      colour = "#465667"
+    ),
+    panel.grid.major.x = element_line(
+      colour = "#E0E5EA",
+      linewidth = 0.3
+    ),
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank(),
     legend.position = "bottom",
-    legend.text = element_text(colour = "#273A4B"),
+    legend.text = element_text(
+      colour = "#273A4B"
+    ),
     plot.caption.position = "plot",
     plot.caption = element_text(
-      hjust = 0, colour = "#465667", margin = margin(t = 8)
+      hjust = 0,
+      colour = "#465667",
+      margin = margin(t = 8)
     ),
     plot.margin = margin(14, 18, 12, 14)
   )
 
-print(grafico_prioridades_inversion)
+print(grafico_composicion_sgp)
 
-# 5. Guardar la figura
+# 7. Guardar la figura
+figures <- here::here("output", "figures")
+
+dir.create(
+  figures,
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
 ggsave(
   filename = file.path(
-    figures, "composicion_promedio_inversion_categoria_617_2003_2010.png"
+    figures,
+    "composicion_promedio_sgp_categoria_617_2003_2010.png"
   ),
-  plot = grafico_prioridades_inversion,
+  plot = grafico_composicion_sgp,
   width = 12,
   height = 6.5,
   dpi = 300,
   bg = "white"
 )
+
+
+
+
+
+
+
+
+
 
 ###############PARTE 14. EVOLUCIÓN Y COMPOSICIÓN DEL SGP MUNICIPAL
 
@@ -1836,160 +2122,402 @@ ggsave(
   bg = "white"
 )
 
-
-#####
-############## PARTE 14. EVOLUCIÓN Y COMPOSICIÓN DEL SGP MUNICIPAL
-
-library(tidyverse)
-
-figures <- here::here("output", "figures")
-dir.create(figures, recursive = TRUE, showWarnings = FALSE)
-
-colores_sgp <- c(
-  "Educación"                         = "#193C8C",
-  "Salud"                             = "#2C659F",
-  "Agua potable y saneamiento básico" = "#76A9D2",
-  "Propósito general"                 = "#7E8E9F",
-  "Asignaciones especiales"           = "#D4D9DF"
+############## PARTE 14. CORRELACIÓN ANUAL ENTRE SGP Y DESEMBOLSOS
+# 1. Verificar las variables
+variables_correlacion <- c(
+  "codmpio",
+  "ano",
+  "sgp_total_real2023",
+  "finan_credito_desemb_real2023"
 )
 
-componentes_sgp <- c(
-  "educacion", "salud", "agua", "proposito_general", "asignaciones_especiales"
-)
+faltantes <- setdiff(variables_correlacion, names(base))
 
-# 1. Preparar los componentes en millones de pesos de 2023
-sgp_municipal <- base %>%
-  filter(between(ano, 2002, 2023), !is.na(codmpio),
-         !is.na(sgp_total_real2023)) %>%
-  transmute(
-    codmpio,
-    ano,
-    total_reportado = sgp_total_real2023,
-    educacion = sgp_educaciontot_real2023,
-    salud = sgp_saludtot_real2023,
-    agua = if_else(
-      ano <= 2007, sgp_propgeneral_ap_real2023, sgp_agua_real2023
+if (length(faltantes) > 0) {
+  stop(
+    paste(
+      "Faltan estas variables:",
+      paste(faltantes, collapse = ", ")
     ),
-    proposito_general = if_else(
-      ano <= 2007,
-      sgp_propgeneraltot_real2023 - sgp_propgeneral_ap_real2023,
-      sgp_propgeneraltot_real2023
-    ),
-    asignaciones_especiales = rowSums(
-      pick(
-        sgp_alimescolar_real2023,
-        sgp_riberenos_real2023,
-        sgp_resgindigena_real2023,
-        sgp_fp_real2023,
-        sgp_pinfancia_real2023
-      )
-    )
+    call. = FALSE
+  )
+}
+
+# 2. Seleccionar el período y las variables
+base_correlacion <- base %>%
+  filter(
+    between(ano, 2002, 2023),
+    !is.na(codmpio)
+  ) %>%
+  select(all_of(variables_correlacion))
+
+# Evitar que municipios-año duplicados alteren el cálculo
+duplicados_correlacion <- base_correlacion %>%
+  count(codmpio, ano, name = "registros") %>%
+  filter(registros > 1)
+
+if (nrow(duplicados_correlacion) > 0) {
+  print(duplicados_correlacion, n = Inf)
+  
+  stop(
+    "Hay municipios-año duplicados. Revísalos antes de calcular la correlación.",
+    call. = FALSE
+  )
+}
+
+# Conservar pares válidos; los ceros sí se incluyen
+base_correlacion <- base_correlacion %>%
+  filter(
+    is.finite(sgp_total_real2023),
+    is.finite(finan_credito_desemb_real2023)
   )
 
-# 2. Sumar los montos anuales para los municipios con datos completos
-sgp_anual <- sgp_municipal %>%
-  drop_na(all_of(componentes_sgp)) %>%
+# 3. Calcular la correlación de Pearson entre municipios en cada año
+correlacion_anual_sgp <- base_correlacion %>%
   group_by(ano) %>%
   summarise(
-    municipios_grafico = n_distinct(codmpio),
-    across(all_of(c(componentes_sgp, "total_reportado")), sum),
-    .groups = "drop"
-  )
-
-# 3. Revisar la cobertura y la diferencia frente al total reportado
-conciliacion_sgp <- sgp_municipal %>%
-  group_by(ano) %>%
-  summarise(municipios_con_total = n_distinct(codmpio), .groups = "drop") %>%
-  complete(ano = 2002:2023, fill = list(municipios_con_total = 0L)) %>%
-  left_join(sgp_anual, by = "ano") %>%
-  mutate(
-    municipios_grafico = coalesce(municipios_grafico, 0L),
-    municipios_excluidos = municipios_con_total - municipios_grafico,
-    suma_componentes = rowSums(pick(all_of(componentes_sgp))),
-    diferencia_millones = total_reportado - suma_componentes,
-    diferencia_pct = if_else(
-      total_reportado > 0,
-      100 * diferencia_millones / total_reportado,
+    municipios = n_distinct(codmpio),
+    
+    correlacion = if (
+      n() >= 3 &&
+      sd(sgp_total_real2023) > 0 &&
+      sd(finan_credito_desemb_real2023) > 0
+    ) {
+      cor(
+        sgp_total_real2023,
+        finan_credito_desemb_real2023,
+        method = "pearson"
+      )
+    } else {
       NA_real_
-    )
+    },
+    
+    .groups = "drop"
   ) %>%
-  select(
-    ano, municipios_con_total, municipios_grafico, municipios_excluidos,
-    total_reportado, suma_componentes, diferencia_millones, diferencia_pct
-  )
-
-print(conciliacion_sgp, n = Inf, width = Inf)
-
-# 4. Graficar los componentes y el total reportado
-sgp_grafico <- sgp_anual %>%
-  pivot_longer(
-    all_of(componentes_sgp),
-    names_to = "componente",
-    values_to = "millones"
+  complete(
+    ano = 2002:2023,
+    fill = list(municipios = 0L)
   ) %>%
+  arrange(ano) %>%
+  # Separar la línea cuando un año no tiene correlación calculable
   mutate(
-    componente = factor(
-      componente,
-      levels = componentes_sgp,
-      labels = names(colores_sgp)
+    tramo = cumsum(is.na(correlacion)),
+    etiqueta = scales::number(
+      correlacion,
+      accuracy = 0.01,
+      decimal.mark = ","
     )
   )
 
-grafico_composicion_sgp <- ggplot(
-  sgp_grafico,
-  aes(x = ano, y = millones, fill = componente)
+# Tabla para revisar resultados y cobertura
+print(
+  correlacion_anual_sgp %>%
+    select(ano, municipios, correlacion),
+  n = Inf,
+  width = Inf
+)
+
+datos_grafico_cor <- correlacion_anual_sgp %>%
+  filter(!is.na(correlacion))
+
+if (nrow(datos_grafico_cor) == 0) {
+  stop(
+    "No hay años con información suficiente para calcular la correlación.",
+    call. = FALSE
+  )
+}
+
+anios_sin_correlacion <- correlacion_anual_sgp %>%
+  filter(is.na(correlacion)) %>%
+  pull(ano)
+
+nota_cobertura <- if (length(anios_sin_correlacion) > 0) {
+  paste0(
+    "Sin correlación calculable: ",
+    paste(anios_sin_correlacion, collapse = ", "),
+    "."
+  )
+} else {
+  NULL
+}
+
+# 4. Graficar la evolución de la correlación
+grafico_correlacion_sgp <- ggplot(
+  datos_grafico_cor,
+  aes(x = ano, y = correlacion)
 ) +
-  geom_col(width = 0.78, position = position_stack(reverse = TRUE)) +
-  geom_point(
-    data = sgp_anual,
-    aes(x = ano, y = total_reportado),
-    inherit.aes = FALSE,
-    colour = "#202020",
-    size = 1.7
+  geom_hline(
+    yintercept = 0,
+    colour = "#7E8E9F",
+    linetype = "dashed",
+    linewidth = 0.5
   ) +
-  scale_fill_manual(values = colores_sgp) +
+  geom_line(
+    aes(group = tramo),
+    colour = "#193C8C",
+    linewidth = 0.9
+  ) +
+  geom_point(
+    colour = "#193C8C",
+    size = 2.5
+  ) +
+  geom_text(
+    aes(
+      label = etiqueta,
+      vjust = if_else(correlacion >= 0, -0.9, 1.8)
+    ),
+    size = 3,
+    colour = "#172B3E",
+    show.legend = FALSE
+  ) +
   scale_x_continuous(
-    breaks = seq(2002, 2023, by = 3),
-    limits = c(2001.5, 2023.5),
-    expand = expansion(mult = 0)
+    breaks = 2002:2023,
+    expand = expansion(mult = c(0.025, 0.025))
   ) +
   scale_y_continuous(
+    breaks = seq(0, 1, by = 0.10),
     labels = scales::label_number(
-      accuracy = 1, decimal.mark = ",", big.mark = "."
+      accuracy = 0.01,
+      decimal.mark = ","
     ),
-    expand = expansion(mult = c(0, 0.06))
+    limits = c(0, 1),
+    expand = expansion(mult = c(0, 0.05))
   ) +
-  guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
   labs(
-    title = "Evolución y composición del SGP municipal",
+    title = "Relación entre el SGP y los desembolsos de crédito municipal",
+    subtitle = "Correlación anual de Pearson entre municipios | 2002–2023",
     x = NULL,
-    y = "Millones de pesos de 2023",
-    fill = NULL,
+    y = "Coeficiente de correlación",
     caption = paste(
-      "Fuente: DNP, Panel de Buen Gobierno del CEDE. Cálculos propios.",
-      "Nota: Los puntos muestran el total reportado para los municipios con datos completos en cada año.",
-      sep = "\n"
+      c(
+        "Fuente: Panel de Buen Gobierno del CEDE. Cálculos propios.",
+        "Nota: Correlación anual de los montos totales en pesos constantes de 2023.",
+        nota_cobertura
+      ),
+      collapse = "\n"
     )
   ) +
   theme_minimal(base_size = 11) +
   theme(
     plot.title.position = "plot",
-    plot.title = element_text(size = 17, face = "bold", colour = "#172B3E"),
+    plot.title = element_text(
+      size = 17,
+      face = "bold",
+      colour = "#172B3E",
+      margin = margin(b = 6)
+    ),
+    plot.subtitle = element_text(
+      colour = "#465667",
+      margin = margin(b = 14)
+    ),
+    axis.text.x = element_text(
+      angle = 45,
+      hjust = 1,
+      size = 9,
+      colour = "#465667"
+    ),
+    axis.text.y = element_text(colour = "#465667"),
+    axis.title.y = element_text(
+      colour = "#465667",
+      margin = margin(r = 10)
+    ),
     panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(
+      colour = "#E0E5EA",
+      linewidth = 0.3
+    ),
     panel.grid.minor = element_blank(),
-    legend.position = "bottom",
-    legend.text = element_text(size = 9),
     plot.caption.position = "plot",
-    plot.caption = element_text(hjust = 0, colour = "#465667")
+    plot.caption = element_text(
+      hjust = 0,
+      size = 9,
+      colour = "#465667",
+      margin = margin(t = 10)
+    ),
+    plot.margin = margin(14, 18, 12, 14)
   )
 
-print(grafico_composicion_sgp)
+print(grafico_correlacion_sgp)
 
+# 5. Guardar la figura
 ggsave(
-  filename = file.path(figures, "composicion_sgp_municipal_2002_2023.png"),
-  plot = grafico_composicion_sgp,
-  width = 11,
-  height = 6,
+  filename = file.path(
+    figures,
+    "correlacion_anual_sgp_desembolsos_2002_2023.png"
+  ),
+  plot = grafico_correlacion_sgp,
+  width = 13,
+  height = 6.5,
   dpi = 300,
   bg = "white"
 )
+
+
+
+############## ANEXO DISPONIBILIDAD TEMPORAL DE TODAS LAS VARIABLES
+
+# 1. Identificar todos los años presentes en base
+anios_base <- sort(unique(base$ano[!is.na(base$ano)]))
+
+if (length(anios_base) == 0) {
+  stop("La variable ano no contiene años disponibles.")
+}
+
+# Incluir años intermedios para identificar posibles vacíos
+anios_revision <- seq(min(anios_base), max(anios_base))
+
+cat(
+  "Período presente en base:",
+  min(anios_base), "a", max(anios_base), "\n"
+)
+
+cat(
+  "Años presentes:",
+  paste(anios_base, collapse = ", "), "\n"
+)
+
+# 2. Funciones de apoyo
+# Los ceros cuentan como información válida
+dato_valido <- function(x) {
+  if (is.numeric(x)) {
+    is.finite(x)
+  } else {
+    !is.na(x) & nzchar(trimws(as.character(x)))
+  }
+}
+
+# Resumir años consecutivos: 2002–2010, 2013–2023
+resumir_anios <- function(x) {
+  x <- sort(unique(x))
+  
+  if (length(x) == 0) {
+    return("Ninguno")
+  }
+  
+  grupos <- cumsum(c(TRUE, diff(x) != 1))
+  
+  paste(
+    vapply(
+      split(x, grupos),
+      function(z) {
+        if (length(z) == 1) {
+          as.character(z)
+        } else {
+          paste0(min(z), "–", max(z))
+        }
+      },
+      character(1)
+    ),
+    collapse = ", "
+  )
+}
+
+# 3. Revisar disponibilidad sin filtrar por período
+# Se excluyen únicamente registros sin año o código municipal válido
+base_revision <- base %>%
+  filter(
+    !is.na(ano),
+    dato_valido(codmpio)
+  )
+
+variables_revision <- names(base)
+
+# Convertir a indicadores de disponibilidad antes de pasar a formato largo
+disponibilidad_larga <- base_revision %>%
+  transmute(
+    .anio_revision = ano,
+    .municipio_revision = codmpio,
+    across(
+      all_of(variables_revision),
+      dato_valido
+    )
+  ) %>%
+  pivot_longer(
+    cols = all_of(variables_revision),
+    names_to = "variable",
+    values_to = "disponible"
+  )
+
+# Contar municipios distintos, no filas
+conteo_anual <- disponibilidad_larga %>%
+  group_by(variable, ano = .anio_revision) %>%
+  summarise(
+    municipios_con_datos = n_distinct(
+      .municipio_revision[disponible]
+    ),
+    .groups = "drop"
+  )
+
+cobertura_anual <- expand_grid(
+  variable = variables_revision,
+  ano = anios_revision
+) %>%
+  left_join(
+    conteo_anual,
+    by = c("variable", "ano")
+  ) %>%
+  mutate(
+    municipios_con_datos = coalesce(
+      municipios_con_datos, 0L
+    )
+  )
+
+# 4. Resumen del período disponible por variable
+resumen_disponibilidad <- cobertura_anual %>%
+  group_by(variable) %>%
+  summarise(
+    primer_anio = if (any(municipios_con_datos > 0)) {
+      min(ano[municipios_con_datos > 0])
+    } else {
+      NA_integer_
+    },
+    
+    ultimo_anio = if (any(municipios_con_datos > 0)) {
+      max(ano[municipios_con_datos > 0])
+    } else {
+      NA_integer_
+    },
+    
+    numero_anios_con_datos = sum(
+      municipios_con_datos > 0
+    ),
+    
+    periodos_con_datos = resumir_anios(
+      ano[municipios_con_datos > 0]
+    ),
+    
+    # Vacíos únicamente entre el primer y último año con datos
+    vacios_internos = if (any(municipios_con_datos > 0)) {
+      resumir_anios(
+        ano[
+          municipios_con_datos == 0 &
+            ano >= min(ano[municipios_con_datos > 0]) &
+            ano <= max(ano[municipios_con_datos > 0])
+        ]
+      )
+    } else {
+      "Sin información"
+    },
+    
+    .groups = "drop"
+  ) %>%
+  arrange(match(variable, variables_revision))
+
+View(resumen_disponibilidad)
+
+print(
+  resumen_disponibilidad,
+  n = Inf,
+  width = Inf
+)
+
+# 5. Detalle: municipios con datos por variable y año
+tabla_municipios_por_anio <- cobertura_anual %>%
+  pivot_wider(
+    names_from = ano,
+    values_from = municipios_con_datos,
+    names_prefix = "anio_"
+  ) %>%
+  arrange(match(variable, variables_revision))
+
+View(tabla_municipios_por_anio)

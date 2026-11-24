@@ -38,12 +38,12 @@ if (length(paquetes_faltantes) > 0) {
   )
 }
 
-# La Parte 5 usa maps a través de ggplot2::map_data().
+# usa maps a través de ggplot2::map_data().
 invisible(
   lapply(setdiff(paquetes, "maps"), library, character.only = TRUE)
 )
 
-# 3. RUTAS
+# RUTAS
 root <- here::here() # Función here sirve para buscar la raíz de proyecto
 
 data <- here::here("data", "raw")
